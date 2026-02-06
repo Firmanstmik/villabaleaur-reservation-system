@@ -7,8 +7,8 @@ import { whatsappNumber } from '@/data/mockData';
 
 const navLinks = [
   { name: 'Home', path: '/' },
-  { name: 'Properties', path: '/properties' },
   { name: 'Services', path: '/services' },
+  { name: 'Properties', path: '/properties' },
   { name: 'About', path: '/about' },
   { name: 'Agents', path: '/agents' },
   { name: 'Blog', path: '/blog' },
@@ -42,21 +42,23 @@ export function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-background/95 backdrop-blur-md shadow-lg'
-            : 'bg-transparent'
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-background shadow-sm`}
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-3">
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="text-2xl font-bold text-ukon-navy"
+                className="flex items-center gap-2"
               >
-                UKON <span className="text-ukon-red">ESTATE</span>
+                <div className="w-10 h-10 bg-ukon-navy rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">UE</span>
+                </div>
+                <div className="text-xl font-bold">
+                  <span className="text-ukon-navy">UKON</span>{' '}
+                  <span className="text-ukon-navy">ESTATE</span>
+                </div>
               </motion.div>
             </Link>
 
@@ -81,7 +83,7 @@ export function Navbar() {
             <div className="hidden lg:flex items-center gap-4">
               <Button
                 onClick={handleWhatsAppClick}
-                className="bg-ukon-red hover:bg-ukon-red/90 text-white glow-effect flex items-center gap-2"
+                className="bg-ukon-red hover:bg-ukon-red/90 text-white glow-effect flex items-center gap-2 rounded-full px-6"
               >
                 <span className="blink-dot" />
                 Contact Us Now
@@ -150,7 +152,7 @@ export function Navbar() {
                 >
                   <Button
                     onClick={handleWhatsAppClick}
-                    className="w-full bg-ukon-red hover:bg-ukon-red/90 text-white glow-effect flex items-center justify-center gap-2"
+                    className="w-full bg-ukon-red hover:bg-ukon-red/90 text-white glow-effect flex items-center justify-center gap-2 rounded-full"
                   >
                     <span className="blink-dot" />
                     Contact Us Now
