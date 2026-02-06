@@ -3,8 +3,9 @@ import { Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useInView } from '@/hooks/useInView';
 import { useCountUp } from '@/hooks/useCountUp';
-import { stats, whatsappNumber } from '@/data/mockData';
+import { stats } from '@/data/mockData';
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 function StatCounter({ end, suffix, label, delay }: { end: number; suffix: string; label: string; delay: number }) {
   const { ref, isInView } = useInView({ threshold: 0.5 });
@@ -17,11 +18,11 @@ function StatCounter({ end, suffix, label, delay }: { end: number; suffix: strin
   }, [isInView, start]);
 
   return (
-    <div ref={ref} className="text-center">
-      <div className="text-4xl md:text-5xl font-bold text-white counter-animate">
+    <div ref={ref} className="text-left">
+      <div className="text-3xl md:text-4xl font-bold text-white counter-animate">
         {formattedValue}
       </div>
-      <div className="text-white/70 mt-2">{label}</div>
+      <div className="text-white/70 text-sm mt-1">{label}</div>
     </div>
   );
 }
@@ -29,154 +30,138 @@ function StatCounter({ end, suffix, label, delay }: { end: number; suffix: strin
 export function HeroSection() {
   const { ref, isInView } = useInView();
 
-  const handleWhatsAppClick = () => {
-    window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`, '_blank');
-  };
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image with Parallax */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage:
-            'url(https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80)',
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
-      </div>
-
-      {/* Content */}
-      <div ref={ref} className="relative z-10 container mx-auto px-4 py-32">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Animated Title */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
+    <section className="pt-24 pb-8 px-4 md:px-8 bg-background">
+      <div className="container mx-auto">
+        {/* Hero Card Container */}
+        <div className="relative">
+          {/* Main Hero Image Container with custom shape */}
+          <div
+            className="relative w-full h-[500px] md:h-[600px] rounded-3xl overflow-hidden"
+            style={{
+              clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 80px), calc(100% - 280px) calc(100% - 80px), calc(100% - 280px) 100%, 0 100%)',
+            }}
           >
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-              WHERE DREAMS
-              <br />
-              <span className="text-ukon-red">COME TRUE</span>
-            </h1>
-          </motion.div>
-
-          {/* Description */}
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto"
-          >
-            Discover exceptional properties and make your real estate dreams a reality with UKON Estate's expert guidance and personalized service.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
-          >
-            <Button
-              onClick={handleWhatsAppClick}
-              size="lg"
-              className="bg-ukon-red hover:bg-ukon-red/90 text-white glow-effect flex items-center gap-2 px-8 py-6 text-lg"
+            {/* Background Image */}
+            <div
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{
+                backgroundImage:
+                  'url(https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80)',
+              }}
             >
-              <span className="blink-dot" />
-              Contact Us Now
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-white text-white hover:bg-white hover:text-ukon-navy px-8 py-6 text-lg"
-              asChild
-            >
-              <a href="/properties">
-                View Properties
-                <ArrowRight className="ml-2" size={20} />
-              </a>
-            </Button>
-          </motion.div>
+              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+            </div>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="grid grid-cols-3 gap-8 max-w-2xl mx-auto"
-          >
-            <StatCounter end={stats.projects} suffix="+" label="Projects" delay={0} />
-            <StatCounter end={stats.clients} suffix="+" label="Happy Clients" delay={200} />
-            <StatCounter end={stats.value} suffix="M+" label="Value Sold" delay={400} />
-          </motion.div>
-        </div>
+            {/* Content - Left Aligned */}
+            <div ref={ref} className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 max-w-2xl">
+              {/* Animated Title */}
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+              >
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                  WHERE DREAMS
+                  <br />
+                  COME TRUE.
+                </h1>
+              </motion.div>
 
-        {/* Floating Google Reviews Badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, x: 100 }}
-          animate={isInView ? { opacity: 1, scale: 1, x: 0 } : {}}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="absolute bottom-20 right-8 hidden lg:block"
-        >
+              {/* Description */}
+              <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-base md:text-lg text-white/80 mb-8 max-w-md"
+              >
+                We provide tailored real estate solutions, guiding you through every step with personalized experiences that meet your unique needs and aspirations.
+              </motion.p>
+
+              {/* CTA Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="mb-12"
+              >
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-white/80 bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-foreground rounded-full px-8 py-6 text-base"
+                  asChild
+                >
+                  <Link to="/properties">
+                    Explore Properties
+                    <ArrowRight className="ml-2" size={20} />
+                  </Link>
+                </Button>
+              </motion.div>
+
+              {/* Stats */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="flex gap-8 md:gap-12"
+              >
+                <StatCounter end={stats.projects} suffix="+" label="Projects Complete" delay={0} />
+                <StatCounter end={stats.clients} suffix="+" label="Happy Clients" delay={200} />
+                <StatCounter end={stats.value} suffix="M+" label="Project Value" delay={400} />
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Google Reviews Badge - Positioned in the cutout */}
           <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            className="bg-white rounded-2xl p-4 shadow-2xl"
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 1 }}
+            className="absolute bottom-0 right-0 hidden md:block"
+            style={{ width: '280px' }}
           >
-            <div className="flex items-center gap-3">
-              <div className="flex -space-x-2">
-                <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80"
-                  alt="Customer"
-                  className="w-10 h-10 rounded-full border-2 border-white"
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80"
-                  alt="Customer"
-                  className="w-10 h-10 rounded-full border-2 border-white"
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80"
-                  alt="Customer"
-                  className="w-10 h-10 rounded-full border-2 border-white"
-                />
-              </div>
-              <div>
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={14} className="fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-foreground">4.9</span> on Google
+            <div className="bg-background rounded-tl-3xl pt-4 pl-4">
+              <div className="bg-secondary/50 rounded-2xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex -space-x-2">
+                    <img
+                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80"
+                      alt="Customer"
+                      className="w-10 h-10 rounded-full border-2 border-background"
+                    />
+                    <img
+                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80"
+                      alt="Customer"
+                      className="w-10 h-10 rounded-full border-2 border-background"
+                    />
+                    <img
+                      src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80"
+                      alt="Customer"
+                      className="w-10 h-10 rounded-full border-2 border-background"
+                    />
+                    <img
+                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80"
+                      alt="Customer"
+                      className="w-10 h-10 rounded-full border-2 border-background"
+                    />
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-foreground">
+                      47+ Google Reviews
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={12} className="fill-yellow-400 text-yellow-400" />
+                      ))}
+                      <span className="text-sm text-muted-foreground ml-1">4.8 / 5</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center"
-        >
-          <motion.div
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-1.5 h-3 bg-white/50 rounded-full mt-2"
-          />
-        </motion.div>
-      </motion.div>
     </section>
   );
 }
