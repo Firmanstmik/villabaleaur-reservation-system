@@ -11,35 +11,26 @@ export function FeaturedProperties() {
   const featuredProperties = properties.filter((p) => p.featured).slice(0, 6);
 
   return (
-    <section className="py-24 bg-secondary/30">
+    <section className="py-24 bg-background">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div ref={ref} className="text-center mb-16">
+        <div ref={ref} className="mb-12">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5 }}
-            className="inline-block px-4 py-2 bg-ukon-red/10 text-ukon-red rounded-full text-sm font-medium mb-4"
+            className="inline-block px-4 py-2 bg-secondary text-muted-foreground rounded-full text-sm font-medium mb-6"
           >
-            Featured Listings
+            Featured Properties
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4"
+            className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground uppercase tracking-wide"
           >
-            Discover Our Premium Properties
+            Discover Homes Tailored to Your<br />Lifestyle and Needs
           </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-muted-foreground text-lg max-w-2xl mx-auto"
-          >
-            Explore our handpicked selection of exceptional properties that offer
-            the perfect blend of luxury, comfort, and value.
-          </motion.p>
         </div>
 
         {/* Properties Grid */}
