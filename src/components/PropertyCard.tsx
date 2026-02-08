@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
-import { Bed, Bath, Square, MapPin } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { MapPin } from 'lucide-react';
 import { Property } from '@/data/mockData';
 
 interface PropertyCardProps {
@@ -9,23 +8,20 @@ interface PropertyCardProps {
 }
 
 const statusColors = {
-  rent: 'bg-blue-500',
-  sale: 'bg-green-500',
-  investment: 'bg-purple-500',
+  rent: 'bg-white/90 text-foreground',
+  sale: 'bg-white/90 text-foreground',
+  investment: 'bg-white/90 text-foreground',
 };
 
 const statusLabels = {
   rent: 'For Rent',
-  sale: 'For Sale',
-  investment: 'Investment',
+  sale: 'For Sell',
+  investment: 'For Investment',
 };
 
 export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
-  const formatPrice = (price: number, priceType: 'sale' | 'rent') => {
-    if (priceType === 'rent') {
-      return `$${price.toLocaleString()}/mo`;
-    }
-    return `$${price.toLocaleString()}`;
+  const formatPrice = (price: number) => {
+    return `$ ${price.toLocaleString()}`;
   };
 
   return (
@@ -34,60 +30,67 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="card-hover group"
+      className="group"
     >
-      <div className="bg-card rounded-2xl overflow-hidden shadow-lg border border-border">
-        {/* Image */}
-        <div className="relative aspect-[4/3] image-zoom">
-          <img
-            src={property.image}
-            alt={property.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          
-          {/* Status Badge */}
-          <Badge
-            className={`absolute top-4 left-4 ${statusColors[property.status]} text-white border-0`}
-          >
-            {statusLabels[property.status]}
-          </Badge>
+      {/* Image */}
+      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-3">
+        <img
+          src={property.image}
+          alt={property.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        
+        {/* Status Badge - Top Right */}
+        <div
+          className={`absolute top-4 right-4 ${statusColors[property.status]} px-4 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm`}
+        >
+          {statusLabels[property.status]}
+        </div>
+      </div>
 
-          {/* Price Tag */}
-          <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg">
-            <span className="text-lg font-bold text-ukon-navy">
-              {formatPrice(property.price, property.priceType)}
-            </span>
+      {/* Content */}
+      <div className="space-y-2">
+        {/* Location */}
+        <div className="flex items-center gap-1 text-muted-foreground">
+          <MapPin size={14} className="text-ukon-red" />
+          <span className="text-sm">{property.address.split(',').slice(-2).join(',').trim()}</span>
+        </div>
+
+        {/* Title */}
+        <h3 className="text-lg font-semibold text-foreground">
+          {property.title}
+        </h3>
+
+        {/* Specs Row */}
+        <div className="flex items-center gap-4 text-muted-foreground text-sm">
+          <div className="flex items-center gap-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 7v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7"/>
+              <path d="M21 7H3l2-4h14l2 4Z"/>
+              <path d="M7 11h4"/>
+            </svg>
+            <span>{property.bedrooms}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1z"/>
+              <path d="M6 12V5a2 2 0 0 1 2-2h3v2.25"/>
+            </svg>
+            <span>{property.bathrooms}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18"/>
+            </svg>
+            <span>{property.sqft.toLocaleString()} sq.ft</span>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-5">
-          <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-ukon-red transition-colors">
-            {property.title}
-          </h3>
-          
-          <div className="flex items-center gap-1 text-muted-foreground mb-4">
-            <MapPin size={16} className="text-ukon-red" />
-            <span className="text-sm">{property.address}</span>
-          </div>
-
-          {/* Specs */}
-          <div className="flex items-center justify-between pt-4 border-t border-border">
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <Bed size={18} />
-              <span className="text-sm">{property.bedrooms} Beds</span>
-            </div>
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <Bath size={18} />
-              <span className="text-sm">{property.bathrooms} Baths</span>
-            </div>
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <Square size={18} />
-              <span className="text-sm">{property.sqft.toLocaleString()} sqft</span>
-            </div>
-          </div>
-        </div>
+        {/* Price */}
+        <p className="text-lg font-bold text-foreground pt-1">
+          {formatPrice(property.price)}
+        </p>
       </div>
     </motion.div>
   );
