@@ -38,13 +38,14 @@ export function HeroSection() {
         <div className="relative">
           {/* Main Hero Image Container with custom shape */}
           <div
-            className="relative w-full h-[500px] md:h-[600px] rounded-3xl overflow-visible"
+            className="relative w-full h-[500px] md:h-[600px] overflow-visible"
           >
             {/* Background Image with clip-path for cutout */}
             <div
-              className="absolute inset-0 rounded-3xl overflow-hidden"
+              className="absolute inset-0 overflow-hidden"
               style={{
-                clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 100px), calc(100% - 320px) calc(100% - 100px), calc(100% - 320px) 100%, 0 100%)',
+                clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 80px), calc(100% - 260px) calc(100% - 80px), calc(100% - 260px) 100%, 0 100%)',
+                borderBottomLeftRadius: '24px',
               }}
             >
               <div
@@ -122,54 +123,51 @@ export function HeroSection() {
             animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 1 }}
             className="absolute bottom-0 right-0 hidden md:flex items-end"
-            style={{ height: '100px', width: '320px' }}
+            style={{ height: '80px', width: '260px' }}
           >
             {/* White curved background that creates the cutout effect */}
             <div 
-              className="bg-background h-full w-full flex items-center"
-              style={{
-                borderTopLeftRadius: '24px',
-              }}
+              className="bg-background h-full w-full flex items-center rounded-tl-3xl"
             >
-              <div className="flex items-center gap-3 px-4 py-3">
+              <div className="flex items-center gap-2 px-4">
                 {/* Avatar stack */}
-                <div className="flex -space-x-3">
+                <div className="flex -space-x-2">
                   <img
                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80"
                     alt="Customer"
-                    className="w-11 h-11 rounded-full border-2 border-background object-cover"
+                    className="w-9 h-9 rounded-full border-2 border-background object-cover"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80"
                     alt="Customer"
-                    className="w-11 h-11 rounded-full border-2 border-background object-cover"
+                    className="w-9 h-9 rounded-full border-2 border-background object-cover"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80"
                     alt="Customer"
-                    className="w-11 h-11 rounded-full border-2 border-background object-cover"
+                    className="w-9 h-9 rounded-full border-2 border-background object-cover"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80"
                     alt="Customer"
-                    className="w-11 h-11 rounded-full border-2 border-background object-cover"
+                    className="w-9 h-9 rounded-full border-2 border-background object-cover"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80"
                     alt="Customer"
-                    className="w-11 h-11 rounded-full border-2 border-background object-cover"
+                    className="w-9 h-9 rounded-full border-2 border-background object-cover"
                   />
                 </div>
                 {/* Text content */}
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium text-foreground whitespace-nowrap">
+                  <span className="text-xs font-medium text-foreground whitespace-nowrap">
                     47+ Google Reviews
                   </span>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-0.5">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={14} className="fill-amber-400 text-amber-400" />
+                      <Star key={i} size={12} className="fill-amber-400 text-amber-400" />
                     ))}
-                    <span className="text-sm text-muted-foreground ml-1">4.8 / 5</span>
+                    <span className="text-xs text-muted-foreground ml-1">4.8 / 5</span>
                   </div>
                 </div>
               </div>
