@@ -38,13 +38,15 @@ export function HeroSection() {
         <div className="relative">
           {/* Main Hero Image Container with custom shape */}
           <div
-            className="relative w-full h-[500px] md:h-[600px] rounded-3xl overflow-visible"
+            className="relative w-full h-[500px] md:h-[560px] overflow-visible"
+            style={{ borderRadius: '24px' }}
           >
             {/* Background Image with clip-path for cutout */}
             <div
-              className="absolute inset-0 rounded-3xl overflow-hidden"
+              className="absolute inset-0 overflow-hidden"
               style={{
-                clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 100px), calc(100% - 320px) calc(100% - 100px), calc(100% - 320px) 100%, 0 100%)',
+                borderRadius: '24px',
+                clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 90px), calc(100% - 380px) calc(100% - 90px), calc(100% - 380px) 100%, 0 100%)',
               }}
             >
               <div
@@ -59,13 +61,13 @@ export function HeroSection() {
 
             {/* Content - Left Aligned */}
             <div ref={ref} className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 max-w-2xl">
-              {/* Animated Title */}
+              {/* Animated Title - NOT italic, bold uppercase */}
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
               >
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight italic">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight tracking-tight">
                   WHERE DREAMS
                   <br />
                   COME TRUE.
@@ -122,54 +124,49 @@ export function HeroSection() {
             animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 1 }}
             className="absolute bottom-0 right-0 hidden md:flex items-end"
-            style={{ height: '100px', width: '320px' }}
+            style={{ height: '90px', width: '380px' }}
           >
             {/* White curved background that creates the cutout effect */}
             <div 
-              className="bg-background h-full w-full flex items-center"
+              className="bg-background h-full w-full flex items-center justify-end pr-4"
               style={{
                 borderTopLeftRadius: '24px',
               }}
             >
-              <div className="flex items-center gap-3 px-4 py-3">
+              <div className="flex items-center gap-4">
                 {/* Avatar stack */}
                 <div className="flex -space-x-3">
                   <img
                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80"
                     alt="Customer"
-                    className="w-11 h-11 rounded-full border-2 border-background object-cover"
+                    className="w-10 h-10 rounded-full border-2 border-background object-cover"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80"
                     alt="Customer"
-                    className="w-11 h-11 rounded-full border-2 border-background object-cover"
+                    className="w-10 h-10 rounded-full border-2 border-background object-cover"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80"
                     alt="Customer"
-                    className="w-11 h-11 rounded-full border-2 border-background object-cover"
+                    className="w-10 h-10 rounded-full border-2 border-background object-cover"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80"
                     alt="Customer"
-                    className="w-11 h-11 rounded-full border-2 border-background object-cover"
-                  />
-                  <img
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80"
-                    alt="Customer"
-                    className="w-11 h-11 rounded-full border-2 border-background object-cover"
+                    className="w-10 h-10 rounded-full border-2 border-background object-cover"
                   />
                 </div>
                 {/* Text content */}
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium text-foreground whitespace-nowrap">
+                  <span className="text-sm font-semibold text-foreground whitespace-nowrap">
                     47+ Google Reviews
                   </span>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-0.5">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} size={14} className="fill-amber-400 text-amber-400" />
                     ))}
-                    <span className="text-sm text-muted-foreground ml-1">4.8 / 5</span>
+                    <span className="text-sm text-muted-foreground ml-1.5">4.8 / 5</span>
                   </div>
                 </div>
               </div>
