@@ -1,6 +1,7 @@
-import { motion } from 'framer-motion';
+import { motion, useAnimationControls, useMotionValue } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { agents } from '@/data/mockData';
+import { useRef, useEffect, useCallback } from 'react';
 import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
 import pakKumisPhoto from '@/assets/Pak_Kumis.avif';
 import paulWenninkPhoto from '@/assets/Paul_Wennink.avif';
@@ -24,9 +25,61 @@ const agentPhotos: Record<string, string> = {
 };
 
 export function AgentsCarousel() {
-  // Duplicate agents to create a seamless loop
-  // We need enough copies to fill the screen + buffer for the animation loop
   const duplicatedAgents = [...agents, ...agents, ...agents, ...agents];
+  const containerRef = useRef<HTMLDivElement>(null);
+  const controls = useAnimationControls();
+  const x = useMotionValue(0);
+  const isDragging = useRef(false);
+  const animationRef = useRef<number>();
+
+  const startAutoScroll = useCallback(() => {
+    if (!containerRef.current) return;
+    const totalWidth = containerRef.current.scrollWidth / 4;
+    const currentX = x.get();
+    // Calculate remaining distance as fraction
+    const progress = Math.abs(currentX % totalWidth) / totalWidth;
+    const remainingDuration = 30 * (1 - progress);
+
+    controls.start({
+      x: currentX - totalWidth + (currentX % totalWidth),
+      transition: {
+        ease: 'linear',
+        duration: remainingDuration > 0 ? remainingDuration : 30,
+        repeat: Infinity,
+        repeatType: 'loop',
+      },
+    });
+  }, [controls, x]);
+
+  useEffect(() => {
+    // Small delay to let layout settle
+    const timer = setTimeout(() => {
+      if (!containerRef.current) return;
+      const totalWidth = containerRef.current.scrollWidth / 4;
+      controls.start({
+        x: -totalWidth,
+        transition: { ease: 'linear', duration: 30, repeat: Infinity, repeatType: 'loop' },
+      });
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [controls]);
+
+  const handleDragStart = () => {
+    isDragging.current = true;
+    controls.stop();
+  };
+
+  const handleDragEnd = () => {
+    isDragging.current = false;
+    // Wrap position to avoid drifting too far
+    if (containerRef.current) {
+      const totalWidth = containerRef.current.scrollWidth / 4;
+      const currentX = x.get();
+      const wrapped = currentX % totalWidth;
+      x.set(wrapped);
+    }
+    startAutoScroll();
+  };
 
   return (
     <section className="py-24 bg-background overflow-hidden w-full relative">
@@ -39,54 +92,39 @@ export function AgentsCarousel() {
         </h2>
       </div>
 
-      {/* 
-        Full-width Infinite Slider 
-        - Edge-to-edge (no side padding on container)
-        - Seamless loop
-      */}
-      <div className="w-full overflow-hidden">
+      <div className="w-full overflow-hidden cursor-grab active:cursor-grabbing">
         <motion.div
+          ref={containerRef}
           className="flex gap-6 w-max pl-6"
-          animate={{ x: ["0%", "-25%"] }} // Move by 1/4 (since we have 4 sets, this loops the first set)
-          transition={{
-            ease: "linear",
-            duration: 30, // Adjust speed as needed
-            repeat: Infinity,
-          }}
-          style={{ willChange: 'transform' }} // Optimization
-        // Drag support (basic) - pauses on hover typically, but here we just allow simple interaction if needed
-        // drag="x"
-        // dragConstraints={{ left: -1000, right: 0 }}
+          style={{ x, willChange: 'transform' }}
+          animate={controls}
+          drag="x"
+          dragConstraints={{ left: -99999, right: 0 }}
+          dragElastic={0.1}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
         >
           {duplicatedAgents.map((agent, index) => (
             <div
               key={`${agent.id}-${index}`}
-              className="relative flex-shrink-0"
-              style={{ width: '19vw', minWidth: '260px', maxWidth: '340px' }} // Slightly smaller
+              className="relative flex-shrink-0 select-none"
+              style={{ width: '19vw', minWidth: '260px', maxWidth: '340px' }}
             >
-              {/* Image Container - Updated to 801x788 ratio */}
               <div
                 className="relative w-full overflow-hidden mb-4"
-                style={{
-                  borderRadius: '1.5rem',
-                  aspectRatio: '801/1000' // Taller ratio
-                }}
+                style={{ borderRadius: '1.5rem', aspectRatio: '801/1000' }}
               >
                 <img
                   src={agentPhotos[agent.id] || agent.photo}
                   alt={agent.name}
-                  className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-500 hover:scale-105"
+                  className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-500 hover:scale-105 pointer-events-none"
                   draggable={false}
                 />
               </div>
-
-              {/* Text Content - Image 2 Style (Simple, Below Image) + Location Icon from Current */}
               <div className="flex flex-col items-start px-2">
                 <h3 className="text-xl font-bold text-foreground leading-tight">
                   {agent.name}
                 </h3>
-
-                {/* Location - Using exact style from current-hero-agents (Mock/Previous) */}
                 <div className="flex items-center gap-1.5 text-muted-foreground mt-1.5">
                   <MapPin size={14} className="text-ukon-red fill-current" />
                   <span className="text-sm font-medium">{agent.location}</span>
