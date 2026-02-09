@@ -16,7 +16,7 @@ export function ServicesSection() {
   const { ref, isInView } = useInView();
 
   return (
-    <section className="py-24 bg-background">
+    <section id="services" className="py-24 bg-background">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div ref={ref} className="text-center mb-16">
