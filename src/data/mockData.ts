@@ -158,7 +158,7 @@ export const agents: Agent[] = [
     id: '1',
     name: 'Gino Beelt',
     location: 'Miami, FL',
-    photo: '/assets/Gino_Beelt.avif',
+    photo: '',
     specialty: 'Luxury Homes',
   },
   {

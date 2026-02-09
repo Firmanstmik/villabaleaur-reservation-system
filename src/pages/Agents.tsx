@@ -4,6 +4,11 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { agents, whatsappNumber } from '@/data/mockData';
+import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
+
+const agentPhotos: Record<string, string> = {
+  '1': ginoBeeltPhoto,
+};
 import { useInView } from '@/hooks/useInView';
 
 const Agents = () => {
@@ -69,7 +74,7 @@ const Agents = () => {
                     {/* Image */}
                     <div className="relative aspect-[4/5] image-zoom">
                       <img
-                        src={agent.photo}
+                        src={agentPhotos[agent.id] || agent.photo}
                         alt={agent.name}
                         className="w-full h-full object-cover"
                       />
