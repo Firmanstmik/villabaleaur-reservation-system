@@ -156,9 +156,9 @@ export const properties: Property[] = [
 export const agents: Agent[] = [
   {
     id: '1',
-    name: 'Sarah Johnson',
+    name: 'Gino Beelt',
     location: 'Miami, FL',
-    photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80',
+    photo: '/assets/Gino_Beelt.avif',
     specialty: 'Luxury Homes',
   },
   {

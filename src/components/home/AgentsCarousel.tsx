@@ -1,6 +1,11 @@
 import { motion } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { agents } from '@/data/mockData';
+import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
+
+const agentPhotos: Record<string, string> = {
+  '1': ginoBeeltPhoto,
+};
 
 export function AgentsCarousel() {
   // Duplicate agents to create a seamless loop
@@ -52,7 +57,7 @@ export function AgentsCarousel() {
                 }}
               >
                 <img
-                  src={agent.photo}
+                  src={agentPhotos[agent.id] || agent.photo}
                   alt={agent.name}
                   className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-500 hover:scale-105"
                   draggable={false}
