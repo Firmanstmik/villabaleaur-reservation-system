@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { whatsappNumber } from '@/data/mockData';
+import logoImage from '@/assets/Ukon-Estate.png';
 
 const footerLinks = {
   company: [
@@ -66,9 +67,7 @@ export function Footer() {
             {/* Brand Column */}
             <div className="lg:col-span-2">
               <Link to="/" className="inline-block mb-6">
-                <span className="text-2xl font-bold">
-                  UKON <span className="text-ukon-red">ESTATE</span>
-                </span>
+                <img src={logoImage} alt="UKON ESTATE Logo" className="h-16 w-auto object-contain brightness-0 invert" />
               </Link>
               <p className="text-white/70 mb-6 max-w-sm">
                 Your trusted partner in real estate. We help you find, sell, and invest in properties that match your dreams.
