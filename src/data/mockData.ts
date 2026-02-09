@@ -158,7 +158,7 @@ export const agents: Agent[] = [
   { id: '2', name: 'Pak Kumis', location: 'New York, NY', photo: '', specialty: 'Commercial Properties' },
   { id: '3', name: 'Paul Wennink', location: 'Los Angeles, CA', photo: '', specialty: 'Beachfront Properties' },
   { id: '4', name: 'Raffy Ukon', location: 'Austin, TX', photo: '', specialty: 'Investment Properties' },
-  { id: '5', name: 'Roselynn Chain', location: 'Denver, CO', photo: '', specialty: 'Mountain Retreats' },
+  { id: '5', name: 'Roselynn Chai', location: 'Denver, CO', photo: '', specialty: 'Mountain Retreats' },
   { id: '6', name: 'Marco Loureiro', location: 'Chicago, IL', photo: '', specialty: 'Urban Living' },
   { id: '7', name: 'Jeroen Egbers', location: 'San Francisco, CA', photo: '', specialty: 'Tech Hub Living' },
   { id: '8', name: 'Hendrik Ukon', location: 'Barcelona, Spain', photo: '', specialty: 'Historic Villas' },

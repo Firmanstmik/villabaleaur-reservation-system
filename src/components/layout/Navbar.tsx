@@ -95,7 +95,7 @@ export function Navbar() {
     <>
       <header
         className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm"
-        style={{ height: 'auto', padding: '1.5vw 2vw' }}
+        style={{ height: 'auto', padding: '0.8vw 2vw' }}
       >
         <div className="w-full flex items-center justify-between">
           {/* Logo Group */}
@@ -175,9 +175,9 @@ export function Navbar() {
       </header>
 
       {/* Spacer to push content down - matches header height approximately */}
-      {/* On desktop, ~5vw height + padding. On mobile, ~80px */}
-      <div style={{ height: '5vw' }} className="hidden lg:block" />
-      <div className="h-20 lg:hidden" />
+      {/* On desktop, ~3.8vw height + padding. On mobile, ~60px */}
+      <div style={{ height: '3.8vw' }} className="hidden lg:block" />
+      <div className="h-15 lg:hidden" />
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>

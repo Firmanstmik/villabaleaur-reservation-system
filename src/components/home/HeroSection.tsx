@@ -1,25 +1,100 @@
+import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import heroBg from '@/assets/hero-bg.png';
+import heroVideo from '@/assets/hero-video.mp4';
+import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
+import roselynnChaiPhoto from '@/assets/Roselynn_Chai.avif';
+import marcoLoureiroPhoto from '@/assets/Marco_Loureiro.avif';
+import afifahUkonPhoto from '@/assets/Afifah_Ukon.avif';
 import { stats } from '@/data/mockData';
 
 export function HeroSection() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const cloneRef = useRef<HTMLVideoElement>(null);
+  const [showClone, setShowClone] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const clone = cloneRef.current;
+    if (!video) return;
+
+    video.playbackRate = 0.75;
+    if (clone) clone.playbackRate = 0.75;
+
+    const FADE_DURATION = 1.5; // seconds before end to start crossfade
+
+    const handleTimeUpdate = () => {
+      if (!video.duration || !cloneRef.current) return;
+      const timeLeft = video.duration - video.currentTime;
+
+      if (timeLeft <= FADE_DURATION && !showClone) {
+        // Start clone at beginning, fade it in
+        cloneRef.current.currentTime = 0;
+        cloneRef.current.play().catch(() => {});
+        setShowClone(true);
+      }
+    };
+
+    const handleSeeked = () => {
+      // Video has looped back to start — hide clone
+      if (video.currentTime < FADE_DURATION) {
+        setShowClone(false);
+      }
+    };
+
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('seeked', handleSeeked);
+
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('seeked', handleSeeked);
+    };
+  }, [showClone]);
+
   return (
     <section className="w-full bg-background relative" style={{ padding: '2vh 2vw' }}>
       <div
         className="relative w-full overflow-hidden"
         style={{ height: '85vh', borderRadius: '2.5vw' }}
       >
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroBg})` }}
+        {/* Background Video */}
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster={heroBg}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ display: 'block', transform: 'scale(1.05)' }}
         >
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
-        </div>
+          <source src={heroVideo} type="video/mp4" />
+        </video>
+
+        {/* Clone video for crossfade at loop boundary */}
+        <video
+          ref={cloneRef}
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          style={{
+            display: 'block',
+            transform: 'scale(1.05)',
+            opacity: showClone ? 1 : 0,
+            transition: `opacity ${1.5}s ease-in-out`,
+          }}
+        >
+          <source src={heroVideo} type="video/mp4" />
+        </video>
+
+        {/* Dark Overlay — 10% opacity, above video, below content */}
+        <div className="absolute inset-0 bg-black/[0.10]" />
+
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
 
         {/* Content Container */}
         <div className="relative z-10 h-full flex flex-col justify-center items-start" style={{ paddingLeft: '5vw' }}>
@@ -108,54 +183,58 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Google Reviews Overlay (The Fluid Cutout) */}
-        {/* This div sits on top of the image to create the 'cutout' effect */}
+      </div>
+
+      {/* Google Reviews — edge-locked to hero's bottom-right border */}
+      <div
+        className="absolute z-20"
+        style={{
+          bottom: '2vh',
+          right: '2vw',
+        }}
+      >
         <div
-          className="absolute bottom-0 right-0 bg-background flex items-center justify-center z-20"
+          className="bg-background flex items-end"
           style={{
-            width: 'auto', // Let content define width + padding
-            minWidth: '28vw',
-            height: '10vh', // Reduced height further
-            borderTopLeftRadius: '4vw', // Increased radius for smoother curve
-            padding: '0 2vw 0 1.5vw' // Adjusted padding: no top/bottom, balanced sides
+            borderTopLeftRadius: '2.5vw',
+            padding: '1.2vw 0.8vw 0.6vw 1.6vw',
+            gap: '0.8vw',
           }}
         >
-          <div className="flex items-center justify-center h-full" style={{ gap: '1.2vw' }}>
-            {/* Avatars */}
-            <div className="flex -space-x-[1.2vw]">
-              {[
-                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
-                "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80",
-                "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80",
-                "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80"
-              ].map((src, i) => (
-                <div
-                  key={i}
-                  className="rounded-full border-[0.25vw] border-background overflow-hidden relative z-0"
-                  style={{
-                    width: '4.2vw',
-                    height: '4.2vw',
-                    zIndex: 10 - i
-                  }}
-                >
-                  <img src={src} alt="Reviewer" className="w-full h-full object-cover" />
-                </div>
-              ))}
-            </div>
-
-            {/* Text */}
-            <div className="flex flex-col justify-center h-full" style={{ paddingTop: '0.5vw' }}>
-              <span className="font-medium text-muted-foreground leading-none" style={{ fontSize: '1vw' }}>
-                47+ Google Reviews
-              </span>
-              <div className="flex items-center mt-[0.4vw] leading-none" style={{ gap: '0.4vw' }}>
-                <div className="flex gap-[0.1vw]">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="fill-amber-400 text-amber-400" style={{ width: '1.1vw', height: '1.1vw' }} />
-                  ))}
-                </div>
-                <span className="text-foreground font-bold" style={{ fontSize: '1.1vw' }}>4.8 / 5</span>
+          {/* Avatars */}
+          <div className="flex -space-x-[1.2vw]">
+            {[
+              ginoBeeltPhoto,
+              roselynnChaiPhoto,
+              marcoLoureiroPhoto,
+              afifahUkonPhoto,
+            ].map((src, i) => (
+              <div
+                key={i}
+                className="rounded-full border-[0.25vw] border-background overflow-hidden relative z-0"
+                style={{
+                  width: '4.2vw',
+                  height: '4.2vw',
+                  zIndex: 10 - i
+                }}
+              >
+                <img src={src} alt="Reviewer" className="w-full h-full object-cover" />
               </div>
+            ))}
+          </div>
+
+          {/* Text */}
+          <div className="flex flex-col justify-end" style={{ paddingBottom: '0.15vw' }}>
+            <span className="font-medium text-muted-foreground leading-none" style={{ fontSize: '1vw' }}>
+              47+ Google Reviews
+            </span>
+            <div className="flex items-center mt-[0.4vw] leading-none" style={{ gap: '0.4vw' }}>
+              <div className="flex gap-[0.1vw]">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="fill-amber-400 text-amber-400" style={{ width: '1.1vw', height: '1.1vw' }} />
+                ))}
+              </div>
+              <span className="text-foreground font-bold" style={{ fontSize: '1.1vw' }}>4.8 / 5</span>
             </div>
           </div>
         </div>

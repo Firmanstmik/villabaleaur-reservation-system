@@ -8,7 +8,7 @@ import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
 import pakKumisPhoto from '@/assets/Pak_Kumis.avif';
 import paulWenninkPhoto from '@/assets/Paul_Wennink.avif';
 import raffyUkonPhoto from '@/assets/Raffy_Ukon.avif';
-import roselynnChainPhoto from '@/assets/Roselynn_Chain.avif';
+import roselynnChaiPhoto from '@/assets/Roselynn_Chai.avif';
 import marcoLoureiroPhoto from '@/assets/Marco_Loureiro.avif';
 import jeroenEgbersPhoto from '@/assets/Jeroen_Egbers.avif';
 import hendrikUkonPhoto from '@/assets/Hendrik_Ukon.avif';
@@ -19,7 +19,7 @@ const agentPhotos: Record<string, string> = {
   '2': pakKumisPhoto,
   '3': paulWenninkPhoto,
   '4': raffyUkonPhoto,
-  '5': roselynnChainPhoto,
+  '5': roselynnChaiPhoto,
   '6': marcoLoureiroPhoto,
   '7': jeroenEgbersPhoto,
   '8': hendrikUkonPhoto,
