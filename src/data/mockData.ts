@@ -154,69 +154,15 @@ export const properties: Property[] = [
 ];
 
 export const agents: Agent[] = [
-  {
-    id: '1',
-    name: 'Gino Beelt',
-    location: 'Miami, FL',
-    photo: '',
-    specialty: 'Luxury Homes',
-  },
-  {
-    id: '2',
-    name: 'Michael Chen',
-    location: 'New York, NY',
-    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
-    specialty: 'Commercial Properties',
-  },
-  {
-    id: '3',
-    name: 'Emily Rodriguez',
-    location: 'Los Angeles, CA',
-    photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80',
-    specialty: 'Beachfront Properties',
-  },
-  {
-    id: '4',
-    name: 'David Williams',
-    location: 'Austin, TX',
-    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80',
-    specialty: 'Investment Properties',
-  },
-  {
-    id: '5',
-    name: 'Jessica Martinez',
-    location: 'Denver, CO',
-    photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80',
-    specialty: 'Mountain Retreats',
-  },
-  {
-    id: '6',
-    name: 'Robert Kim',
-    location: 'Chicago, IL',
-    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80',
-    specialty: 'Urban Living',
-  },
-  {
-    id: '7',
-    name: 'James Wilson',
-    location: 'San Francisco, CA',
-    photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80',
-    specialty: 'Tech Hub Living',
-  },
-  {
-    id: '8',
-    name: 'Maria Garcia',
-    location: 'Barcelona, Spain',
-    photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80',
-    specialty: 'Historic Villas',
-  },
-  {
-    id: '9',
-    name: 'Thomas Anderson',
-    location: 'London, UK',
-    photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80',
-    specialty: 'Modern Apartments',
-  },
+  { id: '1', name: 'Gino Beelt', location: 'Miami, FL', photo: '', specialty: 'Luxury Homes' },
+  { id: '2', name: 'Pak Kumis', location: 'New York, NY', photo: '', specialty: 'Commercial Properties' },
+  { id: '3', name: 'Paul Wennink', location: 'Los Angeles, CA', photo: '', specialty: 'Beachfront Properties' },
+  { id: '4', name: 'Raffy Ukon', location: 'Austin, TX', photo: '', specialty: 'Investment Properties' },
+  { id: '5', name: 'Roselynn Chain', location: 'Denver, CO', photo: '', specialty: 'Mountain Retreats' },
+  { id: '6', name: 'Marco Loureiro', location: 'Chicago, IL', photo: '', specialty: 'Urban Living' },
+  { id: '7', name: 'Jeroen Egbers', location: 'San Francisco, CA', photo: '', specialty: 'Tech Hub Living' },
+  { id: '8', name: 'Hendrik Ukon', location: 'Barcelona, Spain', photo: '', specialty: 'Historic Villas' },
+  { id: '9', name: 'Afifah Ukon', location: 'London, UK', photo: '', specialty: 'Modern Apartments' },
 ];
 
 export const testimonials: Testimonial[] = [
