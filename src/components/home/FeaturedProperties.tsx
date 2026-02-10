@@ -1,14 +1,51 @@
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { PropertyCard } from '@/components/PropertyCard';
-import { properties } from '@/data/mockData';
+import { properties as mockProperties } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
+import { supabase } from '@/lib/supabase';
 
 export function FeaturedProperties() {
   const { ref, isInView } = useInView();
-  const featuredProperties = properties.filter((p) => p.featured).slice(0, 6);
+  const [displayProperties, setDisplayProperties] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('properties')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const propertiesToDisplay = (data && data.length > 0) ? data : mockProperties;
+
+        // Normalize
+        const normalized = propertiesToDisplay.map(p => ({
+          ...p,
+          image: p.image_url || p.image,
+          sqft: p.m2 || p.sqft || 0,
+          priceType: p.price_type || p.priceType,
+          isUkonAgent: p.is_ukon_agent || p.isUkonAgent,
+        }));
+
+        setDisplayProperties(normalized);
+      } catch (err) {
+        console.error('Error fetching featured properties:', err);
+        setDisplayProperties(mockProperties);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
+  const featuredProperties = useMemo(() => {
+    return displayProperties.filter((p) => p.featured).slice(0, 6);
+  }, [displayProperties]);
 
   return (
     <section className="py-24 bg-background">

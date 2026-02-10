@@ -9,7 +9,21 @@ export interface Property {
   sqft: number;
   status: 'rent' | 'sale' | 'investment';
   image: string;
+  images: string[];
   featured: boolean;
+  type: string;
+  listingCode?: string;
+  ownership?: string;
+  yearBuilt?: string;
+  surfaceArea?: string;
+  buildingArea?: string;
+  features: Record<string, string>;
+  nearbyAmenities?: {
+    name: string;
+    distance: string;
+    type: 'school' | 'hospital' | 'shopping' | 'transport' | 'airport' | 'park';
+  }[];
+  isUkonAgent: boolean;
 }
 
 export interface Agent {
@@ -55,10 +69,38 @@ export const properties: Property[] = [
     priceType: 'sale',
     bedrooms: 5,
     bathrooms: 4,
-    sqft: 4500,
+    sqft: 450,
     status: 'sale',
     image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80',
+      'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80',
+      'https://images.unsplash.com/photo-1613977257592-4871e5fcd7c4?w=800&q=80',
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
+    ],
     featured: true,
+    type: 'Villa',
+    listingCode: 'LV-MIA-001',
+    ownership: 'Freehold',
+    yearBuilt: '2022',
+    surfaceArea: '500 m2',
+    buildingArea: '450 m2',
+    features: {
+      'Condition': 'New',
+      'View': 'Garden',
+      'Distance to Beach': '5 mins',
+      'Pool': 'Private 12m',
+      'Garden': 'Landscaped',
+      'Kitchen': 'Fully Equipped',
+    },
+    nearbyAmenities: [
+      { name: 'Miami International School', distance: '800m', type: 'school' },
+      { name: 'Coconut Grove Hospital', distance: '1.2km', type: 'hospital' },
+      { name: 'The Fresh Market', distance: '400m', type: 'shopping' },
+      { name: 'Metrobus Station', distance: '200m', type: 'transport' },
+    ],
+    isUkonAgent: true,
   },
   {
     id: '2',
@@ -68,10 +110,38 @@ export const properties: Property[] = [
     priceType: 'rent',
     bedrooms: 3,
     bathrooms: 2,
-    sqft: 2200,
+    sqft: 220,
     status: 'rent',
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
+      'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80',
+      'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80',
+    ],
     featured: true,
+    type: 'Penthouse',
+    listingCode: 'PH-NYC-002',
+    ownership: 'Leasehold',
+    yearBuilt: '2020',
+    surfaceArea: '220 m2',
+    buildingArea: '220 m2',
+    features: {
+      'Floor': '42nd',
+      'View': 'City Skyline',
+      'Gym': 'In-building',
+      'Security': '24/7 Doorman',
+      'Terrace': 'Private',
+      'Distance to Park': '2 mins',
+    },
+    nearbyAmenities: [
+      { name: 'PS 158 Manhattan', distance: '500m', type: 'school' },
+      { name: 'Lenox Hill Hospital', distance: '1.5km', type: 'hospital' },
+      { name: 'Bloomingdale\'s', distance: '900m', type: 'shopping' },
+      { name: '59th St Subway Station', distance: '300m', type: 'transport' },
+    ],
+    isUkonAgent: false,
   },
   {
     id: '3',
@@ -81,10 +151,38 @@ export const properties: Property[] = [
     priceType: 'sale',
     bedrooms: 6,
     bathrooms: 5,
-    sqft: 6800,
+    sqft: 680,
     status: 'investment',
     image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
+      'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80',
+      'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80',
+    ],
     featured: true,
+    type: 'Villa',
+    listingCode: 'BE-MAL-003',
+    ownership: 'Freehold',
+    yearBuilt: '2019',
+    surfaceArea: '1000 m2',
+    buildingArea: '680 m2',
+    features: {
+      'Beach Access': 'Direct',
+      'ROI': 'Up to 12%',
+      'Status': 'Operational',
+      'Management': 'In-house',
+      'Guest Facilities': 'Sauna, Gym',
+      'Furniture': 'Included',
+    },
+    nearbyAmenities: [
+      { name: 'Malibu Elementary School', distance: '2.5km', type: 'school' },
+      { name: 'St. John\'s Health Center', distance: '8km', type: 'hospital' },
+      { name: 'Malibu Village', distance: '3.2km', type: 'shopping' },
+      { name: 'Pacific Coast Hwy Bus Stop', distance: '150m', type: 'transport' },
+    ],
+    isUkonAgent: true,
   },
   {
     id: '4',
@@ -94,62 +192,38 @@ export const properties: Property[] = [
     priceType: 'rent',
     bedrooms: 4,
     bathrooms: 3,
-    sqft: 2800,
+    sqft: 280,
     status: 'rent',
     image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
+      'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80',
+      'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80',
+      'https://images.unsplash.com/photo-1613977257592-4871e5fcd7c4?w=800&q=80',
+    ],
     featured: true,
-  },
-  {
-    id: '5',
-    title: 'Hillside Retreat',
-    address: '555 Mountain View, Denver, CO',
-    price: 890000,
-    priceType: 'sale',
-    bedrooms: 4,
-    bathrooms: 3,
-    sqft: 3200,
-    status: 'sale',
-    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
-    featured: true,
-  },
-  {
-    id: '6',
-    title: 'Urban Loft Living',
-    address: '888 Arts District, Chicago, IL',
-    price: 5500,
-    priceType: 'rent',
-    bedrooms: 2,
-    bathrooms: 2,
-    sqft: 1800,
-    status: 'rent',
-    image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80',
-    featured: true,
-  },
-  {
-    id: '7',
-    title: 'Waterfront Condo',
-    address: '100 Harbor View, Seattle, WA',
-    price: 720000,
-    priceType: 'sale',
-    bedrooms: 3,
-    bathrooms: 2,
-    sqft: 1900,
-    status: 'sale',
-    image: 'https://images.unsplash.com/photo-1600573472591-ee6c563aaec9?w=800&q=80',
-    featured: false,
-  },
-  {
-    id: '8',
-    title: 'Garden Villa',
-    address: '200 Rose Lane, Phoenix, AZ',
-    price: 650000,
-    priceType: 'sale',
-    bedrooms: 4,
-    bathrooms: 3,
-    sqft: 2600,
-    status: 'investment',
-    image: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80',
-    featured: false,
+    type: 'Townhouse',
+    listingCode: 'TH-AUS-004',
+    ownership: 'Freehold',
+    yearBuilt: '2021',
+    surfaceArea: '300 m2',
+    buildingArea: '280 m2',
+    features: {
+      'Parking': '2 Cars',
+      'Smart Home': 'Yes',
+      'Patio': 'Yes',
+      'Distance to Downtown': '10 mins',
+      'Pet Friendly': 'Yes',
+      'Utilities': 'Low Energy',
+    },
+    nearbyAmenities: [
+      { name: 'Austin High School', distance: '1.8km', type: 'school' },
+      { name: 'St. David\'s Medical Center', distance: '3.5km', type: 'hospital' },
+      { name: 'Whole Foods Market', distance: '1.1km', type: 'shopping' },
+      { name: 'CapMetro Bus Stop', distance: '250m', type: 'transport' },
+    ],
+    isUkonAgent: false,
   },
 ];
 
@@ -284,4 +358,5 @@ export const stats = {
   value: 10,
 };
 
-export const whatsappNumber = '+1234567890';
+export const whatsappNumber = '+31853331000';
+export const whatsappUrl = 'https://wa.me/31853331000?text=Hello%2C%20I%E2%80%99m%20interested%20in%20a%20property%20on%20your%20website.%20Could%20you%20please%20share%20more%20details%20about%3A';

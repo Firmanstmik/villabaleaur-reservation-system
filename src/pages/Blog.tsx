@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Calendar, User, ArrowRight } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
@@ -7,13 +7,54 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { blogPosts } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
+import heroBg from '@/assets/hero-bg.png';
+import heroVideo from '@/assets/hero-video.mp4';
 
 const categories = ['All', 'Buying', 'Selling', 'Investing', 'Market'];
 
 const Blog = () => {
   const { ref, isInView } = useInView();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const cloneRef = useRef<HTMLVideoElement>(null);
+  const [showClone, setShowClone] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const clone = cloneRef.current;
+    if (!video) return;
+
+    video.playbackRate = 0.75;
+    if (clone) clone.playbackRate = 0.75;
+
+    const FADE_DURATION = 1.5;
+
+    const handleTimeUpdate = () => {
+      if (!video.duration || !cloneRef.current) return;
+      const timeLeft = video.duration - video.currentTime;
+
+      if (timeLeft <= FADE_DURATION && !showClone) {
+        cloneRef.current.currentTime = 0;
+        cloneRef.current.play().catch(() => {});
+        setShowClone(true);
+      }
+    };
+
+    const handleSeeked = () => {
+      if (video.currentTime < FADE_DURATION) {
+        setShowClone(false);
+      }
+    };
+
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('seeked', handleSeeked);
+
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('seeked', handleSeeked);
+    };
+  }, [showClone]);
 
   const filteredPosts = useMemo(() => {
     return blogPosts.filter((post) => {
@@ -35,11 +76,45 @@ const Blog = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="py-24 bg-ukon-navy">
-          <div className="container mx-auto px-4">
+        <section className="relative py-24 overflow-hidden">
+          {/* Background Video */}
+          <video
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster={heroBg}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ display: 'block', transform: 'scale(1.05)' }}
+          >
+            <source src={heroVideo} type="video/mp4" />
+          </video>
+
+          {/* Clone video for crossfade at loop boundary */}
+          <video
+            ref={cloneRef}
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            style={{
+              display: 'block',
+              transform: 'scale(1.05)',
+              opacity: showClone ? 1 : 0,
+              transition: 'opacity 1.5s ease-in-out',
+            }}
+          >
+            <source src={heroVideo} type="video/mp4" />
+          </video>
+
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-black/[0.10]" />
+          <div className="absolute inset-0 bg-black/40" />
+
+          <div className="container mx-auto px-4 relative z-10">
             <div ref={ref} className="text-center">
               <motion.span
                 initial={{ opacity: 0, y: 20 }}

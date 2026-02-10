@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { whatsappNumber } from '@/data/mockData';
+import { whatsappUrl } from '@/data/mockData';
 import logoImage from '@/assets/Ukon-Estate.png';
 
 const navLinks = [
@@ -17,7 +17,36 @@ const navLinks = [
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (typeof window !== 'undefined') {
+        const currentScrollY = window.scrollY;
+
+        // Always show at top
+        if (currentScrollY < 10) {
+          setIsVisible(true);
+          setLastScrollY(currentScrollY);
+          return;
+        }
+
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          // Scrolling down
+          setIsVisible(false);
+        } else {
+          // Scrolling up
+          setIsVisible(true);
+        }
+        setLastScrollY(currentScrollY);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -34,7 +63,7 @@ export function Navbar() {
   }, []);
 
   const handleWhatsAppClick = () => {
-    window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`, '_blank');
+    window.open(whatsappUrl, '_blank');
   };
 
   const scrollToTop = () => {
@@ -93,8 +122,11 @@ export function Navbar() {
 
   return (
     <>
-      <header
-        className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm"
+      <motion.header
+        initial={{ y: 0 }}
+        animate={{ y: isVisible ? 0 : -100 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="fixed top-0 left-0 right-0 z-50 bg-transparent backdrop-blur-md border-b border-transparent transition-colors duration-300"
         style={{ height: 'auto', padding: '0.8vw 2vw' }}
       >
         <div className="w-full flex items-center justify-between">
@@ -172,12 +204,15 @@ export function Navbar() {
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-      </header>
+      </motion.header>
 
-      {/* Spacer to push content down - matches header height approximately */}
-      {/* On desktop, ~3.8vw height + padding. On mobile, ~60px */}
-      <div style={{ height: '3.8vw' }} className="hidden lg:block" />
-      <div className="h-15 lg:hidden" />
+      {/* Spacer to push content down - only on non-property pages */}
+      {!location.pathname.startsWith('/property/') && (
+        <>
+          <div style={{ height: '5vw' }} className="hidden lg:block" />
+          <div className="h-20 lg:hidden" />
+        </>
+      )}
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>

@@ -1,0 +1,357 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+    LayoutDashboard,
+    Home,
+    PlusCircle,
+    Settings,
+    LogOut,
+    Search,
+    MoreVertical,
+    Plus,
+    Building2,
+    Users,
+    TrendingUp
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
+import AddPropertyForm from '@/components/admin/AddPropertyForm';
+
+type Tab = 'overview' | 'listings' | 'add-new' | 'settings';
+
+const Dashboard = () => {
+    const [user, setUser] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState<Tab>('overview');
+    const navigate = useNavigate();
+
+    const [properties, setProperties] = useState<any[]>([]);
+    const [statsLoading, setStatsLoading] = useState(true);
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                navigate('/login');
+            } else {
+                setUser(user);
+                fetchDashboardData(user.id);
+            }
+            setLoading(false);
+        };
+
+        const fetchDashboardData = async (userId: string) => {
+            try {
+                const { data, error } = await supabase
+                    .from('properties')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                setProperties(data || []);
+            } catch (err) {
+                console.error('Error fetching dashboard data:', err);
+            } finally {
+                setStatsLoading(false);
+            }
+        };
+
+        checkUser();
+    }, [navigate]);
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        toast.success('Logged out successfully');
+        navigate('/login');
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-[#0e2e50] border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
+
+    const navigationItems = [
+        { id: 'overview' as Tab, icon: LayoutDashboard, label: 'Overview' },
+        { id: 'listings' as Tab, icon: Home, label: 'Listings' },
+        { id: 'add-new' as Tab, icon: PlusCircle, label: 'Add New' },
+        { id: 'settings' as Tab, icon: Settings, label: 'Settings' },
+    ];
+
+    const recentListings = properties.slice(0, 5);
+
+    return (
+        <div className="min-h-screen bg-secondary/30 flex">
+            {/* Sidebar */}
+            <aside className="w-64 bg-[#0e2e50] text-white flex flex-col p-6 fixed h-full z-10">
+                <div className="mb-10 px-2">
+                    <h1 className="text-xl font-bold tracking-tighter text-white">UKON ESTATE</h1>
+                    <p className="text-[10px] text-white/50 uppercase tracking-widest mt-1 font-bold">Admin Panel</p>
+                </div>
+
+                <nav className="flex-1 space-y-1">
+                    {navigationItems.map((item) => (
+                        <button
+                            key={item.id}
+                            onClick={() => setActiveTab(item.id)}
+                            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative ${activeTab === item.id
+                                ? 'bg-white text-[#0e2e50] font-bold shadow-lg'
+                                : 'text-white/60 hover:text-white hover:bg-white/5'
+                                }`}
+                        >
+                            <item.icon size={20} className={activeTab === item.id ? 'text-[#0e2e50] scale-110' : 'group-hover:scale-110 transition-transform'} />
+                            {item.label}
+                            {activeTab === item.id && (
+                                <motion.div
+                                    layoutId="activeTab"
+                                    className="absolute inset-0 bg-white rounded-2xl -z-10"
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                />
+                            )}
+                        </button>
+                    ))}
+                </nav>
+
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-ukon-red/20 transition-all mt-auto border border-transparent hover:border-ukon-red/30"
+                >
+                    <LogOut size={20} />
+                    Logout
+                </button>
+            </aside>
+
+            {/* Main Content */}
+            <main className="flex-1 ml-64 p-8 lg:p-12 overflow-y-auto">
+                <div className="max-w-6xl mx-auto">
+                    <AnimatePresence mode="wait">
+                        {activeTab === 'overview' && (
+                            <motion.div
+                                key="overview"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                            >
+                                {/* Header */}
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                                    <div>
+                                        <h2 className="text-3xl lg:text-4xl font-bold text-[#0e2e50]">Welcome back, Admin</h2>
+                                        <p className="text-muted-foreground mt-2 font-medium">Here's what's happening with your properties today.</p>
+                                    </div>
+                                    <Button
+                                        onClick={() => setActiveTab('add-new')}
+                                        className="bg-[#0e2e50] text-white gap-2 rounded-2xl h-14 px-8 shadow-xl hover:bg-[#0e2e50]/90 transition-all hover:scale-105 active:scale-95"
+                                    >
+                                        <Plus size={20} />
+                                        Publish Listing
+                                    </Button>
+                                </div>
+
+                                {/* Stats Grid */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                                    {[
+                                        { label: 'Total Listings', value: statsLoading ? '...' : properties.length.toString(), icon: Building2, color: 'text-blue-600', bg: 'bg-blue-50' },
+                                        { label: 'Active Leads', value: '0', icon: Users, color: 'text-green-600', bg: 'bg-green-50' },
+                                        { label: 'Views (30d)', value: '0', icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50' },
+                                    ].map((stat) => (
+                                        <div key={stat.label} className="p-8 rounded-[2rem] border border-border bg-white shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                                            <div className={`absolute top-0 right-0 w-32 h-32 ${stat.bg} rounded-bl-[4rem] -mr-8 -mt-8 opacity-50 group-hover:scale-110 transition-transform`} />
+                                            <div className="relative z-10">
+                                                <div className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center mb-6`}>
+                                                    <stat.icon size={24} />
+                                                </div>
+                                                <span className="text-muted-foreground text-sm font-bold uppercase tracking-wider">{stat.label}</span>
+                                                <div className="text-4xl font-bold mt-2 text-[#0e2e50]">{stat.value}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Desktop Table (Summary) */}
+                                <div className="bg-white rounded-[2.5rem] border border-border shadow-sm overflow-hidden mb-12">
+                                    <div className="p-8 border-b border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                        <h3 className="font-bold text-xl text-[#0e2e50]">Recent Listings</h3>
+                                        <div className="relative w-full sm:w-72">
+                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                                            <Input placeholder="Filter by address..." className="pl-12 h-11 rounded-2xl bg-secondary/30 border-none text-sm focus:ring-1 focus:ring-[#0e2e50]/10" />
+                                        </div>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead className="bg-[#0e2e50]/[0.02]">
+                                                <tr>
+                                                    <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Property Details</th>
+                                                    <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Status</th>
+                                                    <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Pricing</th>
+                                                    <th className="px-8 py-5 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Options</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-border">
+                                                {recentListings.length > 0 ? (
+                                                    recentListings.map((p) => (
+                                                        <tr key={p.id} className="hover:bg-secondary/5 transition-colors group">
+                                                            <td className="px-8 py-6">
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className="w-16 h-16 bg-muted rounded-2xl bg-cover bg-center shadow-inner group-hover:scale-105 transition-transform" style={{ backgroundImage: `url(${p.image_url || p.image})` }} />
+                                                                    <div>
+                                                                        <div className="font-bold text-base text-[#0e2e50]">{p.title}</div>
+                                                                        <div className="text-xs text-muted-foreground font-medium mt-0.5">{p.address}</div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-8 py-6">
+                                                                <span className={`px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider ${p.status === 'rent' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                                                                    {p.status || p.price_type || 'Published'}
+                                                                </span>
+                                                            </td>
+                                                            <td className="px-8 py-6 font-bold text-[#0e2e50]">${(p.price || 0).toLocaleString()}</td>
+                                                            <td className="px-8 py-6 text-right">
+                                                                <button className="p-3 hover:bg-white hover:shadow-md rounded-2xl transition-all text-muted-foreground">
+                                                                    <MoreVertical size={18} />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan={4} className="px-8 py-12 text-center text-muted-foreground font-medium">
+                                                            No properties published yet. Use the "Add New" button to create your first listing!
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className="p-6 bg-secondary/10 border-t border-border text-center">
+                                        <button
+                                            onClick={() => setActiveTab('listings')}
+                                            className="text-sm font-bold text-[#0e2e50] hover:underline"
+                                        >
+                                            View all {properties.length} properties
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {activeTab === 'add-new' && (
+                            <motion.div
+                                key="add-new"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                            >
+                                <div className="mb-10">
+                                    <h2 className="text-3xl font-bold text-[#0e2e50]">Publish New Property</h2>
+                                    <p className="text-muted-foreground mt-2 font-medium">Fill in the details below to add a new listing to your catalog.</p>
+                                </div>
+                                <AddPropertyForm onComplete={() => setActiveTab('overview')} />
+                            </motion.div>
+                        )}
+
+                        {activeTab === 'listings' && (
+                            <motion.div
+                                key="listings"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="space-y-8"
+                            >
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                    <div>
+                                        <h2 className="text-3xl font-bold text-[#0e2e50]">All Listings</h2>
+                                        <p className="text-muted-foreground mt-2 font-medium">Manage and monitor all your property listings in one place.</p>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="relative w-64">
+                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                                            <Input placeholder="Search listings..." className="pl-12 h-12 rounded-2xl bg-white border-border shadow-sm focus:ring-1 focus:ring-[#0e2e50]/20" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-[2.5rem] border border-border shadow-sm overflow-hidden">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead className="bg-[#0e2e50]/[0.02]">
+                                                <tr>
+                                                    <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Property Details</th>
+                                                    <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Status</th>
+                                                    <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Pricing</th>
+                                                    <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Location</th>
+                                                    <th className="px-8 py-5 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Options</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-border">
+                                                {properties.length > 0 ? (
+                                                    properties.map((p) => (
+                                                        <tr key={p.id} className="hover:bg-secondary/5 transition-colors group">
+                                                            <td className="px-8 py-6">
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className="w-14 h-14 bg-muted rounded-2xl bg-cover bg-center shadow-inner group-hover:scale-105 transition-transform" style={{ backgroundImage: `url(${p.image_url || p.image})` }} />
+                                                                    <div>
+                                                                        <div className="font-bold text-[#0e2e50]">{p.title}</div>
+                                                                        <div className="text-[10px] text-muted-foreground font-bold mt-0.5 uppercase tracking-wider">{p.listing_code || p.listingCode || 'N/A'}</div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-8 py-6">
+                                                                <span className={`px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider ${p.status === 'rent' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                                                                    {p.status || p.price_type || 'Published'}
+                                                                </span>
+                                                            </td>
+                                                            <td className="px-8 py-6 font-bold text-[#0e2e50]">${(p.price || 0).toLocaleString()}</td>
+                                                            <td className="px-8 py-6 text-sm text-muted-foreground font-medium">{p.address}</td>
+                                                            <td className="px-8 py-6 text-right">
+                                                                <button className="p-3 hover:bg-white hover:shadow-md rounded-2xl transition-all text-muted-foreground">
+                                                                    <MoreVertical size={18} />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan={5} className="px-8 py-16 text-center text-muted-foreground font-medium">
+                                                            No properties found. Try adding a new listing!
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {activeTab === 'settings' && (
+                            <motion.div
+                                key="placeholder"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="h-[60vh] flex flex-col items-center justify-center text-center p-8 bg-white rounded-[2.5rem] border border-border mt-10"
+                            >
+                                <div className="w-20 h-20 bg-secondary/20 rounded-3xl flex items-center justify-center mb-6">
+                                    <Settings className="text-[#0e2e50]/40" size={40} />
+                                </div>
+                                <h3 className="text-2xl font-bold text-[#0e2e50]">Settings coming soon</h3>
+                                <p className="text-muted-foreground mt-2 max-w-sm">We're working hard to bring the full settings experience to you. Stay tuned!</p>
+                                <Button
+                                    onClick={() => setActiveTab('overview')}
+                                    className="mt-8 bg-[#0e2e50] text-white rounded-full"
+                                >
+                                    Back to Overview
+                                </Button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            </main>
+        </div>
+    );
+};
+
+export default Dashboard;

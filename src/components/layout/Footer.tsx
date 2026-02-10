@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { whatsappNumber } from '@/data/mockData';
+import { whatsappUrl } from '@/data/mockData';
 import logoImage from '@/assets/Ukon-Estate.png';
 
 const footerLinks = {
@@ -28,7 +28,7 @@ const footerLinks = {
 
 export function Footer() {
   const handleWhatsAppClick = () => {
-    window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`, '_blank');
+    window.open(whatsappUrl, '_blank');
   };
 
   return (

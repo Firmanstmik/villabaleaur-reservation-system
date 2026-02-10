@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
@@ -6,34 +6,153 @@ import { Footer } from '@/components/layout/Footer';
 import { PropertyCard } from '@/components/PropertyCard';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { properties } from '@/data/mockData';
+import { properties as mockProperties } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
+import { supabase } from '@/lib/supabase';
+import heroBg from '@/assets/hero-bg.png';
+import heroVideo from '@/assets/hero-video.mp4';
 
 type FilterType = 'all' | 'rent' | 'sale';
 
 const Properties = () => {
   const { ref, isInView } = useInView();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const cloneRef = useRef<HTMLVideoElement>(null);
+  const [showClone, setShowClone] = useState(false);
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [displayProperties, setDisplayProperties] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('properties')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const propertiesToDisplay = (data && data.length > 0) ? data : mockProperties;
+
+        // Normalize data structures (Supabase snake_case -> App camelCase)
+        const normalized = propertiesToDisplay.map(p => ({
+          ...p,
+          image: p.image_url || p.image,
+          sqft: p.m2 || p.sqft || 0,
+          priceType: p.price_type || p.priceType,
+          isUkonAgent: p.is_ukon_agent || p.isUkonAgent,
+          buildingArea: p.building_area || p.buildingArea,
+          surfaceArea: p.surface_area || p.surfaceArea,
+          yearBuilt: p.year_built || p.yearBuilt,
+          listingCode: p.listing_code || p.listingCode,
+          nearbyAmenities: p.nearby_amenities || p.nearbyAmenities
+        }));
+
+        setDisplayProperties(normalized);
+      } catch (err) {
+        console.error('Error fetching properties:', err);
+        setDisplayProperties(mockProperties);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const clone = cloneRef.current;
+    if (!video) return;
+
+    video.playbackRate = 0.75;
+    if (clone) clone.playbackRate = 0.75;
+
+    const FADE_DURATION = 1.5;
+
+    const handleTimeUpdate = () => {
+      if (!video.duration || !cloneRef.current) return;
+      const timeLeft = video.duration - video.currentTime;
+
+      if (timeLeft <= FADE_DURATION && !showClone) {
+        cloneRef.current.currentTime = 0;
+        cloneRef.current.play().catch(() => { });
+        setShowClone(true);
+      }
+    };
+
+    const handleSeeked = () => {
+      if (video.currentTime < FADE_DURATION) {
+        setShowClone(false);
+      }
+    };
+
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('seeked', handleSeeked);
+
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('seeked', handleSeeked);
+    };
+  }, [showClone]);
 
   const filteredProperties = useMemo(() => {
-    return properties.filter((property) => {
-      const matchesFilter = filter === 'all' || property.status === filter || 
-        (filter === 'sale' && property.status === 'investment');
-      const matchesSearch = property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        property.address.toLowerCase().includes(searchQuery.toLowerCase());
+    return displayProperties.filter((property) => {
+      const propertyStatus = property.status || property.price_type || 'sale';
+      const matchesFilter = filter === 'all' || propertyStatus === filter ||
+        (filter === 'sale' && propertyStatus === 'investment');
+
+      const title = property.title || '';
+      const address = property.address || '';
+
+      const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        address.toLowerCase().includes(searchQuery.toLowerCase());
+
       return matchesFilter && matchesSearch;
     });
-  }, [filter, searchQuery]);
+  }, [filter, searchQuery, displayProperties]);
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="py-24 bg-ukon-navy">
-          <div className="container mx-auto px-4">
+        <section className="relative py-24 overflow-hidden">
+          {/* Background Video */}
+          <video
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster={heroBg}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ display: 'block', transform: 'scale(1.05)' }}
+          >
+            <source src={heroVideo} type="video/mp4" />
+          </video>
+
+          {/* Clone video for crossfade at loop boundary */}
+          <video
+            ref={cloneRef}
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            style={{
+              display: 'block',
+              transform: 'scale(1.05)',
+              opacity: showClone ? 1 : 0,
+              transition: 'opacity 1.5s ease-in-out',
+            }}
+          >
+            <source src={heroVideo} type="video/mp4" />
+          </video>
+
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-black/[0.10]" />
+          <div className="absolute inset-0 bg-black/40" />
+
+          <div className="container mx-auto px-4 relative z-10">
             <div ref={ref} className="text-center">
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
@@ -84,19 +203,19 @@ const Properties = () => {
               >
                 <Tabs value={filter} onValueChange={(v) => setFilter(v as FilterType)}>
                   <TabsList className="bg-card border border-border">
-                    <TabsTrigger 
+                    <TabsTrigger
                       value="all"
                       className="data-[state=active]:bg-ukon-red data-[state=active]:text-white"
                     >
                       All Properties
                     </TabsTrigger>
-                    <TabsTrigger 
+                    <TabsTrigger
                       value="rent"
                       className="data-[state=active]:bg-ukon-red data-[state=active]:text-white"
                     >
                       For Rent
                     </TabsTrigger>
-                    <TabsTrigger 
+                    <TabsTrigger
                       value="sale"
                       className="data-[state=active]:bg-ukon-red data-[state=active]:text-white"
                     >
