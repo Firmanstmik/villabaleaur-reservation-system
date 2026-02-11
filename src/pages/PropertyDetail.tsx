@@ -43,6 +43,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { supabase } from '@/lib/supabase';
+import { PropertyMap } from '@/components/map/PropertyMap';
 
 const PropertyDetail = () => {
     const { id } = useParams();
@@ -391,7 +392,7 @@ const PropertyDetail = () => {
                                 </div>
                             </section>
 
-                            {/* Location (Google Maps) */}
+                            {/* Location (Mapbox Interactive Map) */}
                             <section>
                                 <div className="flex items-center justify-between mb-6">
                                     <h3 className="text-2xl font-bold">Location</h3>
@@ -405,22 +406,22 @@ const PropertyDetail = () => {
                                         Open in Google Maps
                                     </Button>
                                 </div>
-                                <div className="w-full aspect-video rounded-3xl bg-muted overflow-hidden relative border border-border group">
-                                    <iframe
-                                        width="100%"
-                                        height="100%"
-                                        frameBorder="0"
-                                        style={{ border: 0 }}
-                                        src={import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-                                            ? `https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(property.address)}&zoom=15`
-                                            : `https://www.google.com/maps?q=${encodeURIComponent(property.address)}&output=embed`
-                                        }
-                                        allowFullScreen
-                                        className="w-full h-full"
-                                    ></iframe>
-                                    {/* Overlay for branding and border support */}
-                                    <div className="absolute inset-0 pointer-events-none border border-border rounded-3xl" />
-                                </div>
+                                {property.latitude && property.longitude ? (
+                                    <PropertyMap
+                                        latitude={property.latitude}
+                                        longitude={property.longitude}
+                                        address={property.address}
+                                        title={property.title}
+                                        height="aspect-video"
+                                    />
+                                ) : (
+                                    <div className="w-full aspect-video rounded-3xl bg-muted flex items-center justify-center border border-border">
+                                        <div className="text-center text-muted-foreground">
+                                            <MapPin size={32} className="mx-auto mb-2" />
+                                            <p className="font-medium">Location coordinates not available</p>
+                                        </div>
+                                    </div>
+                                )}
                             </section>
                         </div>
 

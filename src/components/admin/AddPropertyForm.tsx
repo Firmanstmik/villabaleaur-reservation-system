@@ -1,5 +1,20 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+    DndContext,
+    closestCenter,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    rectSortingStrategy
+} from '@dnd-kit/sortable';
+import { restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { SortableImage } from './SortableImage';
 import { useDropzone } from 'react-dropzone';
 import imageCompression from 'browser-image-compression';
 import {
@@ -10,6 +25,7 @@ import {
     ChevronLeft,
     Image as ImageIcon,
     Check,
+    GripVertical,
     School,
     Hospital,
     ShoppingBag,
@@ -46,6 +62,36 @@ import {
 } from "@/components/ui/select";
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+import { z } from 'zod';
+import ListingPreview from './ListingPreview';
+import { AddressAutocomplete } from '@/components/map/AddressAutocomplete';
+
+const propertySchema = z.object({
+    title: z.string().min(5, 'Title must be at least 5 characters'),
+    description: z.string().min(20, 'Description must be at least 20 characters'),
+    address: z.string().min(10, 'Full address is required'),
+    latitude: z.number().nullable().optional(),
+    longitude: z.number().nullable().optional(),
+    formatted_address: z.string().optional(),
+    price: z.string().refine(v => !isNaN(parseFloat(v)) && parseFloat(v) > 0, 'Valid price is required'),
+    bedrooms: z.string().optional(),
+    bathrooms: z.string().optional(),
+    m2: z.string().optional(),
+    property_type: z.string(),
+    listing_code: z.string(),
+    images: z.array(z.string()).min(1, 'At least one image is required'),
+}).refine(
+    (data) => {
+        if (data.address && data.address.length > 10) {
+            return data.latitude !== null && data.longitude !== null;
+        }
+        return true;
+    },
+    {
+        message: 'Please select a valid address from suggestions',
+        path: ['address']
+    }
+);
 
 type Step = 'basic' | 'details' | 'media' | 'amenities';
 
@@ -53,6 +99,8 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
     const [currentStep, setCurrentStep] = useState<Step>('basic');
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [showPreview, setShowPreview] = useState(false);
 
     const initialListingCode = useMemo(() => `UK-${Math.random().toString(36).substring(2, 7).toUpperCase()}`, []);
 
@@ -60,6 +108,9 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
         title: '',
         description: '',
         address: '',
+        latitude: null as number | null,
+        longitude: null as number | null,
+        formatted_address: '',
         price: '',
         price_type: 'sale',
         bedrooms: '',
@@ -133,10 +184,11 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
 
     const handleFileUpload = async (files: File[]) => {
         setUploading(true);
-        const uploadedUrls: string[] = [];
+        const totalFiles = files.length;
+        let completedFiles = 0;
 
-        try {
-            for (const file of files) {
+        const uploadPromises = files.map(async (file) => {
+            try {
                 const options = {
                     maxSizeMB: 0.8,
                     maxWidthOrHeight: 1920,
@@ -149,35 +201,45 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                 const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
                 const filePath = `${fileName}`;
 
-                const { error } = await supabase.storage
+                const { error: uploadError } = await supabase.storage
                     .from('property-images')
                     .upload(filePath, compressedFile);
 
-                if (error) throw error;
+                if (uploadError) throw uploadError;
 
                 const { data: { publicUrl } } = supabase.storage
                     .from('property-images')
                     .getPublicUrl(filePath);
 
-                uploadedUrls.push(publicUrl);
+                // Update state incrementally for each successful upload
+                setFormData(prev => ({
+                    ...prev,
+                    images: [...prev.images, publicUrl],
+                    image_url: prev.image_url || publicUrl
+                }));
+
+                completedFiles++;
+            } catch (error: any) {
+                console.error(`Error uploading ${file.name}:`, error);
+                toast.error(`Failed to upload ${file.name}`);
             }
+        });
 
-            setFormData(prev => ({
-                ...prev,
-                images: [...prev.images, ...uploadedUrls],
-                image_url: prev.image_url || uploadedUrls[0]
-            }));
+        await Promise.all(uploadPromises);
 
-            toast.success(`Successfully uploaded ${files.length} images`);
-        } catch (error: any) {
-            console.error('Upload error:', error);
-            toast.error(error.message || 'Failed to upload images');
-        } finally {
-            setUploading(false);
+        if (completedFiles > 0) {
+            toast.success(`Successfully uploaded ${completedFiles} of ${totalFiles} images`);
         }
+        setUploading(false);
     };
 
-    const onDrop = useCallback((acceptedFiles: File[]) => {
+    const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
+        if (rejectedFiles.length > 0) {
+            console.warn('Rejected files:', rejectedFiles);
+            const reasons = rejectedFiles.map(rf => rf.errors.map((e: any) => e.message).join(', ')).join(' | ');
+            toast.error(`Some files were rejected: ${reasons}`);
+        }
+
         if (acceptedFiles.length > 0) {
             handleFileUpload(acceptedFiles);
         }
@@ -185,9 +247,39 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
-        accept: { 'image/*': [] },
-        maxSize: 10485760
+        accept: {
+            'image/jpeg': ['.jpeg', '.jpg', '.JPG'],
+            'image/png': ['.png'],
+            'image/webp': ['.webp']
+        },
+        maxSize: 52428800 // 50MB
     });
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        })
+    );
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        if (over && active.id !== over.id) {
+            setFormData((prev) => {
+                const oldIndex = prev.images.indexOf(active.id as string);
+                const newIndex = prev.images.indexOf(over.id as string);
+                const newImages = arrayMove(prev.images, oldIndex, newIndex);
+
+                return {
+                    ...prev,
+                    images: newImages,
+                    image_url: newImages[0] || prev.image_url
+                };
+            });
+        }
+    };
 
     const removeImage = (index: number) => {
         setFormData(prev => {
@@ -202,6 +294,28 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
     };
 
     const handleSubmit = async () => {
+        setErrors({});
+
+        // Validate required fields
+        const validation = propertySchema.safeParse(formData);
+        if (!validation.success) {
+            const newErrors: Record<string, string> = {};
+            validation.error.issues.forEach(issue => {
+                newErrors[issue.path[0]] = issue.message;
+            });
+            setErrors(newErrors);
+
+            // Jump to first step with error
+            if (newErrors.title || newErrors.description || newErrors.address || newErrors.price) {
+                setCurrentStep('basic');
+            } else if (newErrors.images) {
+                setCurrentStep('media');
+            }
+
+            toast.error('Please fix the errors before publishing');
+            return;
+        }
+
         setLoading(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
@@ -220,6 +334,9 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                 stories: parseInt(formData.stories) || 0,
                 last_renovated: formData.last_renovated ? parseInt(formData.last_renovated) : null,
                 available_date: formData.available_date || null,
+                latitude: formData.latitude,
+                longitude: formData.longitude,
+                formatted_address: formData.formatted_address,
                 user_id: user.id,
                 published_at: new Date().toISOString(), // Default to published for now
                 last_modified_at: new Date().toISOString()
@@ -300,11 +417,12 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                         <label className="text-sm font-bold text-[#0e2e50] ml-1">Property Title</label>
                                         <Input
                                             name="title"
-                                            placeholder="e.g. Modern Luxury Villa in Miami"
+                                            placeholder="e.g. Modern Minimalist Villa with Pool"
                                             value={formData.title}
                                             onChange={handleInputChange}
-                                            className="h-16 rounded-[1.5rem] bg-secondary/5 border-border focus:border-[#0e2e50] text-lg font-bold"
+                                            className={`h-16 rounded-[1.5rem] bg-secondary/5 font-bold text-lg px-6 ${errors.title ? 'border-ukon-red ring-1 ring-ukon-red' : 'border-border'}`}
                                         />
+                                        {errors.title && <p className="text-xs text-ukon-red font-bold ml-2">{errors.title}</p>}
                                     </div>
                                     <div className="space-y-2 w-48">
                                         <label className="text-sm font-bold text-[#0e2e50] ml-1">Listing Code</label>
@@ -346,16 +464,19 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
 
                                 <div className="space-y-2">
                                     <label className="text-sm font-bold text-[#0e2e50] ml-1">Address</label>
-                                    <div className="relative">
-                                        <MapPin className="absolute left-6 top-1/2 -translate-y-1/2 text-[#0e2e50]" size={20} />
-                                        <Input
-                                            name="address"
-                                            placeholder="Full property address"
-                                            value={formData.address}
-                                            onChange={handleInputChange}
-                                            className="pl-16 h-16 rounded-[1.5rem] bg-secondary/5 border-border font-medium"
-                                        />
-                                    </div>
+                                    <AddressAutocomplete
+                                        value={formData.address}
+                                        onChange={(v) => setFormData(prev => ({ ...prev, address: v }))}
+                                        onSelect={(result) => setFormData(prev => ({
+                                            ...prev,
+                                            address: result.address,
+                                            formatted_address: result.formattedAddress,
+                                            latitude: result.latitude,
+                                            longitude: result.longitude
+                                        }))}
+                                        error={errors.address}
+                                        placeholder="Start typing your property address..."
+                                    />
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -366,8 +487,9 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                             placeholder="Describe the property's unique features, floors, and vibe..."
                                             value={formData.description}
                                             onChange={handleInputChange}
-                                            className="min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed"
+                                            className={`min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed ${errors.description ? 'border-ukon-red ring-1 ring-ukon-red' : ''}`}
                                         />
+                                        {errors.description && <p className="text-xs text-ukon-red font-bold ml-2">{errors.description}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-[#0e2e50] ml-1">Neighborhood Context</label>
@@ -556,25 +678,27 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
 
                                 <div
                                     {...getRootProps()}
-                                    className={`border-2 border-dashed rounded-[3rem] p-16 transition-all duration-500 flex flex-col items-center justify-center text-center cursor-pointer group ${isDragActive
-                                        ? 'border-[#0e2e50] bg-[#0e2e50]/5 scale-[0.99] shadow-inner'
-                                        : 'border-border/60 hover:border-[#0e2e50]/30 hover:bg-secondary/10 hover:shadow-xl hover:shadow-secondary/20'
+                                    className={`border-2 border-dashed rounded-[3rem] p-16 transition-all duration-500 flex flex-col items-center justify-center text-center cursor-pointer group ${errors.images ? 'border-ukon-red bg-ukon-red/5' : isDragActive ? 'border-[#0e2e50] bg-[#0e2e50]/5' : 'border-border/60 hover:border-[#0e2e50]/30 hover:bg-secondary/10'
                                         }`}
                                 >
                                     <input {...getInputProps()} />
-                                    <div className="w-20 h-20 bg-[#0e2e50]/5 rounded-[2rem] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-[#0e2e50] group-hover:text-white transition-all duration-500">
+                                    <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center mb-6 transition-all duration-500 ${errors.images ? 'bg-ukon-red/20 text-ukon-red' : 'bg-[#0e2e50]/5 text-[#0e2e50] group-hover:bg-[#0e2e50] group-hover:text-white'}`}>
                                         {uploading ? (
-                                            <Loader2 size={36} className="animate-spin text-[#0e2e50]" />
+                                            <Loader2 size={36} className="animate-spin" />
                                         ) : (
-                                            <Upload size={36} className="text-[#0e2e50] group-hover:text-white" />
+                                            <Upload size={36} />
                                         )}
                                     </div>
-                                    <h4 className="text-2xl font-black text-[#0e2e50]">
+                                    <h4 className={`text-2xl font-black ${errors.images ? 'text-ukon-red' : 'text-[#0e2e50]'}`}>
                                         {isDragActive ? 'Drop to Upload' : 'Drag & Drop Media'}
                                     </h4>
-                                    <p className="text-muted-foreground mt-2 font-medium max-w-xs">
-                                        High-resolution photos increase conversion by up to 40%. WEBP, JPG, PNG supported.
-                                    </p>
+                                    {errors.images ? (
+                                        <p className="text-ukon-red mt-2 font-bold uppercase tracking-widest text-xs">{errors.images}</p>
+                                    ) : (
+                                        <p className="text-muted-foreground mt-2 font-medium max-w-xs">
+                                            High-resolution photos increase conversion by up to 40%. WEBP, JPG, PNG supported.
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6">
@@ -607,34 +731,28 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                         <h4 className="font-black text-[#0e2e50] text-lg uppercase tracking-wider">Asset Gallery ({formData.images.length})</h4>
                                         <p className="text-[10px] font-black text-ukon-green bg-ukon-green/10 px-3 py-1 rounded-full uppercase tracking-widest">Auto-compressed (WebP)</p>
                                     </div>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                                        {formData.images.map((url, index) => (
-                                            <motion.div
-                                                key={url}
-                                                layout
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                className="group relative aspect-video rounded-[2rem] overflow-hidden border border-border shadow-md"
-                                            >
-                                                <img src={url} alt="Property" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3">
-                                                    <Button
-                                                        variant="destructive"
-                                                        size="icon"
-                                                        onClick={() => removeImage(index)}
-                                                        className="w-12 h-12 rounded-2xl shadow-xl hover:scale-110 transition-transform"
-                                                    >
-                                                        <Trash2 size={20} />
-                                                    </Button>
-                                                </div>
-                                                {index === 0 && (
-                                                    <div className="absolute top-4 left-4 px-4 py-1.5 bg-white/90 backdrop-blur-md rounded-xl text-[10px] font-black text-[#0e2e50] shadow-xl uppercase tracking-[0.2em] border border-white/50">
-                                                        Main Cover
-                                                    </div>
-                                                )}
-                                            </motion.div>
-                                        ))}
-                                    </div>
+                                    <DndContext
+                                        sensors={sensors}
+                                        collisionDetection={closestCenter}
+                                        onDragEnd={handleDragEnd}
+                                        modifiers={[restrictToFirstScrollableAncestor]}
+                                    >
+                                        <SortableContext
+                                            items={formData.images}
+                                            strategy={rectSortingStrategy}
+                                        >
+                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                                                {formData.images.map((url, index) => (
+                                                    <SortableImage
+                                                        key={url}
+                                                        url={url}
+                                                        index={index}
+                                                        onRemove={removeImage}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </SortableContext>
+                                    </DndContext>
                                 </div>
                             )}
                         </motion.div>
@@ -714,27 +832,54 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                 </AnimatePresence>
             </div>
 
-            {/* Footer Navigation */}
+            <AnimatePresence>
+                {showPreview && (
+                    <ListingPreview
+                        data={formData}
+                        onClose={() => setShowPreview(false)}
+                    />
+                )}
+            </AnimatePresence>
+
             <div className="mt-16 pt-10 border-t border-border flex items-center justify-between">
-                <Button
-                    variant="ghost"
-                    onClick={prevStep}
-                    disabled={currentStep === 'basic' || loading}
-                    className="h-16 px-8 rounded-2xl gap-3 font-bold text-[#0e2e50] hover:bg-secondary/20"
-                >
-                    <ChevronLeft size={20} />
-                    Back
-                </Button>
+                <div className="flex items-center gap-4">
+                    <Button
+                        variant="ghost"
+                        onClick={prevStep}
+                        disabled={currentStep === 'basic' || loading}
+                        className="h-16 px-8 rounded-2xl gap-3 font-bold text-[#0e2e50] hover:bg-secondary/20"
+                    >
+                        <ChevronLeft size={20} />
+                        Back
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        onClick={onComplete}
+                        disabled={loading}
+                        className="h-16 px-8 rounded-2xl gap-3 font-bold text-ukon-red hover:bg-ukon-red/10"
+                    >
+                        Cancel
+                    </Button>
+                </div>
 
                 {currentStep === 'amenities' ? (
-                    <Button
-                        onClick={handleSubmit}
-                        disabled={loading || uploading}
-                        className="h-16 px-12 rounded-2xl gap-3 bg-[#0e2e50] hover:bg-[#0e2e50]/90 text-white font-black text-lg shadow-2xl shadow-[#0e2e50]/20"
-                    >
-                        {loading ? <Loader2 className="animate-spin" /> : <Plus size={24} />}
-                        Publish Listing
-                    </Button>
+                    <div className="flex items-center gap-4">
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowPreview(true)}
+                            className="h-16 px-12 rounded-2xl gap-3 border-[#0e2e50] text-[#0e2e50] font-black text-lg hover:bg-[#0e2e50]/5"
+                        >
+                            Preview
+                        </Button>
+                        <Button
+                            onClick={handleSubmit}
+                            disabled={loading || uploading}
+                            className="h-16 px-12 rounded-2xl gap-3 bg-[#0e2e50] hover:bg-[#0e2e50]/90 text-white font-black text-lg shadow-2xl shadow-[#0e2e50]/20"
+                        >
+                            {loading ? <Loader2 className="animate-spin" /> : <Plus size={24} />}
+                            Publish Listing
+                        </Button>
+                    </div>
                 ) : (
                     <Button
                         onClick={nextStep}

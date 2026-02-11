@@ -31,6 +31,22 @@ const Dashboard = () => {
     const [properties, setProperties] = useState<any[]>([]);
     const [statsLoading, setStatsLoading] = useState(true);
 
+    const fetchDashboardData = async (userId: string) => {
+        try {
+            const { data, error } = await supabase
+                .from('properties')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setProperties(data || []);
+        } catch (err) {
+            console.error('Error fetching dashboard data:', err);
+        } finally {
+            setStatsLoading(false);
+        }
+    };
+
     useEffect(() => {
         const checkUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -43,24 +59,15 @@ const Dashboard = () => {
             setLoading(false);
         };
 
-        const fetchDashboardData = async (userId: string) => {
-            try {
-                const { data, error } = await supabase
-                    .from('properties')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-                setProperties(data || []);
-            } catch (err) {
-                console.error('Error fetching dashboard data:', err);
-            } finally {
-                setStatsLoading(false);
-            }
-        };
-
         checkUser();
     }, [navigate]);
+
+    // Refresh data when switching back to overview or listings
+    useEffect(() => {
+        if (user && (activeTab === 'overview' || activeTab === 'listings')) {
+            fetchDashboardData(user.id);
+        }
+    }, [activeTab, user]);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
