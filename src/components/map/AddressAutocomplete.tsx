@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useDeferredValue } from 'react';
-import { MapPin, Loader2, AlertCircle, X } from 'lucide-react';
+import { Loader2, AlertCircle, X, ChevronDown } from 'lucide-react';
 import { geocodeAddress, GeocodingResult } from '@/lib/mapbox';
+import { getCountryFlag, getSupportedCountries } from '@/lib/country-flags';
 import { cn } from '@/lib/utils';
 
 interface AddressAutocompleteProps {
@@ -23,11 +24,15 @@ export function AddressAutocomplete({
   const [suggestions, setSuggestions] = useState<GeocodingResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedCountryFilter, setSelectedCountryFilter] = useState<string | null>(null);
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const countryDropdownRef = useRef<HTMLDivElement>(null);
   const deferredValue = useDeferredValue(value);
 
   // Fetch suggestions when input changes
@@ -43,7 +48,15 @@ export function AddressAutocomplete({
       setErrorMessage(null);
 
       try {
-        const results = await geocodeAddress(deferredValue);
+        const results = await geocodeAddress(deferredValue, {
+          country: selectedCountryFilter || undefined,
+        });
+
+        // Update selected country code from first result if available
+        if (results.length > 0 && results[0].countryCode) {
+          setSelectedCountryCode(results[0].countryCode);
+        }
+
         setSuggestions(results);
         setShowDropdown(results.length > 0);
         setHighlightedIndex(-1);
@@ -61,7 +74,7 @@ export function AddressAutocomplete({
     };
 
     fetchSuggestions();
-  }, [deferredValue]);
+  }, [deferredValue, selectedCountryFilter]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -71,6 +84,12 @@ export function AddressAutocomplete({
         !containerRef.current.contains(event.target as Node)
       ) {
         setShowDropdown(false);
+      }
+      if (
+        countryDropdownRef.current &&
+        !countryDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowCountryDropdown(false);
       }
     };
 
@@ -111,8 +130,9 @@ export function AddressAutocomplete({
   };
 
   const handleSelectSuggestion = (suggestion: GeocodingResult) => {
-    onChange(suggestion.address);
+    onChange(suggestion.formattedAddress); // Use full formatted address
     onSelect(suggestion);
+    setSelectedCountryCode(suggestion.countryCode || null);
     setShowDropdown(false);
     setSuggestions([]);
     setHighlightedIndex(-1);
@@ -124,16 +144,69 @@ export function AddressAutocomplete({
     setSuggestions([]);
     setShowDropdown(false);
     setErrorMessage(null);
+    setSelectedCountryCode(null);
     inputRef.current?.focus();
   };
 
+  const handleCountrySelect = (countryCode: string) => {
+    setSelectedCountryFilter(countryCode);
+    setShowCountryDropdown(false);
+  };
+
+  const currentCountryFlag = getCountryFlag(selectedCountryCode);
+  const supportedCountries = getSupportedCountries();
+
   return (
     <div ref={containerRef} className="relative w-full">
-      <div className="relative">
-        <MapPin
-          className="absolute left-6 top-1/2 -translate-y-1/2 text-[#0e2e50]"
-          size={20}
-        />
+      <div className="relative flex items-center">
+        {/* Country Flag Button */}
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
+          <div ref={countryDropdownRef} className="relative">
+            <button
+              onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white border border-border/50 hover:border-border hover:bg-secondary/10 transition-all"
+              title="Filter by country"
+            >
+              <span className="text-xl">{currentCountryFlag}</span>
+              <ChevronDown size={14} className="text-muted-foreground" />
+            </button>
+
+            {/* Country Dropdown */}
+            {showCountryDropdown && (
+              <div className="absolute top-full left-0 mt-2 bg-white border border-border rounded-2xl shadow-lg z-50 w-64 max-h-96 overflow-y-auto">
+                {/* Clear filter option */}
+                <button
+                  onClick={() => {
+                    setSelectedCountryFilter(null);
+                    setShowCountryDropdown(false);
+                  }}
+                  className="w-full text-left px-4 py-3 hover:bg-secondary/30 border-b border-border/50 font-medium text-sm"
+                >
+                  🌍 All Countries
+                </button>
+
+                {/* Country list */}
+                {supportedCountries.map((country) => (
+                  <button
+                    key={country.code}
+                    onClick={() => handleCountrySelect(country.code)}
+                    className={cn(
+                      'w-full text-left px-4 py-3 transition-colors border-b border-border/30 last:border-b-0',
+                      selectedCountryFilter === country.code
+                        ? 'bg-[#0e2e50]/10 font-semibold'
+                        : 'hover:bg-secondary/30'
+                    )}
+                  >
+                    <span className="text-xl mr-2">{getCountryFlag(country.code)}</span>
+                    {country.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Input field */}
         <input
           ref={inputRef}
           type="text"
@@ -156,7 +229,7 @@ export function AddressAutocomplete({
               : undefined
           }
           className={cn(
-            'w-full pl-16 h-16 rounded-[1.5rem] bg-secondary/5 font-medium',
+            'w-full pl-24 pr-16 h-16 rounded-[1.5rem] bg-secondary/5 font-medium',
             'border focus:outline-none focus:ring-2 focus:ring-[#0e2e50]/20',
             'transition-all duration-200 disabled:opacity-50',
             error || errorMessage
@@ -201,7 +274,7 @@ export function AddressAutocomplete({
         >
           {suggestions.map((suggestion, index) => (
             <li
-              key={`${suggestion.latitude}-${suggestion.longitude}`}
+              key={`${suggestion.latitude}-${suggestion.longitude}-${index}`}
               id={`suggestion-${index}`}
               role="option"
               aria-selected={index === highlightedIndex}
@@ -214,12 +287,11 @@ export function AddressAutocomplete({
               )}
             >
               <div className="flex items-start gap-3">
-                <MapPin
-                  size={16}
-                  className="mt-0.5 flex-shrink-0 text-[#0e2e50]"
-                />
+                <span className="text-lg mt-0.5 flex-shrink-0">
+                  {getCountryFlag(suggestion.countryCode)}
+                </span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm truncate">
+                  <p className="font-bold text-sm">
                     {suggestion.formattedAddress}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">

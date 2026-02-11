@@ -51,8 +51,16 @@ const Dashboard = () => {
         const checkUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
-                navigate('/login');
+                navigate('/');
             } else {
+                // Check if user is agent type - only agents can access dashboard
+                const userType = user.user_metadata?.user_type;
+                if (userType !== 'agent') {
+                    // Buyer users cannot access dashboard
+                    toast.error('This page is for agents only');
+                    navigate('/');
+                    return;
+                }
                 setUser(user);
                 fetchDashboardData(user.id);
             }
@@ -72,7 +80,7 @@ const Dashboard = () => {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         toast.success('Logged out successfully');
-        navigate('/login');
+        navigate('/');
     };
 
     if (loading) {

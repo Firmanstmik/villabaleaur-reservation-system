@@ -65,6 +65,8 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import ListingPreview from './ListingPreview';
 import { AddressAutocomplete } from '@/components/map/AddressAutocomplete';
+import { fetchNearbyPOIs } from '@/lib/poi';
+import POIEditor from './POIEditor';
 
 const propertySchema = z.object({
     title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -99,6 +101,7 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
     const [currentStep, setCurrentStep] = useState<Step>('basic');
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [poiLoading, setPoiLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [showPreview, setShowPreview] = useState(false);
 
@@ -145,6 +148,8 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
         images: [] as string[],
         image_url: '',
         nearby_amenities: [] as any[],
+        poi_fetched_at: null as string | null,
+        poi_source: 'osm' as 'osm' | 'mapbox' | 'manual',
     });
 
     const steps: { id: Step; label: string; icon: any }[] = [
@@ -337,6 +342,9 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                 latitude: formData.latitude,
                 longitude: formData.longitude,
                 formatted_address: formData.formatted_address,
+                nearby_amenities: formData.nearby_amenities || [],
+                poi_fetched_at: formData.poi_fetched_at,
+                poi_source: formData.poi_source,
                 user_id: user.id,
                 published_at: new Date().toISOString(), // Default to published for now
                 last_modified_at: new Date().toISOString()
@@ -467,15 +475,53 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                     <AddressAutocomplete
                                         value={formData.address}
                                         onChange={(v) => setFormData(prev => ({ ...prev, address: v }))}
-                                        onSelect={(result) => setFormData(prev => ({
-                                            ...prev,
-                                            address: result.address,
-                                            formatted_address: result.formattedAddress,
-                                            latitude: result.latitude,
-                                            longitude: result.longitude
-                                        }))}
+                                        onSelect={async (result) => {
+                                            // Set address info
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                address: result.address,
+                                                formatted_address: result.formattedAddress,
+                                                latitude: result.latitude,
+                                                longitude: result.longitude,
+                                                nearby_amenities: [], // Clear old POIs
+                                            }));
+
+                                            // Fetch POIs
+                                            setPoiLoading(true);
+                                            toast.info('Finding nearby amenities...');
+                                            try {
+                                                const pois = await fetchNearbyPOIs(
+                                                    result.latitude,
+                                                    result.longitude
+                                                );
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    nearby_amenities: pois,
+                                                    poi_fetched_at: new Date().toISOString(),
+                                                    poi_source: 'osm'
+                                                }));
+
+                                                if (pois.length === 0) {
+                                                    toast.warning(
+                                                        'No nearby amenities found in this area'
+                                                    );
+                                                } else {
+                                                    toast.success(
+                                                        `Found ${pois.length} nearby points of interest`
+                                                    );
+                                                }
+                                            } catch (error) {
+                                                console.error('POI fetch error:', error);
+                                                toast.error(
+                                                    'Could not load nearby amenities. You can add them manually.'
+                                                );
+                                            } finally {
+                                                setPoiLoading(false);
+                                            }
+                                        }}
                                         error={errors.address}
                                         placeholder="Start typing your property address..."
+                                        disabled={poiLoading}
                                     />
                                 </div>
 
@@ -766,6 +812,20 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                             exit={{ opacity: 0, x: -20 }}
                             className="space-y-10"
                         >
+                            {/* Nearby Points of Interest */}
+                            <div className="p-8 bg-secondary/5 rounded-[2.5rem] border border-border/50">
+                                <POIEditor
+                                    pois={formData.nearby_amenities}
+                                    onChange={(pois) =>
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            nearby_amenities: pois
+                                        }))
+                                    }
+                                    loading={poiLoading}
+                                />
+                            </div>
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                 <div className="space-y-6">
                                     <h4 className="text-sm font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Interior Features</h4>

@@ -11,6 +11,7 @@ export interface GeocodingResult {
   longitude: number;
   city?: string;
   country?: string;
+  countryCode?: string;      // ISO country code (e.g., "NL", "BE", "US")
   placeType: string;        // 'address', 'place', 'region', etc.
 }
 
@@ -123,6 +124,7 @@ export async function geocodeAddress(
         longitude: feature.geometry?.coordinates[0] || feature.center[0],
         city: extractCity(feature),
         country: extractCountry(feature),
+        countryCode: extractCountryCode(feature),
         placeType: feature.place_type[0] || 'place',
       }));
 
@@ -180,6 +182,7 @@ export async function reverseGeocode(
       longitude: feature.geometry?.coordinates[0] || feature.center[0],
       city: extractCity(feature),
       country: extractCountry(feature),
+      countryCode: extractCountryCode(feature),
       placeType: feature.place_type[0] || 'place',
     };
   } catch (error) {
@@ -223,6 +226,18 @@ function extractCountry(feature: MapboxGeocodeResponse['features'][0]): string |
     ctx.id.startsWith('country.')
   );
   return country?.text;
+}
+
+/**
+ * Extract country code from Mapbox feature context
+ */
+function extractCountryCode(feature: MapboxGeocodeResponse['features'][0]): string | undefined {
+  if (!feature.context) return undefined;
+
+  const country = feature.context.find((ctx) =>
+    ctx.id.startsWith('country.')
+  );
+  return country?.short_code?.toUpperCase();
 }
 
 /**

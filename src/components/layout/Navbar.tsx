@@ -3,6 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import AuthModal from '@/components/auth/AuthModal';
+import UserDropdown from '@/components/layout/UserDropdown';
 import { whatsappUrl } from '@/data/mockData';
 import logoImage from '@/assets/Ukon-Estate.png';
 
@@ -17,9 +20,11 @@ const navLinks = [
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -165,8 +170,8 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden lg:flex items-center">
+          {/* CTA Button & Auth */}
+          <div className="hidden lg:flex items-center gap-3">
             <Button
               onClick={handleWhatsAppClick}
               className="rounded-full bg-[#D92C2C] text-white hover:bg-[#D92C2C]/90 transition-all border-none flex items-center justify-between group"
@@ -194,6 +199,20 @@ export function Navbar() {
                 <ArrowRight className="-rotate-45 group-hover:rotate-0 transition-transform duration-300" style={{ width: '1.1vw', height: '1.1vw' }} />
               </div>
             </Button>
+
+            {/* Auth Button / Avatar */}
+            {loading ? null : user ? (
+              <UserDropdown />
+            ) : (
+              <Button
+                onClick={() => setAuthModalOpen(true)}
+                variant="ghost"
+                className="text-foreground hover:text-[#D92C2C] transition-colors font-medium"
+                style={{ fontSize: '0.9vw' }}
+              >
+                Sign In
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -205,6 +224,9 @@ export function Navbar() {
           </button>
         </div>
       </motion.header>
+
+      {/* Auth Modal */}
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
 
       {/* Spacer to push content down - only on non-property pages */}
       {!location.pathname.startsWith('/property/') && (
@@ -242,11 +264,41 @@ export function Navbar() {
                   {link.name}
                 </Link>
               ))}
-              <div className="mt-4">
-                <Button onClick={handleWhatsAppClick} className="w-full bg-[#D92C2C] text-white py-6 text-lg rounded-xl">
-                  Contact Us Now
-                </Button>
-              </div>
+
+              {/* Mobile Auth */}
+              {!loading && (
+                <div className="mt-4 space-y-3">
+                  {user ? (
+                    <>
+                      <UserDropdown />
+                      <Button
+                        onClick={handleWhatsAppClick}
+                        className="w-full bg-[#D92C2C] text-white py-6 text-lg rounded-xl"
+                      >
+                        Contact Us Now
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        onClick={() => {
+                          setAuthModalOpen(true);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="w-full bg-ukon-navy text-white py-6 text-lg rounded-xl"
+                      >
+                        Sign In
+                      </Button>
+                      <Button
+                        onClick={handleWhatsAppClick}
+                        className="w-full bg-[#D92C2C] text-white py-6 text-lg rounded-xl"
+                      >
+                        Contact Us Now
+                      </Button>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </motion.div>
         )}

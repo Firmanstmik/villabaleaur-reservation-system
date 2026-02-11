@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/popover";
 import { supabase } from '@/lib/supabase';
 import { PropertyMap } from '@/components/map/PropertyMap';
+import NearbyAmenities from '@/components/property/NearbyAmenities';
 
 const PropertyDetail = () => {
     const { id } = useParams();
@@ -357,36 +358,23 @@ const PropertyDetail = () => {
                                                 <div className="w-1 h-6 bg-[#0e2e50] rounded-full" />
                                                 Nearby Points of Interest
                                             </h4>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                {(property.nearbyAmenities || property.nearby_amenities).map((amenity: any, idx: number) => {
-                                                    const IconMap = {
-                                                        school: School,
-                                                        hospital: Hospital,
-                                                        shopping: ShoppingBag,
-                                                        transport: Bus,
-                                                        airport: Plane,
-                                                        park: Trees
-                                                    };
-                                                    const Icon = IconMap[amenity.type as keyof typeof IconMap] || Info;
+                                            <NearbyAmenities
+                                                amenities={property.nearbyAmenities || property.nearby_amenities}
+                                            />
+                                        </div>
+                                    )}
 
-                                                    return (
-                                                        <div
-                                                            key={idx}
-                                                            className="flex items-center justify-between p-4 bg-secondary/10 rounded-xl border border-border/50"
-                                                        >
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#0e2e50] shadow-sm">
-                                                                    <Icon size={20} />
-                                                                </div>
-                                                                <span className="font-semibold text-sm">{amenity.name}</span>
-                                                            </div>
-                                                            <span className="text-xs font-bold px-2 py-1 bg-[#0e2e50]/5 text-[#0e2e50] rounded-lg">
-                                                                {amenity.distance}
-                                                            </span>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
+                                    {/* Empty state when no amenities */}
+                                    {!(property.nearbyAmenities || property.nearby_amenities) && (
+                                        <div className="space-y-4">
+                                            <h4 className="text-lg font-bold text-[#0e2e50] flex items-center gap-2">
+                                                <div className="w-1 h-6 bg-[#0e2e50] rounded-full" />
+                                                Nearby Points of Interest
+                                            </h4>
+                                            <NearbyAmenities
+                                                amenities={undefined}
+                                                showEmpty={true}
+                                            />
                                         </div>
                                     )}
                                 </div>
