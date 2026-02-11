@@ -4,18 +4,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import AuthModal from '@/components/auth/AuthModal';
 import UserDropdown from '@/components/layout/UserDropdown';
+import { LocaleDropdown } from '@/components/layout/LocaleDropdown';
 import { whatsappUrl } from '@/data/mockData';
 import logoImage from '@/assets/Ukon-Estate.png';
 
-const navLinks = [
-  { name: 'Home', path: '/', scrollTo: 'top' },
-  { name: 'Services', path: '/', scrollTo: 'services' },
-  { name: 'Properties', path: '/properties' },
-  { name: 'About', path: '/about' },
-  { name: 'Agents', path: '/agents' },
-  { name: 'Blog', path: '/blog' },
+// Navigation links configuration (without language prefix - added dynamically)
+const navLinksConfig = [
+  { key: 'home', path: '/', scrollTo: 'top' },
+  { key: 'services', path: '/', scrollTo: 'services' },
+  { key: 'properties', path: '/properties' },
+  { key: 'about', path: '/about' },
+  { key: 'agents', path: '/agents' },
+  { key: 'blog', path: '/blog' },
 ];
 
 export function Navbar() {
@@ -25,6 +28,24 @@ export function Navbar() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
   const { user, loading } = useAuth();
+  const { t, language } = useLanguage();
+
+  // Helper to build language-prefixed paths
+  const withLang = (path: string): string => {
+    return `/${language}${path}`;
+  };
+
+  // Extract language prefix and base path
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const basePathSegments = pathSegments.slice(1); // Remove language prefix
+  const basePath = basePathSegments.length > 0 ? `/${basePathSegments.join('/')}` : '/';
+
+  // Build nav links with language prefix and translation names
+  const navLinks = navLinksConfig.map((link) => ({
+    ...link,
+    name: t(`navigation.${link.key}`),
+    localizedPath: withLang(link.path),
+  }));
 
   useEffect(() => {
     const handleScroll = () => {
@@ -98,16 +119,16 @@ export function Navbar() {
 
       if (link.scrollTo === 'top') {
         // Scroll to top
-        if (location.pathname !== '/') {
-          window.location.href = '/';
+        if (basePath !== '/') {
+          window.location.href = withLang('/');
         } else {
           scrollToTop();
         }
       } else {
         // Scroll to section
-        if (location.pathname !== '/') {
+        if (basePath !== '/') {
           // Navigate to home first, then scroll
-          window.location.href = `/#${link.scrollTo}`;
+          window.location.href = `${withLang('/')}#${link.scrollTo}`;
         } else {
           // Already on home, just scroll
           scrollToSection(link.scrollTo);
@@ -122,7 +143,7 @@ export function Navbar() {
     if (link.scrollTo && link.scrollTo !== 'top') {
       return false;
     }
-    return location.pathname === link.path;
+    return basePath === link.path;
   };
 
   return (
@@ -137,10 +158,10 @@ export function Navbar() {
         <div className="w-full flex items-center justify-between">
           {/* Logo Group */}
           <Link
-            to="/"
+            to={withLang('/')}
             className="flex items-center gap-[0.8vw]"
             onClick={(e) => {
-              if (location.pathname === '/') {
+              if (basePath === '/') {
                 e.preventDefault();
                 scrollToTop();
               }
@@ -159,7 +180,7 @@ export function Navbar() {
             {navLinks.map((link) => (
               <Link
                 key={link.path}
-                to={link.path}
+                to={link.localizedPath}
                 onClick={(e) => handleNavClick(e, link)}
                 className={`font-medium transition-colors hover:text-[#D92C2C] ${isLinkActive(link) ? 'text-[#D92C2C]' : 'text-foreground'
                   }`}
@@ -170,7 +191,7 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* CTA Button & Auth */}
+          {/* CTA Button & Auth & Globe */}
           <div className="hidden lg:flex items-center gap-3">
             {/* Auth Button / Avatar */}
             {loading ? null : user ? (
@@ -182,9 +203,12 @@ export function Navbar() {
                 className="text-foreground hover:text-[#0e2e50] transition-colors font-medium"
                 style={{ fontSize: '0.9vw' }}
               >
-                Sign In
+                {t('navigation.signIn')}
               </Button>
             )}
+
+            {/* Globe Dropdown */}
+            <LocaleDropdown />
 
             <Button
               onClick={handleWhatsAppClick}
@@ -203,7 +227,7 @@ export function Navbar() {
                   <div className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
                   <div className="relative inline-flex rounded-full bg-green-500 w-full h-full" />
                 </div>
-                <span className="font-medium">Contact</span>
+                <span className="font-medium">{t('navigation.contact')}</span>
               </div>
 
               <div
@@ -229,7 +253,7 @@ export function Navbar() {
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
 
       {/* Spacer to push content down - only on non-property pages */}
-      {!location.pathname.startsWith('/property/') && (
+      {!location.pathname.includes('/property/') && (
         <>
           <div style={{ height: '5vw' }} className="hidden lg:block" />
           <div className="h-20 lg:hidden" />
@@ -254,7 +278,7 @@ export function Navbar() {
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
-                  to={link.path}
+                  to={link.localizedPath}
                   onClick={(e) => {
                     handleNavClick(e, link);
                     setIsMobileMenuOpen(false);
@@ -264,6 +288,11 @@ export function Navbar() {
                   {link.name}
                 </Link>
               ))}
+
+              {/* Mobile Locale Dropdown */}
+              <div className="mt-2 pt-4 border-t border-border/30">
+                <LocaleDropdown />
+              </div>
 
               {/* Mobile Auth */}
               {!loading && (
@@ -275,7 +304,7 @@ export function Navbar() {
                         onClick={handleWhatsAppClick}
                         className="w-full bg-[#D92C2C] text-white py-6 text-lg rounded-xl"
                       >
-                        Contact Us Now
+                        {t('navigation.contactUsNow')}
                       </Button>
                     </>
                   ) : (
@@ -287,13 +316,13 @@ export function Navbar() {
                         }}
                         className="w-full bg-ukon-navy text-white py-6 text-lg rounded-xl"
                       >
-                        Sign In
+                        {t('navigation.signIn')}
                       </Button>
                       <Button
                         onClick={handleWhatsAppClick}
                         className="w-full bg-[#D92C2C] text-white py-6 text-lg rounded-xl"
                       >
-                        Contact Us Now
+                        {t('navigation.contactUsNow')}
                       </Button>
                     </>
                   )}

@@ -2,15 +2,17 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
 
 // Core Layout components
-
 import About from "./pages/About";
 import Agents from "./pages/Agents";
 import Blog from "./pages/Blog";
@@ -30,32 +32,65 @@ function ScrollToTop() {
   return null;
 }
 
+/**
+ * RootRedirect handles the initial redirect from / to /:lang/
+ * Uses LanguageProvider to determine the default language
+ */
+function RootRedirect() {
+  const { language } = useLanguage();
+  return <Navigate to={`/${language}/`} replace />;
+}
+
+/**
+ * AppRoutes contains all the language-prefixed routes
+ * Structure: /:lang/path (where lang is en, id, nl, es)
+ */
+function AppRoutes() {
+  return (
+    <Routes>
+      {/* Root redirect to language-specific home */}
+      <Route path="/" element={<RootRedirect />} />
+
+      {/* Language-prefixed routes */}
+      <Route path="/:lang" element={<Index />} />
+      <Route path="/:lang/properties" element={<Properties />} />
+      <Route path="/:lang/property/:id" element={<PropertyDetail />} />
+      <Route path="/:lang/about" element={<About />} />
+      <Route path="/:lang/agents" element={<Agents />} />
+      <Route path="/:lang/blog" element={<Blog />} />
+      <Route path="/:lang/login" element={<Login />} />
+      <Route path="/:lang/dashboard" element={<Dashboard />} />
+      <Route path="/:lang/account" element={<Account />} />
+      <Route path="/:lang/auth/callback" element={<AuthCallback />} />
+
+      {/* Catch-all 404 */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
+
+function AppContent() {
+  return (
+    <AuthProvider>
+      <ScrollToTop />
+      <AppRoutes />
+    </AuthProvider>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/properties" element={<Properties />} />
-            <Route path="/property/:id" element={<PropertyDetail />} />
-
-            <Route path="/about" element={<About />} />
-            <Route path="/agents" element={<Agents />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+    <BrowserRouter>
+      <LanguageProvider>
+        <CurrencyProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <AppContent />
+          </TooltipProvider>
+        </CurrencyProvider>
+      </LanguageProvider>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 
