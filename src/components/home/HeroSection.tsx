@@ -140,7 +140,7 @@ export function HeroSection() {
               className="rounded-full bg-white text-black hover:bg-white/90 transition-all border-none flex items-center justify-between group"
               style={{
                 height: 'auto',
-                padding: '0.8vw 0.8vw 0.8vw 2vw',
+                padding: '0.74vw 0.8vw 0.74vw 2vw',
                 fontSize: '1vw',
                 borderRadius: '100vw',
                 gap: '1vw'

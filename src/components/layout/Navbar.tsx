@@ -172,12 +172,26 @@ export function Navbar() {
 
           {/* CTA Button & Auth */}
           <div className="hidden lg:flex items-center gap-3">
+            {/* Auth Button / Avatar */}
+            {loading ? null : user ? (
+              <UserDropdown />
+            ) : (
+              <Button
+                onClick={() => setAuthModalOpen(true)}
+                variant="ghost"
+                className="text-foreground hover:text-[#0e2e50] transition-colors font-medium"
+                style={{ fontSize: '0.9vw' }}
+              >
+                Sign In
+              </Button>
+            )}
+
             <Button
               onClick={handleWhatsAppClick}
-              className="rounded-full bg-[#D92C2C] text-white hover:bg-[#D92C2C]/90 transition-all border-none flex items-center justify-between group"
+              className="rounded-full bg-[#0e2e50] text-white hover:bg-[#0e2e50]/90 transition-all border-none flex items-center justify-between group"
               style={{
                 height: 'auto',
-                padding: '0.6vw 0.6vw 0.6vw 1.5vw',
+                padding: '0.56vw 0.6vw 0.56vw 1.5vw',
                 fontSize: '0.9vw',
                 borderRadius: '100vw',
                 gap: '0.8vw'
@@ -189,30 +203,16 @@ export function Navbar() {
                   <div className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
                   <div className="relative inline-flex rounded-full bg-green-500 w-full h-full" />
                 </div>
-                <span className="font-medium">Contact Us Now</span>
+                <span className="font-medium">Contact</span>
               </div>
 
               <div
-                className="bg-white text-[#D92C2C] rounded-full flex items-center justify-center transition-transform group-hover:bg-white/90"
+                className="bg-white text-[#0e2e50] rounded-full flex items-center justify-center transition-transform group-hover:bg-white/90"
                 style={{ width: '2.2vw', height: '2.2vw' }}
               >
                 <ArrowRight className="-rotate-45 group-hover:rotate-0 transition-transform duration-300" style={{ width: '1.1vw', height: '1.1vw' }} />
               </div>
             </Button>
-
-            {/* Auth Button / Avatar */}
-            {loading ? null : user ? (
-              <UserDropdown />
-            ) : (
-              <Button
-                onClick={() => setAuthModalOpen(true)}
-                variant="ghost"
-                className="text-foreground hover:text-[#D92C2C] transition-colors font-medium"
-                style={{ fontSize: '0.9vw' }}
-              >
-                Sign In
-              </Button>
-            )}
           </div>
 
           {/* Mobile Menu Button */}
