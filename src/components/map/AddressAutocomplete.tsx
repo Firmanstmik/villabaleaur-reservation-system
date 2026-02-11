@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useDeferredValue } from 'react';
 import { Loader2, AlertCircle, X, ChevronDown } from 'lucide-react';
-import { geocodeAddress, GeocodingResult } from '@/lib/mapbox';
+import { geocodeAddress, GeocodingResult, reverseGeocode } from '@/lib/mapbox';
 import { getCountryFlag, getSupportedCountries } from '@/lib/country-flags';
 import { cn } from '@/lib/utils';
 
@@ -34,6 +34,38 @@ export function AddressAutocomplete({
   const containerRef = useRef<HTMLDivElement>(null);
   const countryDropdownRef = useRef<HTMLDivElement>(null);
   const deferredValue = useDeferredValue(value);
+  const [geolocating, setGeolocating] = useState(false);
+
+  // Auto-detect user's country based on browser geolocation
+  useEffect(() => {
+    const detectUserLocation = async () => {
+      if (!selectedCountryFilter && navigator.geolocation) {
+        setGeolocating(true);
+        try {
+          const position = await new Promise<GeolocationCoordinates>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+              (pos) => resolve(pos.coords),
+              (err) => reject(err),
+              { timeout: 5000, maximumAge: 3600000 } // Cache for 1 hour
+            );
+          });
+
+          // Reverse geocode to get country
+          const location = await reverseGeocode(position.latitude, position.longitude);
+          if (location?.countryCode) {
+            setSelectedCountryFilter(location.countryCode);
+          }
+        } catch (err) {
+          // Silently fail - user can manually select country if needed
+          console.debug('Geolocation failed:', err);
+        } finally {
+          setGeolocating(false);
+        }
+      }
+    };
+
+    detectUserLocation();
+  }, []); // Run once on mount
 
   // Fetch suggestions when input changes
   useEffect(() => {
@@ -48,9 +80,16 @@ export function AddressAutocomplete({
       setErrorMessage(null);
 
       try {
-        const results = await geocodeAddress(deferredValue, {
+        let results = await geocodeAddress(deferredValue, {
           country: selectedCountryFilter || undefined,
         });
+
+        // If no results with country filter, try without it (helps with edge cases)
+        if (results.length === 0 && selectedCountryFilter) {
+          results = await geocodeAddress(deferredValue, {
+            country: undefined,
+          });
+        }
 
         // Update selected country code from first result if available
         if (results.length > 0 && results[0].countryCode) {
@@ -62,7 +101,11 @@ export function AddressAutocomplete({
         setHighlightedIndex(-1);
 
         if (results.length === 0) {
-          setErrorMessage('No addresses found. Try a different search.');
+          // Provide helpful error message based on search context
+          const suggestions = selectedCountryFilter
+            ? 'Try checking spelling, using just the street name, or searching without a country filter.'
+            : 'Try checking spelling, using a shorter street name, or adding "Indonesia" to your search.';
+          setErrorMessage(`Address not found. ${suggestions}`);
         }
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to search addresses';
@@ -145,6 +188,7 @@ export function AddressAutocomplete({
     setShowDropdown(false);
     setErrorMessage(null);
     setSelectedCountryCode(null);
+    // Don't clear selectedCountryFilter - keep user's country selection
     inputRef.current?.focus();
   };
 
@@ -153,7 +197,8 @@ export function AddressAutocomplete({
     setShowCountryDropdown(false);
   };
 
-  const currentCountryFlag = getCountryFlag(selectedCountryCode);
+  // Use selected filter as primary, fall back to detected country code, then to location pin
+  const currentCountryFlag = getCountryFlag(selectedCountryFilter || selectedCountryCode);
   const supportedCountries = getSupportedCountries();
 
   return (
