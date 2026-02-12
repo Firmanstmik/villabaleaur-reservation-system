@@ -5,7 +5,7 @@ import { Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import AuthModal from '@/components/auth/AuthModal';
+import { useAuthPanel } from '@/contexts/AuthPanelContext';
 import UserDropdown from '@/components/layout/UserDropdown';
 import { LocaleDropdown } from '@/components/layout/LocaleDropdown';
 import { whatsappUrl } from '@/data/mockData';
@@ -23,12 +23,12 @@ const navLinksConfig = [
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
   const { user, loading } = useAuth();
   const { t, language } = useLanguage();
+  const { toggleAuthPanel } = useAuthPanel();
 
   // Helper to build language-prefixed paths
   const withLang = (path: string): string => {
@@ -198,7 +198,7 @@ export function Navbar() {
               <UserDropdown />
             ) : (
               <Button
-                onClick={() => setAuthModalOpen(true)}
+                onClick={() => toggleAuthPanel('login')}
                 variant="ghost"
                 className="text-foreground hover:text-[#0e2e50] transition-colors font-medium"
                 style={{ fontSize: '0.9vw' }}
@@ -248,9 +248,6 @@ export function Navbar() {
           </button>
         </div>
       </motion.header>
-
-      {/* Auth Modal */}
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
 
       {/* Spacer to push content down - only on non-property pages */}
       {!location.pathname.includes('/property/') && (
@@ -311,7 +308,7 @@ export function Navbar() {
                     <>
                       <Button
                         onClick={() => {
-                          setAuthModalOpen(true);
+                          openAuthPanel('login');
                           setIsMobileMenuOpen(false);
                         }}
                         className="w-full bg-ukon-navy text-white py-6 text-lg rounded-xl"

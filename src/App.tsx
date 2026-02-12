@@ -8,6 +8,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { AuthPanelProvider, useAuthPanel } from "@/contexts/AuthPanelContext";
+import { AuthPanel } from "@/components/auth/AuthPanel";
 import Index from "./pages/Index";
 import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
@@ -69,12 +71,35 @@ function AppRoutes() {
   );
 }
 
+function AuthPanelGlobal() {
+  const { isAuthPanelOpen, closeAuthPanel, initialMode } = useAuthPanel();
+  const { language } = useLanguage();
+  const location = useLocation();
+
+  // Only show global variant on non-home pages
+  const isHomePage = location.pathname === `/${language}` || location.pathname === '/' || location.pathname === `/${language}/`;
+
+  if (isHomePage) return null;
+
+  return (
+    <AuthPanel
+      variant="global"
+      isOpen={isAuthPanelOpen}
+      onClose={closeAuthPanel}
+      initialMode={initialMode}
+    />
+  );
+}
+
 function AppContent() {
   return (
-    <AuthProvider>
-      <ScrollToTop />
-      <AppRoutes />
-    </AuthProvider>
+    <AuthPanelProvider>
+      <AuthProvider>
+        <ScrollToTop />
+        <AppRoutes />
+        <AuthPanelGlobal />
+      </AuthProvider>
+    </AuthPanelProvider>
   );
 }
 

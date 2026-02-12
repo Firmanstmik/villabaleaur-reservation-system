@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { useAuthPanel } from '@/contexts/AuthPanelContext';
+import { AuthPanel } from '@/components/auth/AuthPanel';
 import heroBg from '@/assets/hero-bg.png';
 import heroVideo from '@/assets/hero-video.mp4';
 import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
@@ -32,9 +34,21 @@ const currencyAmounts: Record<string, number> = {
 export function HeroSection() {
   const { language, t } = useLanguage();
   const { currency } = useCurrency();
+  const { isAuthPanelOpen, closeAuthPanel, initialMode } = useAuthPanel();
   const videoRef = useRef<HTMLVideoElement>(null);
   const cloneRef = useRef<HTMLVideoElement>(null);
   const [showClone, setShowClone] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Handle window resize for mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -117,7 +131,18 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
 
         {/* Content Container */}
-        <div className="relative z-10 h-full flex flex-col justify-center items-start" style={{ paddingLeft: '5vw' }}>
+        <motion.div
+          className="relative z-10 h-full flex flex-col justify-center items-start"
+          style={{ paddingLeft: '5vw' }}
+          animate={{
+            x: isAuthPanelOpen ? (isMobile ? '0%' : '-6%') : '0%',
+            opacity: isAuthPanelOpen ? (isMobile ? 1 : 0.7) : 1,
+          }}
+          transition={{
+            duration: 0.4,
+            ease: [0.4, 0.0, 0.2, 1],
+          }}
+        >
 
           {/* Headline */}
           <motion.h1
@@ -209,8 +234,15 @@ export function HeroSection() {
               <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>{t('hero.stats.projectValue')}</div>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
 
+        {/* Auth Panel - Hero Variant */}
+        <AuthPanel
+          variant="hero"
+          isOpen={isAuthPanelOpen}
+          onClose={closeAuthPanel}
+          initialMode={initialMode}
+        />
       </div>
 
       {/* Google Reviews — edge-locked to hero's bottom-right border */}
