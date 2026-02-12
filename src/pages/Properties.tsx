@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { properties as mockProperties } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/supabase';
 import heroBg from '@/assets/hero-bg.png';
 import heroVideo from '@/assets/hero-video.mp4';
@@ -16,6 +17,7 @@ type FilterType = 'all' | 'rent' | 'sale';
 
 const Properties = () => {
   const { ref, isInView } = useInView();
+  const { t } = useLanguage();
   const videoRef = useRef<HTMLVideoElement>(null);
   const cloneRef = useRef<HTMLVideoElement>(null);
   const [showClone, setShowClone] = useState(false);
@@ -160,7 +162,7 @@ const Properties = () => {
                 transition={{ duration: 0.6 }}
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
               >
-                Find Your Perfect Property
+                {t('properties.findYourPerfect')}
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -168,7 +170,7 @@ const Properties = () => {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="text-white/70 text-lg max-w-2xl mx-auto"
               >
-                Browse our exclusive collection of properties for sale, rent, and investment opportunities.
+                {t('properties.browseDescription')}
               </motion.p>
             </div>
           </div>
@@ -188,7 +190,7 @@ const Properties = () => {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
                 <Input
                   type="text"
-                  placeholder="Search properties..."
+                  placeholder={t('properties.search')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 h-12 rounded-full border-2 focus:border-ukon-red"
@@ -207,19 +209,19 @@ const Properties = () => {
                       value="all"
                       className="data-[state=active]:bg-ukon-red data-[state=active]:text-white"
                     >
-                      All Properties
+                      {t('properties.allProperties')}
                     </TabsTrigger>
                     <TabsTrigger
                       value="rent"
                       className="data-[state=active]:bg-ukon-red data-[state=active]:text-white"
                     >
-                      For Rent
+                      {t('properties.forRent')}
                     </TabsTrigger>
                     <TabsTrigger
                       value="sale"
                       className="data-[state=active]:bg-ukon-red data-[state=active]:text-white"
                     >
-                      For Sale
+                      {t('properties.forSale')}
                     </TabsTrigger>
                   </TabsList>
                 </Tabs>
@@ -244,7 +246,7 @@ const Properties = () => {
                 className="text-center py-16"
               >
                 <p className="text-muted-foreground text-lg">
-                  No properties found matching your criteria.
+                  {t('properties.noPropertiesFound')}
                 </p>
               </motion.div>
             )}

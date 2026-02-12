@@ -4,6 +4,7 @@ import { MapPin, Heart } from 'lucide-react';
 import { Property } from '@/data/mockData';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface PropertyCardProps {
   property: Property;
@@ -16,19 +17,16 @@ const statusColors = {
   investment: 'bg-white/90 text-foreground',
 };
 
-const statusLabels = {
-  rent: 'For Rent',
-  sale: 'For Sell',
-  investment: 'For Investment',
+const statusLabelKeys = {
+  rent: 'properties.forRent',
+  sale: 'properties.forSell',
+  investment: 'properties.forInvestment',
 };
 
 export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
   const [isSaved, setIsSaved] = useState(false);
-  const { language } = useLanguage();
-
-  const formatPrice = (price: number) => {
-    return `$ ${(price || 0).toLocaleString()}`;
-  };
+  const { language, t } = useLanguage();
+  const { currency, formatPrice } = useCurrency();
 
   const handleSave = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -36,7 +34,7 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
     setIsSaved(!isSaved);
   };
 
-  const propertyStatus = (property.status || (property as any).price_type || 'sale') as keyof typeof statusLabels;
+  const propertyStatus = (property.status || (property as any).price_type || 'sale') as keyof typeof statusLabelKeys;
   const propertyTitle = property.title || 'Property Listing';
   const propertyImage = property.image || (property as any).image_url || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80';
   const propertySqft = property.sqft || (property as any).m2 || 0;
@@ -74,7 +72,7 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
           <div
             className={`absolute top-4 right-4 ${statusColors[propertyStatus] || 'bg-white/90'} px-4 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm`}
           >
-            {statusLabels[propertyStatus] || 'Available'}
+            {t(statusLabelKeys[propertyStatus]) || t('properties.available')}
           </div>
         </div>
 
@@ -123,7 +121,7 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
 
           {/* Price */}
           <p className="text-lg font-bold text-foreground pt-1">
-            {formatPrice(property.price)}
+            {formatPrice(property.price, currency, language)}
           </p>
         </div>
       </Link>
