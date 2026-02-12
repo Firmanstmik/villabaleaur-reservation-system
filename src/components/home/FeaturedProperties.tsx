@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { PropertyCard } from '@/components/PropertyCard';
 import { properties as mockProperties } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/supabase';
 
 export function FeaturedProperties() {
   const { ref, isInView } = useInView();
+  const { language } = useLanguage();
   const [displayProperties, setDisplayProperties] = useState<any[]>([]);
 
   useEffect(() => {
@@ -90,7 +92,7 @@ export function FeaturedProperties() {
             size="lg"
             className="bg-ukon-navy hover:bg-ukon-navy/90 text-white"
           >
-            <Link to="/properties">
+            <Link to={`/${language}/properties`}>
               View All Properties
               <ArrowRight className="ml-2" size={20} />
             </Link>

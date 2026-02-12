@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { MapPin, Heart } from 'lucide-react';
 import { Property } from '@/data/mockData';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface PropertyCardProps {
   property: Property;
@@ -23,6 +24,7 @@ const statusLabels = {
 
 export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
   const [isSaved, setIsSaved] = useState(false);
+  const { language } = useLanguage();
 
   const formatPrice = (price: number) => {
     return `$ ${(price || 0).toLocaleString()}`;
@@ -48,7 +50,7 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className="group"
     >
-      <Link to={`/property/${property.id}`} className="block">
+      <Link to={`/${language}/property/${property.id}`} className="block">
         {/* Image */}
         <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-3">
           <img

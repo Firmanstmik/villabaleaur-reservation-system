@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { whatsappUrl } from '@/data/mockData';
 import logoImage from '@/assets/Ukon-Estate.png';
 
@@ -27,8 +28,16 @@ const footerLinks = {
 };
 
 export function Footer() {
+  const { language } = useLanguage();
+
   const handleWhatsAppClick = () => {
     window.open(whatsappUrl, '_blank');
+  };
+
+  // Helper to add language prefix to paths
+  const getLocalizedPath = (path: string) => {
+    if (path === '#') return path;
+    return `/${language}${path}`;
   };
 
   return (
@@ -66,7 +75,7 @@ export function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
             {/* Brand Column */}
             <div className="lg:col-span-2">
-              <Link to="/" className="inline-block mb-6">
+              <Link to={getLocalizedPath('/')} className="inline-block mb-6">
                 <img src={logoImage} alt="UKON ESTATE Logo" className="h-16 w-auto object-contain brightness-0 invert" />
               </Link>
               <p className="text-white/70 mb-6 max-w-sm">
@@ -95,7 +104,7 @@ export function Footer() {
                 {footerLinks.company.map((link) => (
                   <li key={link.name}>
                     <Link
-                      to={link.path}
+                      to={getLocalizedPath(link.path)}
                       className="text-white/70 hover:text-ukon-red transition-colors"
                     >
                       {link.name}
@@ -112,7 +121,7 @@ export function Footer() {
                 {footerLinks.services.map((link) => (
                   <li key={link.name}>
                     <Link
-                      to={link.path}
+                      to={getLocalizedPath(link.path)}
                       className="text-white/70 hover:text-ukon-red transition-colors"
                     >
                       {link.name}
@@ -129,7 +138,7 @@ export function Footer() {
                 {footerLinks.resources.map((link) => (
                   <li key={link.name}>
                     <Link
-                      to={link.path}
+                      to={getLocalizedPath(link.path)}
                       className="text-white/70 hover:text-ukon-red transition-colors"
                     >
                       {link.name}

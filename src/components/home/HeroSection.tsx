@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
 import heroBg from '@/assets/hero-bg.png';
 import heroVideo from '@/assets/hero-video.mp4';
 import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
@@ -12,6 +13,7 @@ import afifahUkonPhoto from '@/assets/Afifah_Ukon.avif';
 import { stats } from '@/data/mockData';
 
 export function HeroSection() {
+  const { language } = useLanguage();
   const videoRef = useRef<HTMLVideoElement>(null);
   const cloneRef = useRef<HTMLVideoElement>(null);
   const [showClone, setShowClone] = useState(false);
@@ -147,7 +149,7 @@ export function HeroSection() {
               }}
               asChild
             >
-              <Link to="/properties">
+              <Link to={`/${language}/properties`}>
                 Explore Properties
                 <div
                   className="bg-black text-white rounded-full flex items-center justify-center transition-transform group-hover:bg-black/80"
