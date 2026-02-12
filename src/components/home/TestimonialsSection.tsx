@@ -4,9 +4,11 @@ import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { testimonials } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export function TestimonialsSection() {
   const { ref, isInView } = useInView();
+  const { t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextTestimonial = () => {
@@ -28,7 +30,7 @@ export function TestimonialsSection() {
             transition={{ duration: 0.5 }}
             className="inline-block px-4 py-2 bg-white/10 text-white rounded-full text-sm font-medium mb-4"
           >
-            Testimonials
+            {t('testimonials.testimonials')}
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -36,7 +38,7 @@ export function TestimonialsSection() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
           >
-            What Our Clients Say
+            {t('testimonials.whatOurClientsSay')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -44,7 +46,7 @@ export function TestimonialsSection() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-white/70 text-lg max-w-2xl mx-auto"
           >
-            Real stories from real clients who found their dream properties with UKON Estate.
+            {t('testimonials.realStories')}
           </motion.p>
         </div>
 

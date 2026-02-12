@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Store, Handshake, KeyRound, TrendingUp, SlidersHorizontal, Settings } from 'lucide-react';
 import { services } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const iconMap: Record<string, React.ReactNode> = {
   Home: <Store size={22} strokeWidth={1.5} />,
@@ -14,6 +15,7 @@ const iconMap: Record<string, React.ReactNode> = {
 
 export function ServicesSection() {
   const { ref, isInView } = useInView();
+  const { t } = useLanguage();
 
   return (
     <section id="services" className="py-20 lg:py-28 bg-white">
@@ -26,7 +28,7 @@ export function ServicesSection() {
             transition={{ duration: 0.5 }}
             className="inline-block px-5 py-1.5 border border-gray-300 rounded-full text-sm font-medium text-gray-700 mb-5"
           >
-            What We Do
+            {t('services.whatWeDo')}
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -34,9 +36,7 @@ export function ServicesSection() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-2xl md:text-3xl lg:text-[2.6rem] font-bold text-[#111827] uppercase leading-tight tracking-tight"
           >
-            EXPLORE OUR RANGE OF
-            <br />
-            EXPERT REAL ESTATE SERVICES
+            {t('services.exploreOurRange')}
           </motion.h2>
         </div>
 

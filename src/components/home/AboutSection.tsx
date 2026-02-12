@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Target, Eye, CheckCircle } from 'lucide-react';
 import { useInView } from '@/hooks/useInView';
 import { useCountUp } from '@/hooks/useCountUp';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useEffect } from 'react';
 
 function StatItem({ value, label, suffix = '', delay = 0 }: { value: number; label: string; suffix?: string; delay?: number }) {
@@ -26,6 +27,7 @@ function StatItem({ value, label, suffix = '', delay = 0 }: { value: number; lab
 
 export function AboutSection() {
   const { ref, isInView } = useInView();
+  const { t } = useLanguage();
 
   return (
     <section className="py-24 bg-secondary/30 overflow-hidden">
@@ -39,7 +41,7 @@ export function AboutSection() {
               transition={{ duration: 0.5 }}
               className="inline-block px-4 py-2 bg-ukon-red/10 text-ukon-red rounded-full text-sm font-medium mb-4"
             >
-              About UKON Estate
+              {t('about.aboutUkon')}
             </motion.span>
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -47,9 +49,9 @@ export function AboutSection() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6"
             >
-              Building Dreams,
+              {t('about.buildingDreams')}
               <br />
-              <span className="text-ukon-red">Creating Homes</span>
+              <span className="text-ukon-red">{t('about.creatingHomes')}</span>
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -57,9 +59,7 @@ export function AboutSection() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-muted-foreground text-lg mb-8"
             >
-              With years of experience in the real estate industry, UKON Estate has
-              helped countless families find their perfect homes. Our dedicated team
-              combines local expertise with global vision to deliver exceptional results.
+              {t('about.description')}
             </motion.p>
 
             {/* Stats */}
@@ -69,9 +69,9 @@ export function AboutSection() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="grid grid-cols-3 gap-6 mb-10"
             >
-              <StatItem value={15} label="Years Experience" suffix="+" delay={0} />
-              <StatItem value={500} label="Properties Sold" suffix="+" delay={200} />
-              <StatItem value={98} label="Client Satisfaction" suffix="%" delay={400} />
+              <StatItem value={15} label={t('about.yearsExperience')} suffix="+" delay={0} />
+              <StatItem value={500} label={t('about.propertiesSold')} suffix="+" delay={200} />
+              <StatItem value={98} label={t('about.clientSatisfaction')} suffix="%" delay={400} />
             </motion.div>
 
             {/* Vision & Mission Cards */}
@@ -85,10 +85,9 @@ export function AboutSection() {
                 <div className="w-12 h-12 bg-ukon-red/10 rounded-xl flex items-center justify-center text-ukon-red mb-4">
                   <Eye size={24} />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Our Vision</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('about.ourVision')}</h3>
                 <p className="text-muted-foreground text-sm">
-                  To be the most trusted real estate partner, transforming how people
-                  find and experience their dream properties.
+                  {t('about.visionStatement')}
                 </p>
               </motion.div>
 
@@ -101,10 +100,9 @@ export function AboutSection() {
                 <div className="w-12 h-12 bg-ukon-red/10 rounded-xl flex items-center justify-center text-ukon-red mb-4">
                   <Target size={24} />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Our Mission</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('about.ourMission')}</h3>
                 <p className="text-muted-foreground text-sm">
-                  To provide exceptional service, honest guidance, and innovative
-                  solutions that exceed client expectations.
+                  {t('about.missionStatement')}
                 </p>
               </motion.div>
             </div>
@@ -142,7 +140,7 @@ export function AboutSection() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-ukon-navy">100%</div>
-                  <div className="text-sm text-muted-foreground">Trusted Service</div>
+                  <div className="text-sm text-muted-foreground">{t('about.trustedService')}</div>
                 </div>
               </div>
             </motion.div>

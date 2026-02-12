@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useInView } from '@/hooks/useInView';
 import { useCountUp } from '@/hooks/useCountUp';
 import { whatsappUrl } from '@/data/mockData';
+import { useLanguage } from '@/contexts/LanguageContext';
 import heroBg from '@/assets/hero-bg.png';
 import heroVideo from '@/assets/hero-video.mp4';
 
@@ -30,29 +31,30 @@ function StatItem({ value, label, suffix = '', delay = 0 }: { value: number; lab
   );
 }
 
-const values = [
-  {
-    icon: Heart,
-    title: 'Client-Centric',
-    description: 'Your needs and dreams are at the heart of everything we do.',
-  },
-  {
-    icon: Award,
-    title: 'Excellence',
-    description: 'We strive for excellence in every transaction and interaction.',
-  },
-  {
-    icon: Users,
-    title: 'Integrity',
-    description: 'Honest, transparent, and ethical practices guide our business.',
-  },
-];
-
 const About = () => {
   const { ref, isInView } = useInView();
+  const { t } = useLanguage();
   const videoRef = useRef<HTMLVideoElement>(null);
   const cloneRef = useRef<HTMLVideoElement>(null);
   const [showClone, setShowClone] = useState(false);
+
+  const values = [
+    {
+      icon: Heart,
+      title: t('about.clientCentric'),
+      description: t('about.clientCentricDescription'),
+    },
+    {
+      icon: Award,
+      title: t('about.excellence'),
+      description: t('about.excellenceDescription'),
+    },
+    {
+      icon: Users,
+      title: t('about.integrity'),
+      description: t('about.integrityDescription'),
+    },
+  ];
 
   useEffect(() => {
     const video = videoRef.current;
@@ -143,7 +145,7 @@ const About = () => {
                 transition={{ duration: 0.5 }}
                 className="inline-block px-4 py-2 bg-white/10 text-white rounded-full text-sm font-medium mb-6"
               >
-                About Us
+                {t('navigation.about')}
               </motion.span>
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
@@ -151,9 +153,9 @@ const About = () => {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
               >
-                Building Dreams,
+                {t('about.buildingDreams')}
                 <br />
-                <span className="text-ukon-red">Creating Homes</span>
+                <span className="text-ukon-red">{t('about.creatingHomes')}</span>
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -161,8 +163,7 @@ const About = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-white/70 text-lg"
               >
-                For over 15 years, UKON Estate has been the trusted partner for families,
-                investors, and businesses looking to find their perfect property.
+                {t('about.longDescription')}
               </motion.p>
             </div>
           </div>
@@ -172,10 +173,10 @@ const About = () => {
         <section className="py-16 bg-secondary/30">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <StatItem value={15} label="Years Experience" suffix="+" delay={0} />
-              <StatItem value={500} label="Properties Sold" suffix="+" delay={100} />
-              <StatItem value={200} label="Happy Clients" suffix="+" delay={200} />
-              <StatItem value={98} label="Client Satisfaction" suffix="%" delay={300} />
+              <StatItem value={15} label={t('about.yearsExperience')} suffix="+" delay={0} />
+              <StatItem value={500} label={t('about.propertiesSold')} suffix="+" delay={100} />
+              <StatItem value={200} label={t('hero.stats.happyClients')} suffix="+" delay={200} />
+              <StatItem value={98} label={t('about.clientSatisfaction')} suffix="%" delay={300} />
             </div>
           </div>
         </section>
@@ -191,22 +192,16 @@ const About = () => {
                 transition={{ duration: 0.6 }}
               >
                 <span className="inline-block px-4 py-2 bg-ukon-red/10 text-ukon-red rounded-full text-sm font-medium mb-4">
-                  Our Story
+                  {t('about.pageSubheadline')}
                 </span>
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  A Legacy of Excellence in Real Estate
+                  {t('about.pageTitle')}
                 </h2>
                 <p className="text-muted-foreground text-lg mb-6">
-                  Founded with a passion for helping people find their dream homes, UKON Estate 
-                  has grown from a small local agency to one of the most trusted names in real estate. 
-                  Our journey has been defined by our commitment to excellence, integrity, and 
-                  client satisfaction.
+                  {t('about.foundedDescription')}
                 </p>
                 <p className="text-muted-foreground text-lg">
-                  Today, we continue to build on our legacy, combining traditional values with 
-                  innovative technology to deliver exceptional real estate experiences. Our team 
-                  of dedicated professionals brings local expertise and global perspective to 
-                  every transaction.
+                  {t('about.todayDescription')}
                 </p>
               </motion.div>
 
@@ -235,7 +230,7 @@ const About = () => {
                     </div>
                     <div>
                       <div className="text-2xl font-bold text-ukon-navy">15+</div>
-                      <div className="text-sm text-muted-foreground">Years of Trust</div>
+                      <div className="text-sm text-muted-foreground">{t('about.pageHeadline')}</div>
                     </div>
                   </div>
                 </motion.div>
@@ -258,11 +253,9 @@ const About = () => {
                 <div className="w-16 h-16 bg-ukon-red/10 rounded-2xl flex items-center justify-center text-ukon-red mb-6">
                   <Eye size={32} />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
+                <h3 className="text-2xl font-bold mb-4">{t('about.ourVision')}</h3>
                 <p className="text-muted-foreground text-lg leading-relaxed">
-                  To be the most trusted and innovative real estate company, transforming how 
-                  people discover, buy, sell, and experience properties. We envision a world 
-                  where finding your dream home is an exciting, seamless journey.
+                  {t('about.visionLongStatement')}
                 </p>
               </motion.div>
 
@@ -276,12 +269,9 @@ const About = () => {
                 <div className="w-16 h-16 bg-ukon-red/10 rounded-2xl flex items-center justify-center text-ukon-red mb-6">
                   <Target size={32} />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
+                <h3 className="text-2xl font-bold mb-4">{t('about.ourMission')}</h3>
                 <p className="text-muted-foreground text-lg leading-relaxed">
-                  To provide exceptional real estate services through honest guidance, 
-                  innovative solutions, and personalized attention. We are committed to 
-                  exceeding client expectations while building lasting relationships 
-                  based on trust and results.
+                  {t('about.missionLongStatement')}
                 </p>
               </motion.div>
             </div>
@@ -299,10 +289,10 @@ const About = () => {
               className="text-center mb-16"
             >
               <span className="inline-block px-4 py-2 bg-ukon-red/10 text-ukon-red rounded-full text-sm font-medium mb-4">
-                Our Values
+                {t('about.ourValues')}
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                What Drives Us Every Day
+                {t('about.whatDrivesUs')}
               </h2>
             </motion.div>
 
@@ -339,10 +329,10 @@ const About = () => {
               className="text-center"
             >
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-                Ready to Work With Us?
+                {t('about.readyToWorkWithUs')}
               </h2>
               <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
-                Let's start your real estate journey together. Contact us today!
+                {t('about.letStartJourney')}
               </p>
               <Button
                 onClick={handleWhatsAppClick}
@@ -350,7 +340,7 @@ const About = () => {
                 className="bg-ukon-red hover:bg-ukon-red/90 text-white glow-effect flex items-center gap-2 mx-auto"
               >
                 <span className="blink-dot" />
-                Contact Us Now
+                {t('navigation.contactUsNow')}
               </Button>
             </motion.div>
           </div>
