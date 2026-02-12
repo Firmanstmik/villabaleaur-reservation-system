@@ -58,14 +58,14 @@ const Account = () => {
   // Redirect agents and non-authenticated users
   useEffect(() => {
     if (!user) {
-      navigate('/');
+      navigate(`/${language}/`);
       return;
     }
     if (userType === 'agent') {
-      navigate('/dashboard');
+      navigate(`/${language}/dashboard`);
       return;
     }
-  }, [user, userType, navigate]);
+  }, [user, userType, navigate, language]);
 
   // Load user data
   useEffect(() => {
@@ -190,7 +190,7 @@ const Account = () => {
     try {
       await signOut();
       toast.success('Logged out successfully');
-      navigate('/');
+      navigate(`/${language}/`);
     } catch (error) {
       toast.error('Failed to log out');
     }
@@ -259,7 +259,7 @@ const Account = () => {
                   <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
                   <p className="text-muted-foreground">{t('account.noSavedProperties')}</p>
                   <Button
-                    onClick={() => navigate('/properties')}
+                    onClick={() => navigate(`/${language}/properties`)}
                     className="mt-4 bg-ukon-navy hover:bg-ukon-navy/90"
                   >
                     {t('account.browseProperties')}

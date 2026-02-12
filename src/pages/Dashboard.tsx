@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import AddPropertyForm from '@/components/admin/AddPropertyForm';
@@ -27,6 +28,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<Tab>('overview');
     const navigate = useNavigate();
+    const { language } = useLanguage();
 
     const [properties, setProperties] = useState<any[]>([]);
     const [statsLoading, setStatsLoading] = useState(true);
@@ -51,14 +53,14 @@ const Dashboard = () => {
         const checkUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
-                navigate('/');
+                navigate(`/${language}/`);
             } else {
                 // Check if user is agent type - only agents can access dashboard
                 const userType = user.user_metadata?.user_type;
                 if (userType !== 'agent') {
                     // Buyer users cannot access dashboard
                     toast.error('This page is for agents only');
-                    navigate('/');
+                    navigate(`/${language}/`);
                     return;
                 }
                 setUser(user);
@@ -68,7 +70,7 @@ const Dashboard = () => {
         };
 
         checkUser();
-    }, [navigate]);
+    }, [navigate, language]);
 
     // Refresh data when switching back to overview or listings
     useEffect(() => {
@@ -80,7 +82,7 @@ const Dashboard = () => {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         toast.success('Logged out successfully');
-        navigate('/');
+        navigate(`/${language}/`);
     };
 
     if (loading) {

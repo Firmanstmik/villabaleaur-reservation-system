@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 /**
  * Legacy Login page - redirects to home
@@ -7,12 +8,13 @@ import { useNavigate } from 'react-router-dom';
  */
 const Login = () => {
   const navigate = useNavigate();
+  const { language } = useLanguage();
 
   useEffect(() => {
     // Redirect to home page
     // The authentication modal is available via the "Sign In" button in the navbar
-    navigate('/');
-  }, [navigate]);
+    navigate(`/${language}/`);
+  }, [navigate, language]);
 
   return null;
 };
