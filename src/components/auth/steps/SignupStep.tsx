@@ -11,6 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SignupStepProps {
   email: string;
@@ -22,15 +23,15 @@ interface SignupStepProps {
   onClose: () => void;
 }
 
-const formatErrorMessage = (error: any): string => {
+const formatErrorMessage = (error: any, t: any): string => {
   const message = error?.message || '';
   if (message.includes('User already registered')) {
-    return 'This email is already registered. Try signing in instead.';
+    return t('auth.signup.userAlreadyRegistered');
   }
   if (message.includes('Password should be at least')) {
-    return 'Password must be at least 8 characters long.';
+    return t('auth.signup.passwordShortError');
   }
-  return message || 'An unexpected error occurred. Please try again.';
+  return message || t('auth.signup.unexpectedError');
 };
 
 export default function SignupStep({
@@ -42,6 +43,7 @@ export default function SignupStep({
   onBack,
   onClose,
 }: SignupStepProps) {
+  const { t } = useLanguage();
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState<'buyer' | 'agent'>('buyer');
@@ -56,17 +58,17 @@ export default function SignupStep({
     e.preventDefault();
 
     if (!name.trim()) {
-      setError('Please enter your full name');
+      setError(t('auth.signup.emptyName'));
       return;
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters long');
+      setError(t('auth.signup.invalidPassword'));
       return;
     }
 
     if (!agreedToTerms) {
-      setError('Please agree to the Terms of Service and Privacy Policy');
+      setError(t('auth.signup.agreeToTermsRequired'));
       return;
     }
 
@@ -79,7 +81,7 @@ export default function SignupStep({
         user_type: userType,
       });
 
-      toast.success('Account created! Check your email to verify.');
+      toast.success(t('auth.signup.accountCreated'));
 
       // Close modal and navigate based on user type
       onSuccess();
@@ -91,7 +93,7 @@ export default function SignupStep({
         setTimeout(() => navigate('/'), 300);
       }
     } catch (err: any) {
-      setError(formatErrorMessage(err));
+      setError(formatErrorMessage(err, t));
       setLoading(false);
     }
   };
@@ -109,7 +111,7 @@ export default function SignupStep({
         className="flex items-center gap-2 text-sm text-muted-foreground mb-6 hover:text-foreground transition-colors disabled:opacity-50"
       >
         <ArrowLeft size={16} />
-        Back
+        {t('auth.signup.back')}
       </motion.button>
 
       {/* Header */}
@@ -119,8 +121,8 @@ export default function SignupStep({
         transition={{ delay: 0.1 }}
         className="mb-8"
       >
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Create your account</h2>
-        <p className="text-muted-foreground mt-1 text-sm sm:text-base">Join UKON Estate today</p>
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">{t('auth.signup.createYourAccount')}</h2>
+        <p className="text-muted-foreground mt-1 text-sm sm:text-base">{t('auth.signup.joinUkonEstate')}</p>
       </motion.div>
 
       {/* Error Alert */}
@@ -148,12 +150,12 @@ export default function SignupStep({
         {/* Full Name */}
         <div className="space-y-2">
           <Label htmlFor="name" className="text-sm font-medium">
-            Full name
+            {t('auth.signup.fullName')}
           </Label>
           <Input
             id="name"
             type="text"
-            placeholder="John Doe"
+            placeholder={t('auth.signup.fullNamePlaceholder')}
             className="h-12 rounded-xl text-base transition-all focus:ring-2 focus:ring-ukon-navy"
             value={name}
             onChange={(e) => {
@@ -168,7 +170,7 @@ export default function SignupStep({
         {/* Email (Disabled) */}
         <div className="space-y-2">
           <Label htmlFor="signup-email" className="text-sm font-medium">
-            Email
+            {t('auth.signup.email')}
           </Label>
           <Input
             id="signup-email"
@@ -182,12 +184,12 @@ export default function SignupStep({
         {/* Password */}
         <div className="space-y-2">
           <Label htmlFor="signup-password" className="text-sm font-medium">
-            Create password
+            {t('auth.signup.createPassword')}
           </Label>
           <Input
             id="signup-password"
             type="password"
-            placeholder="Min. 8 characters"
+            placeholder={t('auth.signup.createPasswordPlaceholder')}
             className="h-12 rounded-xl text-base transition-all focus:ring-2 focus:ring-ukon-navy"
             value={password}
             onChange={(e) => {
@@ -197,20 +199,20 @@ export default function SignupStep({
             disabled={isLoading}
           />
           <p className="text-xs text-muted-foreground mt-1">
-            Must be at least 8 characters long
+            {t('auth.signup.passwordMinLength')}
           </p>
         </div>
 
         {/* User Type Selection (REQUIRED) */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">I am a...</Label>
+          <Label className="text-sm font-medium">{t('auth.signup.iAm')}</Label>
           <RadioGroup value={userType} onValueChange={(value) => setUserType(value as 'buyer' | 'agent')}>
             {/* Buyer Option */}
             <div className="flex items-start space-x-3 border border-border rounded-xl p-4 cursor-pointer hover:bg-secondary/50 transition-colors">
               <RadioGroupItem value="buyer" id="buyer" className="mt-1" />
               <Label htmlFor="buyer" className="flex-1 cursor-pointer">
-                <div className="font-semibold text-base">Buyer/Renter</div>
-                <p className="text-xs text-muted-foreground">Looking for properties</p>
+                <div className="font-semibold text-base">{t('auth.signup.buyerRenter')}</div>
+                <p className="text-xs text-muted-foreground">{t('auth.signup.buyerRenterDescription')}</p>
               </Label>
             </div>
 
@@ -218,8 +220,8 @@ export default function SignupStep({
             <div className="flex items-start space-x-3 border border-border rounded-xl p-4 cursor-pointer hover:bg-secondary/50 transition-colors">
               <RadioGroupItem value="agent" id="agent" className="mt-1" />
               <Label htmlFor="agent" className="flex-1 cursor-pointer">
-                <div className="font-semibold text-base">Agent/Seller</div>
-                <p className="text-xs text-muted-foreground">Listing properties</p>
+                <div className="font-semibold text-base">{t('auth.signup.agentSeller')}</div>
+                <p className="text-xs text-muted-foreground">{t('auth.signup.agentSellerDescription')}</p>
               </Label>
             </div>
           </RadioGroup>
@@ -238,13 +240,13 @@ export default function SignupStep({
             className="mt-1"
           />
           <Label htmlFor="terms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-            I agree to UKON Estate's{' '}
+            {t('auth.signup.agreeToTerms')}{' '}
             <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-ukon-navy hover:underline">
-              Terms of Service
+              {t('auth.signup.termsOfService')}
             </a>
-            {' '}and{' '}
+            {' and '}
             <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-ukon-navy hover:underline">
-              Privacy Policy
+              {t('auth.signup.privacyPolicy')}
             </a>
           </Label>
         </div>
@@ -277,10 +279,10 @@ export default function SignupStep({
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              Creating Account...
+              {t('auth.signup.creatingAccount')}
             </>
           ) : (
-            'Create Account'
+            t('auth.signup.createAccountButton')
           )}
         </Button>
       </motion.form>
@@ -292,7 +294,7 @@ export default function SignupStep({
         transition={{ delay: 0.3 }}
         className="text-center text-xs text-muted-foreground"
       >
-        Protected by industry-standard encryption
+        {t('auth.signup.secureEncryption')}
       </motion.div>
     </div>
   );

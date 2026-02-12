@@ -79,6 +79,7 @@ const PropertyDetail = () => {
                         surfaceArea: data.surface_area || data.surfaceArea,
                         yearBuilt: data.year_built || data.yearBuilt,
                         listingCode: data.listing_code || data.listingCode,
+                        description: data.description || data.description,
                         nearbyAmenities: data.nearby_amenities || data.nearbyAmenities,
                         images: data.images || [data.image_url || data.image]
                     };
@@ -177,7 +178,7 @@ const PropertyDetail = () => {
                                             className="rounded-full gap-2 border-border hover:bg-secondary px-6 h-11 bg-white shadow-sm"
                                         >
                                             <Share2 size={18} />
-                                            <span>Share</span>
+                                            <span>{t('propertyDetail.share')}</span>
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-64 p-3 rounded-2xl border-border shadow-2xl bg-card" align="end">
@@ -294,7 +295,7 @@ const PropertyDetail = () => {
                                             setIsLightboxOpen(true);
                                         }}
                                     >
-                                        Show all photos ({property.images.length})
+                                        {t('propertyDetail.showAllPhotos')} ({property.images.length})
                                     </div>
                                 )}
                             </div>
@@ -313,24 +314,30 @@ const PropertyDetail = () => {
                         <div className="lg:w-2/3 space-y-12">
                             {/* Description */}
                             <section>
-                                <h3 className="text-2xl font-bold mb-6">Description</h3>
+                                <h3 className="text-2xl font-bold mb-6">{t('propertyDetail.description')}</h3>
                                 <div className="prose prose-slate max-w-none text-muted-foreground text-lg leading-relaxed">
-                                    <p>
-                                        Experience the pinnacle of luxury living in this exquisite {property.title.toLowerCase()}.
-                                        Nestled in a prime location, this property offers a rare
-                                        combination of modern design, unmatched comfort, and strategic location.
-                                    </p>
-                                    <p className="mt-4">
-                                        The interior boasts high ceilings, floor-to-ceiling windows that flood the rooms with natural light,
-                                        and premium finishes throughout. Whether you're looking for a permanent residence or an
-                                        investment opportunity, this property delivers on every front.
-                                    </p>
+                                    {property.description ? (
+                                        <p>{property.description}</p>
+                                    ) : (
+                                        <>
+                                            <p>
+                                                Experience the pinnacle of luxury living in this exquisite {property.title.toLowerCase()}.
+                                                Nestled in a prime location, this property offers a rare
+                                                combination of modern design, unmatched comfort, and strategic location.
+                                            </p>
+                                            <p className="mt-4">
+                                                The interior boasts high ceilings, floor-to-ceiling windows that flood the rooms with natural light,
+                                                and premium finishes throughout. Whether you're looking for a permanent residence or an
+                                                investment opportunity, this property delivers on every front.
+                                            </p>
+                                        </>
+                                    )}
                                 </div>
                             </section>
 
                             {/* Property Details & Amenities */}
                             <section>
-                                <h3 className="text-2xl font-bold mb-8">Home Info & Amenities</h3>
+                                <h3 className="text-2xl font-bold mb-8">{t('propertyDetail.homeInfoAmenities')}</h3>
                                 <div className="space-y-10">
                                     {/* Features Grid */}
                                     <div className="space-y-4">
@@ -356,7 +363,7 @@ const PropertyDetail = () => {
                                         <div className="space-y-4">
                                             <h4 className="text-lg font-bold text-[#0e2e50] flex items-center gap-2">
                                                 <div className="w-1 h-6 bg-[#0e2e50] rounded-full" />
-                                                Nearby Points of Interest
+                                                {t('propertyDetail.nearbyPointsOfInterest')}
                                             </h4>
                                             <NearbyAmenities
                                                 amenities={property.nearbyAmenities || property.nearby_amenities}
@@ -369,7 +376,7 @@ const PropertyDetail = () => {
                                         <div className="space-y-4">
                                             <h4 className="text-lg font-bold text-[#0e2e50] flex items-center gap-2">
                                                 <div className="w-1 h-6 bg-[#0e2e50] rounded-full" />
-                                                Nearby Points of Interest
+                                                {t('propertyDetail.nearbyPointsOfInterest')}
                                             </h4>
                                             <NearbyAmenities
                                                 amenities={undefined}
@@ -383,7 +390,7 @@ const PropertyDetail = () => {
                             {/* Location (Mapbox Interactive Map) */}
                             <section>
                                 <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-2xl font-bold">Location</h3>
+                                    <h3 className="text-2xl font-bold">{t('propertyDetail.location')}</h3>
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -391,7 +398,7 @@ const PropertyDetail = () => {
                                         onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.address)}`, '_blank')}
                                     >
                                         <MapPin size={16} />
-                                        Open in Google Maps
+                                        {t('propertyDetail.openInGoogleMaps')}
                                     </Button>
                                 </div>
                                 {property.latitude && property.longitude ? (
@@ -406,7 +413,7 @@ const PropertyDetail = () => {
                                     <div className="w-full aspect-video rounded-3xl bg-muted flex items-center justify-center border border-border">
                                         <div className="text-center text-muted-foreground">
                                             <MapPin size={32} className="mx-auto mb-2" />
-                                            <p className="font-medium">Location coordinates not available</p>
+                                            <p className="font-medium">{t('propertyDetail.locationCoordinatesNotAvailable')}</p>
                                         </div>
                                     </div>
                                 )}
@@ -436,12 +443,12 @@ const PropertyDetail = () => {
                                     </div>
                                     <div className="relative z-10 flex-1">
                                         <h5 className="font-black text-sm uppercase tracking-wider mb-0.5 leading-none">
-                                            {property.isUkonAgent ? 'Ukon Estate Agent' : 'Verified Listing'}
+                                            {property.isUkonAgent ? t('propertyDetail.ukonEstateAgent') : t('propertyDetail.verifiedListing')}
                                         </h5>
                                         <p className={`text-xs ${property.isUkonAgent ? 'text-white/80' : 'text-muted-foreground'}`}>
                                             {property.isUkonAgent
-                                                ? 'Official company representative'
-                                                : 'Secure and verified property'}
+                                                ? t('propertyDetail.officialCompanyRepresentative')
+                                                : t('propertyDetail.secureAndVerified')}
                                         </p>
                                     </div>
 
@@ -478,25 +485,25 @@ const PropertyDetail = () => {
                                     </div>
 
                                     <div className="space-y-6">
-                                        <h4 className="text-lg font-bold border-b border-border pb-2">Overview</h4>
+                                        <h4 className="text-lg font-bold border-b border-border pb-2">{t('propertyDetail.overview')}</h4>
                                         <div className="space-y-4">
                                             {[
-                                                { label: 'Property code', value: property.listingCode },
-                                                { label: 'Ownership', value: property.ownership },
-                                                { label: 'Year of construction', value: property.yearBuilt },
-                                                { label: 'Building area', value: property.buildingArea },
-                                                { label: 'Surface area', value: property.surfaceArea },
-                                                { label: 'Status', value: property.status === 'investment' ? 'For Investment' : 'Available' },
+                                                { labelKey: 'propertyDetail.propertyCode', value: property.listingCode },
+                                                { labelKey: 'propertyDetail.ownership', value: property.ownership },
+                                                { labelKey: 'propertyDetail.yearOfConstruction', value: property.yearBuilt },
+                                                { labelKey: 'propertyDetail.buildingArea', value: property.buildingArea },
+                                                { labelKey: 'propertyDetail.surfaceArea', value: property.surfaceArea },
+                                                { labelKey: 'propertyDetail.status', value: property.status === 'investment' ? t('properties.forInvestment') : t('properties.available') },
                                             ].map((item) => (
-                                                <div key={item.label} className="flex justify-between text-sm">
-                                                    <span className="text-muted-foreground">{item.label}</span>
+                                                <div key={item.labelKey} className="flex justify-between text-sm">
+                                                    <span className="text-muted-foreground">{t(item.labelKey)}</span>
                                                     <span className="font-bold text-foreground">{item.value || 'N/A'}</span>
                                                 </div>
                                             ))}
                                         </div>
 
                                         <div className="pt-6 border-t border-border">
-                                            <h4 className="text-lg font-bold mb-4">Contact agent</h4>
+                                            <h4 className="text-lg font-bold mb-4">{t('propertyDetail.contactAgent')}</h4>
                                             <div className="flex items-center gap-4 mb-6">
                                                 <div className="w-14 h-14 rounded-full bg-secondary overflow-hidden shrink-0 border-2 border-[#0e2e50]/20 p-0.5">
                                                     <img
@@ -520,7 +527,7 @@ const PropertyDetail = () => {
                                                 >
                                                     <Button className="w-full bg-[#075e54] hover:bg-[#128c7e] text-white rounded-xl h-14 gap-2 text-lg font-bold shadow-lg shadow-green-900/10">
                                                         <MessageCircle size={24} />
-                                                        WhatsApp Agent
+                                                        {t('propertyDetail.whatsappAgent')}
                                                     </Button>
                                                 </a>
                                             </div>

@@ -12,7 +12,7 @@
     "logout": "Cerrar Sesión"
   },
   "hero": {
-    "headline": "DONDE LOS SUEÑOS SE HACEN REALIDAD.",
+    "headline": "DONDE LOS SUEÑOS|SE HACEN REALIDAD.",
     "subheadline": "Proporcionamos soluciones inmobiliarias personalizadas, guiándolo en cada paso con experiencias personalizadas que satisfacen sus necesidades y aspiraciones únicas.",
     "exploreProperties": "Explorar Propiedades",
     "stats": {
@@ -56,7 +56,7 @@
     "facebook": "Facebook",
     "x": "X",
     "linkedIn": "LinkedIn",
-    "pricingStartingFrom": "Precios desde",
+    "pricingStartingFrom": "Precio",
     "perMonth": "/mes",
     "overview": "Resumen",
     "propertyCode": "Código de Propiedad",
@@ -81,15 +81,23 @@
     "whatWeDo": "Lo Que Hacemos",
     "exploreOurRange": "EXPLORE NUESTRO RANGO DE SERVICIOS INMOBILIARIOS EXPERTOS",
     "propertySales": "Ventas de Propiedades",
+    "propertySalesDescription": "Orientación experta a través de todo el proceso de venta, desde la inclusión hasta el cierre. Maximizamos el valor de su propiedad con marketing estratégico.",
+    "buyerRepresentation": "Representación del Comprador",
+    "buyerRepresentationDescription": "Apoyo dedicado para encontrar su hogar perfecto. Negociamos los mejores acuerdos y aseguramos una experiencia de compra sin problemas.",
     "rentalManagement": "Gestión de Alquileres",
+    "rentalManagementDescription": "Servicios de alquiler completos para propietarios e inquilinos. Desde la selección hasta el mantenimiento, lo manejamos todo.",
     "investmentConsulting": "Consultoría de Inversiones",
-    "propertyValuation": "Valoración de Propiedades"
+    "investmentConsultingDescription": "Asesoramiento estratégico para inversiones inmobiliarias. Identificamos oportunidades que generan fuertes rendimientos.",
+    "propertyValuation": "Valoración de Propiedades",
+    "propertyValuationDescription": "Valuaciones de mercado precisas respaldadas por datos y experiencia local. Conozca el valor real de su propiedad.",
+    "tailoredSolutions": "Soluciones Personalizadas",
+    "tailoredSolutionsDescription": "Soluciones inmobiliarias personalizadas para necesidades únicas. Ya sea reubicación o reducción de tamaño, nos adaptamos a usted."
   },
   "about": {
-    "aboutUkon": "Acerca de UKON Estate",
+    "aboutUkon": "Acerca de Ukon Estate",
     "buildingDreams": "Construyendo Sueños,",
     "creatingHomes": "Creando Hogares",
-    "description": "Con años de experiencia en la industria inmobiliaria, UKON Estate ha ayudado a innumerables familias a encontrar sus hogares perfectos. Nuestro equipo dedicado combina experiencia local con una visión global para ofrecer resultados excepcionales.",
+    "description": "Con años de experiencia en la industria inmobiliaria, Ukon Estate ha ayudado a innumerables familias a encontrar sus hogares perfectos. Nuestro equipo dedicado combina experiencia local con una visión global para ofrecer resultados excepcionales.",
     "yearsExperience": "Años de Experiencia",
     "propertiesSold": "Propiedades Vendidas",
     "clientSatisfaction": "Satisfacción del Cliente",
@@ -98,11 +106,11 @@
     "visionStatement": "Ser el socio inmobiliario más confiable, transformando la forma en que las personas encuentran y experimentan sus propiedades de ensueño.",
     "ourMission": "Nuestra Misión",
     "missionStatement": "Proporcionar un servicio excepcional, orientación honesta y soluciones innovadoras que excedan las expectativas de los clientes.",
-    "longDescription": "Durante más de 15 años, UKON Estate ha sido el socio de confianza para familias, inversores y empresas que buscan encontrar su propiedad perfecta.",
+    "longDescription": "Durante más de 15 años, Ukon Estate ha sido el socio de confianza para familias, inversores y empresas que buscan encontrar su propiedad perfecta.",
     "pageHeadline": "Años de Confianza",
     "pageSubheadline": "Nuestra Historia",
     "pageTitle": "Un Legado de Excelencia en Bienes Raíces",
-    "foundedDescription": "Fundada con la pasión de ayudar a las personas a encontrar sus hogares de ensueño, UKON Estate ha crecido de una pequeña agencia local a uno de los nombres más confiables en bienes raíces. Nuestro viaje ha estado definido por nuestro compromiso con la excelencia, la integridad y la satisfacción del cliente.",
+    "foundedDescription": "Fundada con la pasión de ayudar a las personas a encontrar sus hogares de ensueño, Ukon Estate ha crecido de una pequeña agencia local a uno de los nombres más confiables en bienes raíces. Nuestro viaje ha estado definido por nuestro compromiso con la excelencia, la integridad y la satisfacción del cliente.",
     "todayDescription": "Hoy continuamos desarrollando nuestro legado, combinando valores tradicionales con tecnología innovadora para ofrecer experiencias inmobiliarias excepcionales. Nuestro equipo de profesionales dedicados aporta experiencia local y perspectiva global a cada transacción.",
     "ourValues": "Nuestros Valores",
     "whatDrivesUs": "Qué Nos Impulsa Cada Día",
@@ -129,7 +137,24 @@
   "testimonials": {
     "testimonials": "Testimonios",
     "whatOurClientsSay": "Lo Que Dicen Nuestros Clientes",
-    "realStories": "Historias reales de clientes reales que encontraron sus propiedades de ensueño con UKON Estate."
+    "realStories": "Historias reales de clientes reales que encontraron sus propiedades de ensueño con Ukon Estate."
+  },
+  "blog": {
+    "ourBlog": "Nuestro Blog",
+    "headline": "Perspectivas Inmobiliarias",
+    "subheadline": "Manténgase informado con las últimas tendencias, consejos e ideas del mundo de los bienes raíces.",
+    "searchPlaceholder": "Buscar artículos...",
+    "categoryAll": "Todos",
+    "categoryBuying": "Compra",
+    "categorySelling": "Venta",
+    "categoryInvesting": "Inversión",
+    "categoryMarket": "Mercado",
+    "readMore": "Leer Más",
+    "noArticlesFound": "No se encontraron artículos que coincidan con sus criterios.",
+    "stayUpdated": "Manténgase Actualizado",
+    "subscriberDescription": "Suscríbase a nuestro boletín para obtener las últimas perspectivas inmobiliarias, actualizaciones del mercado y consejos exclusivos.",
+    "emailPlaceholder": "Ingrese su correo electrónico",
+    "subscribe": "Suscribirse"
   },
   "account": {
     "myAccount": "Mi Cuenta",
@@ -161,30 +186,87 @@
     "myListings": "Mis Listados"
   },
   "auth": {
-    "welcome": "Bienvenido a UKON Estate",
-    "signInDescription": "Inicie sesión para guardar propiedades y obtener recomendaciones personalizadas",
-    "signUpDescription": "Cree una cuenta para comenzar su viaje inmobiliario",
-    "emailAddress": "Dirección de Correo Electrónico",
-    "emailPlaceholder": "usted@ejemplo.com",
-    "continue": "Continuar",
-    "checking": "Comprobando...",
-    "dontHaveAccount": "¿No tiene cuenta?",
-    "alreadyHaveAccount": "¿Ya tiene cuenta?",
-    "signUp": "Registrarse",
-    "signIn": "Iniciar Sesión",
-    "invalidEmail": "Por favor, ingrese una dirección de correo electrónico válida",
-    "enterPassword": "Ingrese su contraseña",
-    "password": "Contraseña",
-    "forgotPassword": "¿Olvidó su contraseña?",
-    "signingIn": "Iniciando sesión...",
-    "useMagicLink": "Usar enlace mágico en su lugar",
-    "incorrectCredentials": "Correo electrónico o contraseña incorrectos. Por favor, inténtelo de nuevo.",
-    "verifyEmail": "Por favor, verifique su dirección de correo electrónico antes de iniciar sesión.",
-    "unexpectedError": "Ocurrió un error inesperado. Por favor, inténtelo de nuevo.",
-    "passwordResetComing": "La restablecimiento de contraseña llega pronto",
-    "successfulLogout": "Sesión cerrada correctamente",
-    "failedLogout": "Error al cerrar sesión. Por favor, inténtelo de nuevo.",
-    "welcomeBack": "¡Bienvenido de vuelta!"
+    "email": {
+      "welcome": "Bienvenido a UKON Estate",
+      "signInDescription": "Inicie sesión para guardar propiedades y obtener recomendaciones personalizadas",
+      "signUpDescription": "Cree una cuenta para comenzar su viaje inmobiliario",
+      "emailAddress": "Dirección de Correo Electrónico",
+      "emailPlaceholder": "usted@ejemplo.com",
+      "continue": "Continuar",
+      "checking": "Comprobando...",
+      "invalidEmail": "Por favor, ingrese una dirección de correo electrónico válida",
+      "dontHaveAccount": "¿No tiene cuenta?",
+      "alreadyHaveAccount": "¿Ya tiene cuenta?",
+      "signUp": "Registrarse",
+      "signIn": "Iniciar Sesión"
+    },
+    "password": {
+      "back": "Atrás",
+      "enterYourPassword": "Ingrese su contraseña",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Ingrese su contraseña",
+      "forgotPassword": "¿Olvidó su contraseña?",
+      "passwordResetComing": "El restablecimiento de contraseña próximamente",
+      "signingIn": "Iniciando sesión...",
+      "signInButton": "Iniciar Sesión",
+      "useMagicLink": "Usar enlace mágico en su lugar",
+      "incorrectCredentials": "Correo electrónico o contraseña incorrectos. Por favor, inténtelo de nuevo.",
+      "verifyEmail": "Por favor, verifique su dirección de correo electrónico antes de iniciar sesión.",
+      "unexpectedError": "Ocurrió un error inesperado. Por favor, inténtelo de nuevo.",
+      "enterPasswordRequired": "Por favor, ingrese su contraseña"
+    },
+    "signup": {
+      "back": "Atrás",
+      "createYourAccount": "Cree su cuenta",
+      "joinUkonEstate": "Únase a UKON Estate hoy",
+      "fullName": "Nombre completo",
+      "fullNamePlaceholder": "Juan Pérez",
+      "email": "Correo Electrónico",
+      "createPassword": "Crear contraseña",
+      "createPasswordPlaceholder": "Mín. 8 caracteres",
+      "passwordMinLength": "Debe tener al menos 8 caracteres",
+      "iAm": "Yo soy un...",
+      "buyerRenter": "Comprador/Inquilino",
+      "buyerRenterDescription": "Buscando propiedades",
+      "agentSeller": "Agente/Vendedor",
+      "agentSellerDescription": "Listando propiedades",
+      "agreeToTerms": "Estoy de acuerdo con los",
+      "termsOfService": "Términos de Servicio",
+      "privacyPolicy": "Política de Privacidad",
+      "creatingAccount": "Creando Cuenta...",
+      "createAccountButton": "Crear Cuenta",
+      "secureEncryption": "Protegido por encriptación de estándar industrial",
+      "accountCreated": "¡Cuenta creada! Revise su correo electrónico para verificar.",
+      "emptyName": "Por favor, ingrese su nombre completo",
+      "invalidPassword": "La contraseña debe tener al menos 8 caracteres",
+      "agreeToTermsRequired": "Por favor, acepte los Términos de Servicio y la Política de Privacidad",
+      "userAlreadyRegistered": "Este correo electrónico ya está registrado. Intente iniciar sesión.",
+      "passwordShortError": "La contraseña debe tener al menos 8 caracteres.",
+      "unexpectedError": "Ocurrió un error inesperado. Por favor, inténtelo de nuevo."
+    },
+    "magicLink": {
+      "checkEmail": "Revise su correo electrónico",
+      "sentLoginLink": "Enviamos un enlace de inicio de sesión a",
+      "lookForEmail": "Busque un correo electrónico con el asunto:",
+      "signInSubject": "Iniciar sesión en UKON Estate",
+      "quickTips": "💡 Consejos rápidos:",
+      "checkSpamFolder": "Revise su carpeta de spam si no lo ve",
+      "linkExpires": "El enlace expira en 24 horas",
+      "resendEmail": "Haga clic en el enlace para iniciar sesión automáticamente",
+      "gotIt": "¡Entendido!",
+      "sending": "Enviando...",
+      "resendCountdown": "Reenviar en {timer}s",
+      "resendButtonText": "Reenviar correo electrónico"
+    },
+    "callback": {
+      "verifying": "Verificando su cuenta...",
+      "pleaseWait": "Por favor, espere mientras lo redirigimos"
+    },
+    "messages": {
+      "successfulLogout": "Sesión cerrada correctamente",
+      "failedLogout": "Error al cerrar sesión. Por favor, inténtelo de nuevo.",
+      "welcomeBack": "¡Bienvenido de vuelta!"
+    }
   },
   "dashboard": {
     "overview": "Descripción General",
@@ -224,10 +306,15 @@
     "company": "Empresa",
     "services": "Servicios",
     "resources": "Recursos",
-    "copyright": "© 2024 UKON Estate. Todos los derechos reservados.",
+    "copyright": "© 2024 Ukon Estate. Todos los derechos reservados.",
     "marketReports": "Informes del Mercado",
     "buyingGuide": "Guía de Compra",
-    "sellingGuide": "Guía de Venta"
+    "sellingGuide": "Guía de Venta",
+    "propertySales": "Ventas de Propiedades",
+    "rentalManagement": "Gestión de Alquileres",
+    "investmentConsulting": "Consultoría de Inversiones",
+    "propertyValuation": "Valoración de Propiedades",
+    "blog": "Blog"
   },
   "common": {
     "loading": "Cargando...",
@@ -256,6 +343,11 @@
     "failedToLoadAccount": "Error al cargar datos de cuenta",
     "errorFetchingProperty": "Error al obtener la propiedad",
     "errorFetchingProperties": "Error al obtener propiedades destacadas",
-    "errorLoadingAccount": "Error al cargar datos de cuenta"
+    "errorLoadingAccount": "Error al cargar datos de cuenta",
+    "notFound": {
+      "title": "404",
+      "message": "¡Oops! Página no encontrada",
+      "returnHome": "Volver al Inicio"
+    }
   }
 }

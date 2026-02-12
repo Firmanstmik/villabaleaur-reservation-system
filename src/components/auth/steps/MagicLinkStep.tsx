@@ -4,6 +4,7 @@ import { Mail, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MagicLinkStepProps {
   email: string;
@@ -22,6 +23,7 @@ export default function MagicLinkStep({
   onResend,
   onClose,
 }: MagicLinkStepProps) {
+  const { t } = useLanguage();
   const [resendTimer, setResendTimer] = useState(0);
   const [isResending, setIsResending] = useState(false);
   const { sendMagicLink } = useAuth();
@@ -47,10 +49,10 @@ export default function MagicLinkStep({
 
     try {
       await sendMagicLink(email);
-      toast.success('Magic link sent! Check your email.');
+      toast.success(t('common.success'));
       setResendTimer(60);
     } catch (err: any) {
-      setError('Failed to send magic link. Please try again.');
+      setError(t('common.tryAgain'));
     } finally {
       setIsResending(false);
     }
@@ -75,9 +77,9 @@ export default function MagicLinkStep({
         transition={{ delay: 0.2 }}
         className="flex-1"
       >
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Check your email</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{t('auth.magicLink.checkEmail')}</h2>
         <p className="text-muted-foreground text-sm sm:text-base">
-          We sent a login link to
+          {t('auth.magicLink.sentLoginLink')}
           <br />
           <span className="font-semibold text-foreground">{email}</span>
         </p>
@@ -89,8 +91,8 @@ export default function MagicLinkStep({
           transition={{ delay: 0.3 }}
           className="bg-secondary/50 rounded-xl p-4 mt-6 text-left"
         >
-          <p className="text-xs text-muted-foreground mb-2">Look for an email with subject:</p>
-          <p className="text-sm font-semibold text-foreground">"Sign in to UKON Estate"</p>
+          <p className="text-xs text-muted-foreground mb-2">{t('auth.magicLink.lookForEmail')}</p>
+          <p className="text-sm font-semibold text-foreground">"{t('auth.magicLink.signInSubject')}"</p>
         </motion.div>
 
         {/* Tips */}
@@ -100,11 +102,11 @@ export default function MagicLinkStep({
           transition={{ delay: 0.4 }}
           className="mt-6 text-left bg-blue-50/50 rounded-xl p-4 border border-blue-100"
         >
-          <p className="text-xs text-blue-900 font-semibold mb-2">💡 Quick tips:</p>
+          <p className="text-xs text-blue-900 font-semibold mb-2">{t('auth.magicLink.quickTips')}</p>
           <ul className="text-xs text-blue-800 space-y-1">
-            <li>• Check your spam folder if you don't see it</li>
-            <li>• The link expires in 24 hours</li>
-            <li>• Click the link to sign in automatically</li>
+            <li>• {t('auth.magicLink.checkSpamFolder')}</li>
+            <li>• {t('auth.magicLink.linkExpires')}</li>
+            <li>• {t('auth.magicLink.resendEmail')}</li>
           </ul>
         </motion.div>
       </motion.div>
@@ -121,7 +123,7 @@ export default function MagicLinkStep({
           variant="outline"
           className="w-full h-12 rounded-xl border-ukon-navy text-ukon-navy hover:bg-ukon-navy hover:text-white transition-all"
         >
-          Got it!
+          {t('auth.magicLink.gotIt')}
         </Button>
 
         <div className="text-center">
@@ -131,11 +133,13 @@ export default function MagicLinkStep({
             className="text-sm text-ukon-navy hover:underline transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isResending ? (
-              'Sending...'
+              t('auth.magicLink.sending')
             ) : resendTimer > 0 ? (
-              <>Resend in {resendTimer}s</>
+              <>
+                {t('auth.magicLink.resendCountdown').replace('{timer}', String(resendTimer))}
+              </>
             ) : (
-              'Resend email'
+              t('auth.magicLink.resendButtonText')
             )}
           </button>
         </div>

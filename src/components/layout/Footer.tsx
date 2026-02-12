@@ -6,29 +6,29 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { whatsappUrl } from '@/data/mockData';
 import logoImage from '@/assets/Ukon-Estate.png';
 
-const footerLinks = {
+const footerLinksKeys = {
   company: [
-    { name: 'About Us', path: '/about' },
-    { name: 'Our Team', path: '/agents' },
-    { name: 'Careers', path: '#' },
-    { name: 'Contact', path: '#' },
+    { key: 'footer.aboutUs', path: '/about' },
+    { key: 'footer.ourTeam', path: '/agents' },
+    { key: 'footer.careers', path: '#' },
+    { key: 'footer.contact', path: '#' },
   ],
   services: [
-    { name: 'Property Sales', path: '/services' },
-    { name: 'Rental Management', path: '/services' },
-    { name: 'Investment Consulting', path: '/services' },
-    { name: 'Property Valuation', path: '/services' },
+    { key: 'footer.propertySales', path: '/services' },
+    { key: 'footer.rentalManagement', path: '/services' },
+    { key: 'footer.investmentConsulting', path: '/services' },
+    { key: 'footer.propertyValuation', path: '/services' },
   ],
   resources: [
-    { name: 'Blog', path: '/blog' },
-    { name: 'Market Reports', path: '#' },
-    { name: 'Buying Guide', path: '#' },
-    { name: 'Selling Guide', path: '#' },
+    { key: 'footer.blog', path: '/blog' },
+    { key: 'footer.marketReports', path: '#' },
+    { key: 'footer.buyingGuide', path: '#' },
+    { key: 'footer.sellingGuide', path: '#' },
   ],
 };
 
 export function Footer() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const handleWhatsAppClick = () => {
     window.open(whatsappUrl, '_blank');
@@ -52,10 +52,10 @@ export function Footer() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              Where Dreams Come True
+              {t('footer.whereServiceDreamsComeTrueDesc')}
             </h2>
             <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
-              Ready to find your perfect property? Contact us today and let's make it happen together.
+              {t('footer.readyToFindPerfectProperty')}
             </p>
             <Button
               onClick={handleWhatsAppClick}
@@ -63,7 +63,7 @@ export function Footer() {
               className="bg-ukon-red hover:bg-ukon-red/90 text-white glow-effect flex items-center gap-2 mx-auto"
             >
               <span className="blink-dot" />
-              Contact Us on WhatsApp
+              {t('footer.contactUsOnWhatsApp')}
             </Button>
           </motion.div>
         </div>
@@ -79,35 +79,35 @@ export function Footer() {
                 <img src={logoImage} alt="UKON ESTATE Logo" className="h-16 w-auto object-contain brightness-0 invert" />
               </Link>
               <p className="text-white/70 mb-6 max-w-sm">
-                Your trusted partner in real estate. We help you find, sell, and invest in properties that match your dreams.
+                {t('footer.trustedPartner')}
               </p>
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-white/70">
                   <MapPin size={18} className="text-ukon-red" />
-                  <span>123 Business Avenue, Miami, FL 33101</span>
+                  <span>{t('footer.address')}</span>
                 </div>
                 <div className="flex items-center gap-3 text-white/70">
                   <Phone size={18} className="text-ukon-red" />
-                  <span>+1 (234) 567-890</span>
+                  <span>{t('footer.phone')}</span>
                 </div>
                 <div className="flex items-center gap-3 text-white/70">
                   <Mail size={18} className="text-ukon-red" />
-                  <span>info@ukonestate.com</span>
+                  <span>{t('footer.email')}</span>
                 </div>
               </div>
             </div>
 
             {/* Company Links */}
             <div>
-              <h4 className="font-semibold text-lg mb-4">Company</h4>
+              <h4 className="font-semibold text-lg mb-4">{t('footer.company')}</h4>
               <ul className="space-y-3">
-                {footerLinks.company.map((link) => (
-                  <li key={link.name}>
+                {footerLinksKeys.company.map((link) => (
+                  <li key={link.key}>
                     <Link
                       to={getLocalizedPath(link.path)}
                       className="text-white/70 hover:text-ukon-red transition-colors"
                     >
-                      {link.name}
+                      {t(link.key)}
                     </Link>
                   </li>
                 ))}
@@ -116,15 +116,15 @@ export function Footer() {
 
             {/* Services Links */}
             <div>
-              <h4 className="font-semibold text-lg mb-4">Services</h4>
+              <h4 className="font-semibold text-lg mb-4">{t('footer.services')}</h4>
               <ul className="space-y-3">
-                {footerLinks.services.map((link) => (
-                  <li key={link.name}>
+                {footerLinksKeys.services.map((link) => (
+                  <li key={link.key}>
                     <Link
                       to={getLocalizedPath(link.path)}
                       className="text-white/70 hover:text-ukon-red transition-colors"
                     >
-                      {link.name}
+                      {t(link.key)}
                     </Link>
                   </li>
                 ))}
@@ -133,15 +133,15 @@ export function Footer() {
 
             {/* Resources Links */}
             <div>
-              <h4 className="font-semibold text-lg mb-4">Resources</h4>
+              <h4 className="font-semibold text-lg mb-4">{t('footer.resources')}</h4>
               <ul className="space-y-3">
-                {footerLinks.resources.map((link) => (
-                  <li key={link.name}>
+                {footerLinksKeys.resources.map((link) => (
+                  <li key={link.key}>
                     <Link
                       to={getLocalizedPath(link.path)}
                       className="text-white/70 hover:text-ukon-red transition-colors"
                     >
-                      {link.name}
+                      {t(link.key)}
                     </Link>
                   </li>
                 ))}
@@ -156,7 +156,7 @@ export function Footer() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-white/50 text-sm">
-              © 2024 UKON Estate. All rights reserved.
+              {t('footer.copyright')}
             </p>
             <div className="flex items-center gap-4">
               <motion.a

@@ -7,13 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { blogPosts } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
+import { useLanguage } from '@/contexts/LanguageContext';
 import heroBg from '@/assets/hero-bg.png';
 import heroVideo from '@/assets/hero-video.mp4';
 
-const categories = ['All', 'Buying', 'Selling', 'Investing', 'Market'];
-
 const Blog = () => {
   const { ref, isInView } = useInView();
+  const { t } = useLanguage();
   const videoRef = useRef<HTMLVideoElement>(null);
   const cloneRef = useRef<HTMLVideoElement>(null);
   const [showClone, setShowClone] = useState(false);
@@ -55,6 +55,17 @@ const Blog = () => {
       video.removeEventListener('seeked', handleSeeked);
     };
   }, [showClone]);
+
+  // Category translation mapping
+  const categoryMap: Record<string, string> = {
+    'All': 'blog.categoryAll',
+    'Buying': 'blog.categoryBuying',
+    'Selling': 'blog.categorySelling',
+    'Investing': 'blog.categoryInvesting',
+    'Market': 'blog.categoryMarket',
+  };
+
+  const categories = ['All', 'Buying', 'Selling', 'Investing', 'Market'];
 
   const filteredPosts = useMemo(() => {
     return blogPosts.filter((post) => {
@@ -122,7 +133,7 @@ const Blog = () => {
                 transition={{ duration: 0.5 }}
                 className="inline-block px-4 py-2 bg-white/10 text-white rounded-full text-sm font-medium mb-6"
               >
-                Our Blog
+                {t('blog.ourBlog')}
               </motion.span>
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
@@ -130,7 +141,7 @@ const Blog = () => {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
               >
-                Real Estate Insights
+                {t('blog.headline')}
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -138,7 +149,7 @@ const Blog = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-white/70 text-lg max-w-2xl mx-auto"
               >
-                Stay informed with the latest trends, tips, and insights from the world of real estate.
+                {t('blog.subheadline')}
               </motion.p>
             </div>
           </div>
@@ -158,7 +169,7 @@ const Blog = () => {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
                 <Input
                   type="text"
-                  placeholder="Search articles..."
+                  placeholder={t('blog.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 h-12 rounded-full border-2 focus:border-ukon-red"
@@ -182,7 +193,7 @@ const Blog = () => {
                         : 'bg-card border border-border hover:border-ukon-red/50'
                     }`}
                   >
-                    {category}
+                    {t(categoryMap[category])}
                   </button>
                 ))}
               </motion.div>
@@ -246,7 +257,7 @@ const Blog = () => {
 
                         {/* Read More */}
                         <div className="flex items-center gap-2 text-ukon-red font-medium group-hover:gap-4 transition-all">
-                          Read More
+                          {t('blog.readMore')}
                           <ArrowRight size={18} />
                         </div>
                       </div>
@@ -261,7 +272,7 @@ const Blog = () => {
                 className="text-center py-16"
               >
                 <p className="text-muted-foreground text-lg">
-                  No articles found matching your criteria.
+                  {t('blog.noArticlesFound')}
                 </p>
               </motion.div>
             )}
@@ -285,15 +296,15 @@ const Blog = () => {
               
               <div className="relative z-10">
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                  Stay Updated
+                  {t('blog.stayUpdated')}
                 </h2>
                 <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
-                  Subscribe to our newsletter for the latest real estate insights, market updates, and exclusive tips.
+                  {t('blog.subscriberDescription')}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                   <Input
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder={t('blog.emailPlaceholder')}
                     className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50"
                   />
                   <motion.button
@@ -301,7 +312,7 @@ const Blog = () => {
                     whileTap={{ scale: 0.95 }}
                     className="h-12 px-8 bg-ukon-red hover:bg-ukon-red/90 text-white rounded-md font-medium transition-colors"
                   >
-                    Subscribe
+                    {t('blog.subscribe')}
                   </motion.button>
                 </div>
               </div>

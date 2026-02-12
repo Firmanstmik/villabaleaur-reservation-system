@@ -11,7 +11,7 @@ import { supabase } from '@/lib/supabase';
 
 export function FeaturedProperties() {
   const { ref, isInView } = useInView();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [displayProperties, setDisplayProperties] = useState<any[]>([]);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export function FeaturedProperties() {
             transition={{ duration: 0.5 }}
             className="inline-block px-4 py-2 bg-secondary text-muted-foreground rounded-full text-sm font-medium mb-6"
           >
-            Featured Properties
+            {t('properties.featured')}
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -68,7 +68,7 @@ export function FeaturedProperties() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground uppercase tracking-wide"
           >
-            Discover Homes Tailored to Your<br />Lifestyle and Needs
+            {t('properties.featuredSubtitle')}
           </motion.h2>
         </div>
 
@@ -93,7 +93,7 @@ export function FeaturedProperties() {
             className="bg-ukon-navy hover:bg-ukon-navy/90 text-white"
           >
             <Link to={`/${language}/properties`}>
-              View All Properties
+              {t('properties.viewAllProperties')}
               <ArrowRight className="ml-2" size={20} />
             </Link>
           </Button>

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Loader2 } from 'lucide-react';
 
 /**
@@ -9,6 +10,7 @@ import { Loader2 } from 'lucide-react';
  * Routes users to appropriate dashboard based on their user type
  */
 const AuthCallback = () => {
+  const { t } = useLanguage();
   const { user, userType, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -37,8 +39,8 @@ const AuthCallback = () => {
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center space-y-4">
         <Loader2 className="h-12 w-12 animate-spin text-ukon-navy mx-auto" />
-        <p className="text-lg font-medium text-foreground">Verifying your account...</p>
-        <p className="text-sm text-muted-foreground">Please wait while we redirect you</p>
+        <p className="text-lg font-medium text-foreground">{t('auth.callback.verifying')}</p>
+        <p className="text-sm text-muted-foreground">{t('auth.callback.pleaseWait')}</p>
       </div>
     </div>
   );

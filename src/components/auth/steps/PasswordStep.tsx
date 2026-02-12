@@ -9,6 +9,7 @@ import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface PasswordStepProps {
   email: string;
@@ -21,15 +22,15 @@ interface PasswordStepProps {
   onClose: () => void;
 }
 
-const formatErrorMessage = (error: any): string => {
+const formatErrorMessage = (error: any, t: any): string => {
   const message = error?.message || '';
   if (message.includes('Invalid login credentials')) {
-    return 'Email or password is incorrect. Please try again.';
+    return t('auth.password.incorrectCredentials');
   }
   if (message.includes('Email not confirmed')) {
-    return 'Please verify your email address before signing in.';
+    return t('auth.password.verifyEmail');
   }
-  return message || 'An unexpected error occurred. Please try again.';
+  return message || t('auth.password.unexpectedError');
 };
 
 export default function PasswordStep({
@@ -42,6 +43,7 @@ export default function PasswordStep({
   onMagicLink,
   onClose,
 }: PasswordStepProps) {
+  const { t } = useLanguage();
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -51,7 +53,7 @@ export default function PasswordStep({
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!password) {
-      setError('Please enter your password');
+      setError(t('auth.password.enterPasswordRequired'));
       return;
     }
 
@@ -60,7 +62,7 @@ export default function PasswordStep({
 
     try {
       await signIn(email, password);
-      toast.success('Welcome back!');
+      toast.success(t('auth.messages.welcomeBack'));
 
       // Close modal and navigate based on user type
       onSuccess();
@@ -72,7 +74,7 @@ export default function PasswordStep({
         setTimeout(() => navigate('/'), 300);
       }
     } catch (err: any) {
-      setError(formatErrorMessage(err));
+      setError(formatErrorMessage(err, t));
       setLoading(false);
     }
   };
@@ -96,7 +98,7 @@ export default function PasswordStep({
         className="flex items-center gap-2 text-sm text-muted-foreground mb-6 hover:text-foreground transition-colors disabled:opacity-50"
       >
         <ArrowLeft size={16} />
-        Back
+        {t('auth.password.back')}
       </motion.button>
 
       {/* Header */}
@@ -106,7 +108,7 @@ export default function PasswordStep({
         transition={{ delay: 0.1 }}
         className="mb-8"
       >
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Enter your password</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">{t('auth.password.enterYourPassword')}</h2>
         <p className="text-muted-foreground mt-1 text-sm sm:text-base truncate">{email}</p>
       </motion.div>
 
@@ -135,18 +137,18 @@ export default function PasswordStep({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password" className="text-sm font-medium">
-              Password
+              {t('auth.password.passwordLabel')}
             </Label>
             <button
               type="button"
               onClick={() => {
                 // TODO: Implement forgot password flow
-                setError('Password reset coming soon');
+                setError(t('auth.password.passwordResetComing'));
               }}
               disabled={isLoading}
               className="text-xs text-ukon-navy hover:underline transition-colors disabled:opacity-50"
             >
-              Forgot password?
+              {t('auth.password.forgotPassword')}
             </button>
           </div>
           <div className="relative">
@@ -154,7 +156,7 @@ export default function PasswordStep({
             <Input
               id="password"
               type={showPassword ? 'text' : 'password'}
-              placeholder="Enter your password"
+              placeholder={t('auth.password.passwordPlaceholder')}
               className="pl-12 pr-12 h-12 rounded-xl text-base transition-all focus:ring-2 focus:ring-ukon-navy"
               value={password}
               onChange={(e) => {
@@ -207,10 +209,10 @@ export default function PasswordStep({
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              Signing in...
+              {t('auth.password.signingIn')}
             </>
           ) : (
-            'Sign In'
+            t('auth.password.signInButton')
           )}
         </Button>
       </motion.form>
@@ -227,7 +229,7 @@ export default function PasswordStep({
           disabled={isLoading}
           className="text-sm text-ukon-navy hover:underline transition-colors disabled:opacity-50"
         >
-          Use magic link instead
+          {t('auth.password.useMagicLink')}
         </button>
       </motion.div>
     </div>

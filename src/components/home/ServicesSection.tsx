@@ -17,6 +17,16 @@ export function ServicesSection() {
   const { ref, isInView } = useInView();
   const { t } = useLanguage();
 
+  // Map service IDs to translation keys
+  const serviceTranslationMap: Record<string, { titleKey: string; descKey: string }> = {
+    '1': { titleKey: 'services.propertySales', descKey: 'services.propertySalesDescription' },
+    '2': { titleKey: 'services.buyerRepresentation', descKey: 'services.buyerRepresentationDescription' },
+    '3': { titleKey: 'services.rentalManagement', descKey: 'services.rentalManagementDescription' },
+    '4': { titleKey: 'services.investmentConsulting', descKey: 'services.investmentConsultingDescription' },
+    '5': { titleKey: 'services.propertyValuation', descKey: 'services.propertyValuationDescription' },
+    '6': { titleKey: 'services.tailoredSolutions', descKey: 'services.tailoredSolutionsDescription' },
+  };
+
   return (
     <section id="services" className="py-20 lg:py-28 bg-white">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
@@ -42,29 +52,35 @@ export function ServicesSection() {
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {services.map((service, index) => (
-            <motion.div
-              key={service.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-[#f3f3f3] rounded-[20px] p-8 lg:p-10 flex flex-col"
-            >
-              {/* Icon */}
-              <div className="w-12 h-12 bg-[#e5e5e5] rounded-full flex items-center justify-center text-[#111827] mb-8">
-                {iconMap[service.icon]}
-              </div>
+          {services.map((service, index) => {
+            const translationMap = serviceTranslationMap[service.id];
+            const title = translationMap ? t(translationMap.titleKey) : service.title;
+            const description = translationMap ? t(translationMap.descKey) : service.description;
 
-              {/* Content */}
-              <h3 className="text-lg lg:text-xl font-bold text-[#111827] mb-3">
-                {service.title}
-              </h3>
-              <p className="text-[#6b7280] text-sm leading-relaxed">
-                {service.description}
-              </p>
-            </motion.div>
-          ))}
+            return (
+              <motion.div
+                key={service.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-[#f3f3f3] rounded-[20px] p-8 lg:p-10 flex flex-col"
+              >
+                {/* Icon */}
+                <div className="w-12 h-12 bg-[#e5e5e5] rounded-full flex items-center justify-center text-[#111827] mb-8">
+                  {iconMap[service.icon]}
+                </div>
+
+                {/* Content */}
+                <h3 className="text-lg lg:text-xl font-bold text-[#111827] mb-3">
+                  {title}
+                </h3>
+                <p className="text-[#6b7280] text-sm leading-relaxed">
+                  {description}
+                </p>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

@@ -118,7 +118,7 @@ const Account = () => {
         }
       } catch (error) {
         console.error('Error loading account data:', error);
-        toast.error('Failed to load account data');
+        toast.error(t('common.failedToLoadAccount'));
       } finally {
         setLoading(false);
       }
@@ -137,10 +137,10 @@ const Account = () => {
       if (error) throw error;
 
       setSavedProperties(savedProperties.filter((p) => p.id !== savedListingId));
-      toast.success('Property removed from saved');
+      toast.success(t('common.propertyRemoved'));
     } catch (error) {
       console.error('Error removing property:', error);
-      toast.error('Failed to remove property');
+      toast.error(t('common.failedToRemove'));
     }
   };
 
@@ -154,10 +154,10 @@ const Account = () => {
       if (error) throw error;
 
       setSearchAlerts(searchAlerts.filter((a) => a.id !== alertId));
-      toast.success('Search alert removed');
+      toast.success(t('common.alertRemoved'));
     } catch (error) {
       console.error('Error removing alert:', error);
-      toast.error('Failed to remove alert');
+      toast.error(t('common.failedToRemoveAlert'));
     }
   };
 
@@ -177,10 +177,10 @@ const Account = () => {
 
       if (error) throw error;
 
-      toast.success('Profile updated successfully');
+      toast.success(t('common.profileUpdated'));
     } catch (error) {
       console.error('Error saving profile:', error);
-      toast.error('Failed to update profile');
+      toast.error(t('common.failedToUpdate'));
     } finally {
       setIsSavingProfile(false);
     }
@@ -189,10 +189,10 @@ const Account = () => {
   const handleLogout = async () => {
     try {
       await signOut();
-      toast.success('Logged out successfully');
+      toast.success(t('auth.messages.successfulLogout'));
       navigate(`/${language}/`);
     } catch (error) {
-      toast.error('Failed to log out');
+      toast.error(t('auth.messages.failedLogout'));
     }
   };
 
@@ -352,9 +352,9 @@ const Account = () => {
                   className="bg-white rounded-2xl p-12 text-center border border-border"
                 >
                   <Bell className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <p className="text-muted-foreground">No search alerts yet</p>
+                  <p className="text-muted-foreground">{t('account.noSearchAlerts')}</p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Create an alert to get notified about new properties matching your criteria
+                    {t('account.createAlertDescription')}
                   </p>
                 </motion.div>
               ) : (
@@ -375,7 +375,7 @@ const Account = () => {
                             {JSON.stringify(alert.search_params || {})}
                           </p>
                           <p className="text-xs text-muted-foreground mt-2">
-                            {alert.email_notifications ? '📧 Email notifications enabled' : 'No notifications'}
+                            {alert.email_notifications ? `📧 ${t('account.emailNotificationsEnabled')}` : t('account.noNotifications')}
                           </p>
                         </div>
                         <Button
@@ -401,7 +401,7 @@ const Account = () => {
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-2xl p-8 border border-border"
             >
-              <h2 className="text-xl font-semibold mb-6">Account Settings</h2>
+              <h2 className="text-xl font-semibold mb-6">{t('account.accountSettings')}</h2>
 
               <form
                 onSubmit={(e) => {
@@ -412,20 +412,20 @@ const Account = () => {
               >
                 {/* Full Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
+                  <Label htmlFor="name">{t('account.fullName')}</Label>
                   <Input
                     id="name"
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Your name"
+                    placeholder={t('account.yourName')}
                     className="h-12 rounded-xl"
                   />
                 </div>
 
                 {/* Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('account.email')}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -434,31 +434,31 @@ const Account = () => {
                     className="h-12 rounded-xl bg-secondary"
                   />
                   <p className="text-xs text-muted-foreground">
-                    To change your email, contact support
+                    {t('account.changeEmailContact')}
                   </p>
                 </div>
 
                 {/* Phone */}
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone">{t('account.phoneNumber')}</Label>
                   <Input
                     id="phone"
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder={t('account.phoneExample')}
                     className="h-12 rounded-xl"
                   />
                 </div>
 
                 {/* Bio */}
                 <div className="space-y-2">
-                  <Label htmlFor="bio">Bio</Label>
+                  <Label htmlFor="bio">{t('account.bio')}</Label>
                   <textarea
                     id="bio"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    placeholder="Tell us about yourself..."
+                    placeholder={t('account.tellUsAbout')}
                     className="w-full min-h-[100px] p-3 rounded-xl border border-input bg-background focus:ring-2 focus:ring-ukon-navy focus:outline-none resize-none"
                   />
                 </div>
@@ -469,7 +469,7 @@ const Account = () => {
                   disabled={isSavingProfile}
                   className="w-full h-12 bg-ukon-navy hover:bg-ukon-navy/90 text-white font-semibold rounded-xl"
                 >
-                  {isSavingProfile ? 'Saving...' : 'Save Changes'}
+                  {isSavingProfile ? t('account.saving') : t('account.saveChanges')}
                 </Button>
               </form>
 
@@ -481,7 +481,7 @@ const Account = () => {
                   className="w-full h-12 rounded-xl flex items-center justify-center gap-2"
                 >
                   <LogOut className="h-4 w-4" />
-                  Sign Out
+                  {t('account.signOut')}
                 </Button>
               </div>
             </motion.div>

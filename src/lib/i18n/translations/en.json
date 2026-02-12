@@ -12,7 +12,7 @@
     "logout": "Logout"
   },
   "hero": {
-    "headline": "WHERE DREAMS COME TRUE.",
+    "headline": "WHERE DREAMS|COME TRUE.",
     "subheadline": "We provide tailored real estate solutions, guiding you through every step with personalized experiences that meet your unique needs and aspirations.",
     "exploreProperties": "Explore Properties",
     "stats": {
@@ -56,7 +56,7 @@
     "facebook": "Facebook",
     "x": "X",
     "linkedIn": "LinkedIn",
-    "pricingStartingFrom": "Pricing starting from",
+    "pricingStartingFrom": "Price",
     "perMonth": "/mo",
     "overview": "Overview",
     "propertyCode": "Property code",
@@ -81,15 +81,23 @@
     "whatWeDo": "What We Do",
     "exploreOurRange": "EXPLORE OUR RANGE OF EXPERT REAL ESTATE SERVICES",
     "propertySales": "Property Sales",
+    "propertySalesDescription": "Expert guidance through the entire sales process, from listing to closing. We maximize your property value with strategic marketing.",
+    "buyerRepresentation": "Buyer Representation",
+    "buyerRepresentationDescription": "Dedicated support for finding your perfect home. We negotiate the best deals and ensure a smooth buying experience.",
     "rentalManagement": "Rental Management",
+    "rentalManagementDescription": "Comprehensive rental services for landlords and tenants. From screening to maintenance, we handle it all.",
     "investmentConsulting": "Investment Consulting",
-    "propertyValuation": "Property Valuation"
+    "investmentConsultingDescription": "Strategic advice for real estate investments. We identify opportunities that deliver strong returns.",
+    "propertyValuation": "Property Valuation",
+    "propertyValuationDescription": "Accurate market valuations backed by data and local expertise. Know the true worth of your property.",
+    "tailoredSolutions": "Tailored Solutions",
+    "tailoredSolutionsDescription": "Customized real estate solutions for unique needs. Whether relocating or downsizing, we adapt to you."
   },
   "about": {
-    "aboutUkon": "About UKON Estate",
+    "aboutUkon": "About Ukon Estate",
     "buildingDreams": "Building Dreams,",
     "creatingHomes": "Creating Homes",
-    "description": "With years of experience in the real estate industry, UKON Estate has helped countless families find their perfect homes. Our dedicated team combines local expertise with global vision to deliver exceptional results.",
+    "description": "With years of experience in the real estate industry, Ukon Estate has helped countless families find their perfect homes. Our dedicated team combines local expertise with global vision to deliver exceptional results.",
     "yearsExperience": "Years Experience",
     "propertiesSold": "Properties Sold",
     "clientSatisfaction": "Client Satisfaction",
@@ -98,11 +106,11 @@
     "visionStatement": "To be the most trusted real estate partner, transforming how people find and experience their dream properties.",
     "ourMission": "Our Mission",
     "missionStatement": "To provide exceptional service, honest guidance, and innovative solutions that exceed client expectations.",
-    "longDescription": "For over 15 years, UKON Estate has been the trusted partner for families, investors, and businesses looking to find their perfect property.",
+    "longDescription": "For over 15 years, Ukon Estate has been the trusted partner for families, investors, and businesses looking to find their perfect property.",
     "pageHeadline": "Years of Trust",
     "pageSubheadline": "Our Story",
     "pageTitle": "A Legacy of Excellence in Real Estate",
-    "foundedDescription": "Founded with a passion for helping people find their dream homes, UKON Estate has grown from a small local agency to one of the most trusted names in real estate. Our journey has been defined by our commitment to excellence, integrity, and client satisfaction.",
+    "foundedDescription": "Founded with a passion for helping people find their dream homes, Ukon Estate has grown from a small local agency to one of the most trusted names in real estate. Our journey has been defined by our commitment to excellence, integrity, and client satisfaction.",
     "todayDescription": "Today, we continue to build on our legacy, combining traditional values with innovative technology to deliver exceptional real estate experiences. Our team of dedicated professionals brings local expertise and global perspective to every transaction.",
     "ourValues": "Our Values",
     "whatDrivesUs": "What Drives Us Every Day",
@@ -129,7 +137,24 @@
   "testimonials": {
     "testimonials": "Testimonials",
     "whatOurClientsSay": "What Our Clients Say",
-    "realStories": "Real stories from real clients who found their dream properties with UKON Estate."
+    "realStories": "Real stories from real clients who found their dream properties with Ukon Estate."
+  },
+  "blog": {
+    "ourBlog": "Our Blog",
+    "headline": "Real Estate Insights",
+    "subheadline": "Stay informed with the latest trends, tips, and insights from the world of real estate.",
+    "searchPlaceholder": "Search articles...",
+    "categoryAll": "All",
+    "categoryBuying": "Buying",
+    "categorySelling": "Selling",
+    "categoryInvesting": "Investing",
+    "categoryMarket": "Market",
+    "readMore": "Read More",
+    "noArticlesFound": "No articles found matching your criteria.",
+    "stayUpdated": "Stay Updated",
+    "subscriberDescription": "Subscribe to our newsletter for the latest real estate insights, market updates, and exclusive tips.",
+    "emailPlaceholder": "Enter your email",
+    "subscribe": "Subscribe"
   },
   "account": {
     "myAccount": "My Account",
@@ -161,31 +186,87 @@
     "myListings": "My Listings"
   },
   "auth": {
-    "welcome": "Welcome to UKON Estate",
-    "signInDescription": "Sign in to save properties and get personalized recommendations",
-    "signUpDescription": "Create an account to start your real estate journey",
-    "emailAddress": "Email address",
-    "emailPlaceholder": "you@example.com",
-    "continue": "Continue",
-    "checking": "Checking...",
-    "dontHaveAccount": "Don't have an account?",
-    "alreadyHaveAccount": "Already have an account?",
-    "signUp": "Sign up",
-    "signIn": "Sign In",
-    "invalidEmail": "Please enter a valid email address",
-    "enterPassword": "Enter your password",
-    "password": "Password",
-    "forgotPassword": "Forgot password?",
-    "signingIn": "Signing in...",
-    "useMagicLink": "Use magic link instead",
-    "incorrectCredentials": "Email or password is incorrect. Please try again.",
-    "verifyEmail": "Please verify your email address before signing in.",
-    "unexpectedError": "An unexpected error occurred. Please try again.",
-    "enterPassword": "Please enter your password",
-    "passwordResetComing": "Password reset coming soon",
-    "successfulLogout": "Logged out successfully",
-    "failedLogout": "Failed to log out. Please try again.",
-    "welcomeBack": "Welcome back!"
+    "email": {
+      "welcome": "Welcome to UKON Estate",
+      "signInDescription": "Sign in to save properties and get personalized recommendations",
+      "signUpDescription": "Create an account to start your real estate journey",
+      "emailAddress": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "continue": "Continue",
+      "checking": "Checking...",
+      "invalidEmail": "Please enter a valid email address",
+      "dontHaveAccount": "Don't have an account?",
+      "alreadyHaveAccount": "Already have an account?",
+      "signUp": "Sign up",
+      "signIn": "Sign in"
+    },
+    "password": {
+      "back": "Back",
+      "enterYourPassword": "Enter your password",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "forgotPassword": "Forgot password?",
+      "passwordResetComing": "Password reset coming soon",
+      "signingIn": "Signing in...",
+      "signInButton": "Sign In",
+      "useMagicLink": "Use magic link instead",
+      "incorrectCredentials": "Email or password is incorrect. Please try again.",
+      "verifyEmail": "Please verify your email address before signing in.",
+      "unexpectedError": "An unexpected error occurred. Please try again.",
+      "enterPasswordRequired": "Please enter your password"
+    },
+    "signup": {
+      "back": "Back",
+      "createYourAccount": "Create your account",
+      "joinUkonEstate": "Join UKON Estate today",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "John Doe",
+      "email": "Email",
+      "createPassword": "Create password",
+      "createPasswordPlaceholder": "Min. 8 characters",
+      "passwordMinLength": "Must be at least 8 characters long",
+      "iAm": "I am a...",
+      "buyerRenter": "Buyer/Renter",
+      "buyerRenterDescription": "Looking for properties",
+      "agentSeller": "Agent/Seller",
+      "agentSellerDescription": "Listing properties",
+      "agreeToTerms": "I agree to UKON Estate's",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "creatingAccount": "Creating Account...",
+      "createAccountButton": "Create Account",
+      "secureEncryption": "Protected by industry-standard encryption",
+      "accountCreated": "Account created! Check your email to verify.",
+      "emptyName": "Please enter your full name",
+      "invalidPassword": "Password must be at least 8 characters long",
+      "agreeToTermsRequired": "Please agree to the Terms of Service and Privacy Policy",
+      "userAlreadyRegistered": "This email is already registered. Try signing in instead.",
+      "passwordShortError": "Password must be at least 8 characters long.",
+      "unexpectedError": "An unexpected error occurred. Please try again."
+    },
+    "magicLink": {
+      "checkEmail": "Check your email",
+      "sentLoginLink": "We sent a login link to",
+      "lookForEmail": "Look for an email with subject:",
+      "signInSubject": "Sign in to UKON Estate",
+      "quickTips": "💡 Quick tips:",
+      "checkSpamFolder": "Check your spam folder",
+      "linkExpires": "The link expires in 24 hours",
+      "resendEmail": "Can't find it? Resend the email",
+      "gotIt": "Got it!",
+      "sending": "Sending...",
+      "resendCountdown": "Resend in {timer}s",
+      "resendButtonText": "Resend email"
+    },
+    "callback": {
+      "verifying": "Verifying your account...",
+      "pleaseWait": "Please wait while we redirect you"
+    },
+    "messages": {
+      "successfulLogout": "Logged out successfully",
+      "failedLogout": "Failed to log out. Please try again.",
+      "welcomeBack": "Welcome back!"
+    }
   },
   "dashboard": {
     "overview": "Overview",
@@ -225,10 +306,15 @@
     "company": "Company",
     "services": "Services",
     "resources": "Resources",
-    "copyright": "© 2024 UKON Estate. All rights reserved.",
+    "copyright": "© 2024 Ukon Estate. All rights reserved.",
     "marketReports": "Market Reports",
     "buyingGuide": "Buying Guide",
-    "sellingGuide": "Selling Guide"
+    "sellingGuide": "Selling Guide",
+    "propertySales": "Property Sales",
+    "rentalManagement": "Rental Management",
+    "investmentConsulting": "Investment Consulting",
+    "propertyValuation": "Property Valuation",
+    "blog": "Blog"
   },
   "common": {
     "loading": "Loading...",
@@ -257,6 +343,11 @@
     "failedToLoadAccount": "Failed to load account data",
     "errorFetchingProperty": "Error fetching property",
     "errorFetchingProperties": "Error fetching featured properties",
-    "errorLoadingAccount": "Error loading account data"
+    "errorLoadingAccount": "Error loading account data",
+    "notFound": {
+      "title": "404",
+      "message": "Oops! Page not found",
+      "returnHome": "Return to Home"
+    }
   }
 }

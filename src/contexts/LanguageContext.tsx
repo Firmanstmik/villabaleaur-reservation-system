@@ -143,11 +143,8 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
       if (value && typeof value === 'object' && k in value) {
         value = value[k];
       } else {
-        // Fallback to English if key not found
-        if (language !== 'en') {
-          return t(key); // Will trigger English fallback
-        }
-        // If still not found, return key itself
+        // If key not found in current language, return the key as fallback
+        // (Do not recurse to avoid infinite loops)
         return key;
       }
     }

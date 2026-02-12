@@ -17,6 +17,7 @@ export interface Property {
   yearBuilt?: string;
   surfaceArea?: string;
   buildingArea?: string;
+  description?: string;
   features: Record<string, string>;
   nearbyAmenities?: {
     name: string;

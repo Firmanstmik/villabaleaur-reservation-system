@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface EmailStepProps {
   email: string;
@@ -34,11 +35,12 @@ export default function EmailStep({
   toggleMode,
   onClose,
 }: EmailStepProps) {
+  const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
 
   const handleContinue = () => {
     if (!isValidEmail(email)) {
-      setError('Please enter a valid email address');
+      setError(t('auth.email.invalidEmail'));
       return;
     }
     setError(null);
@@ -63,11 +65,11 @@ export default function EmailStep({
         <div className="w-16 h-16 bg-gradient-to-br from-ukon-navy to-ukon-navy/80 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <Home className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Welcome to UKON Estate</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">{t('auth.email.welcome')}</h2>
         <p className="text-muted-foreground mt-2 text-sm sm:text-base">
           {mode === 'login'
-            ? 'Sign in to save properties and get personalized recommendations'
-            : 'Create an account to start your real estate journey'}
+            ? t('auth.email.signInDescription')
+            : t('auth.email.signUpDescription')}
         </p>
       </motion.div>
 
@@ -94,14 +96,14 @@ export default function EmailStep({
       >
         <div className="space-y-2">
           <Label htmlFor="email" className="text-sm font-medium">
-            Email address
+            {t('auth.email.emailAddress')}
           </Label>
           <div className="relative">
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t('auth.email.emailPlaceholder')}
               className="pl-12 h-12 rounded-xl text-base transition-all focus:ring-2 focus:ring-ukon-navy"
               value={email}
               onChange={(e) => {
@@ -144,10 +146,10 @@ export default function EmailStep({
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              Checking...
+              {t('auth.email.checking')}
             </>
           ) : (
-            'Continue'
+            t('auth.email.continue')
           )}
         </Button>
       </motion.div>
@@ -160,14 +162,14 @@ export default function EmailStep({
         className="text-center text-sm"
       >
         <span className="text-muted-foreground">
-          {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+          {mode === 'login' ? t('auth.email.dontHaveAccount') : t('auth.email.alreadyHaveAccount')}
         </span>
         <button
           onClick={toggleMode}
           disabled={loading}
           className="text-ukon-navy font-semibold hover:underline transition-colors disabled:opacity-50"
         >
-          {mode === 'login' ? 'Sign up' : 'Sign in'}
+          {mode === 'login' ? t('auth.email.signUp') : t('auth.email.signIn')}
         </button>
       </motion.div>
     </div>

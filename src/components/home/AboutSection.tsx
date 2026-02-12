@@ -4,6 +4,7 @@ import { useInView } from '@/hooks/useInView';
 import { useCountUp } from '@/hooks/useCountUp';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEffect } from 'react';
+import './AboutSection.css';
 
 function StatItem({ value, label, suffix = '', delay = 0 }: { value: number; label: string; suffix?: string; delay?: number }) {
   const { ref, isInView } = useInView({ threshold: 0.5 });
@@ -17,7 +18,7 @@ function StatItem({ value, label, suffix = '', delay = 0 }: { value: number; lab
 
   return (
     <div ref={ref} className="text-center">
-      <div className="text-4xl md:text-5xl font-bold text-ukon-red mb-2 counter-animate">
+      <div className="text-4xl md:text-5xl font-bold text-ukon-navy mb-2 counter-animate">
         {formattedValue}
       </div>
       <div className="text-muted-foreground">{label}</div>
@@ -51,7 +52,7 @@ export function AboutSection() {
             >
               {t('about.buildingDreams')}
               <br />
-              <span className="text-ukon-red">{t('about.creatingHomes')}</span>
+              <span className="text-ukon-navy">{t('about.creatingHomes')}</span>
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -82,7 +83,7 @@ export function AboutSection() {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="bg-card border border-border rounded-2xl p-6"
               >
-                <div className="w-12 h-12 bg-ukon-red/10 rounded-xl flex items-center justify-center text-ukon-red mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-ukon-navy mb-4">
                   <Eye size={24} />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{t('about.ourVision')}</h3>
@@ -97,7 +98,7 @@ export function AboutSection() {
                 transition={{ duration: 0.6, delay: 0.5 }}
                 className="bg-card border border-border rounded-2xl p-6"
               >
-                <div className="w-12 h-12 bg-ukon-red/10 rounded-xl flex items-center justify-center text-ukon-red mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-ukon-navy mb-4">
                   <Target size={24} />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{t('about.ourMission')}</h3>
@@ -135,7 +136,7 @@ export function AboutSection() {
               className="absolute -bottom-8 -left-8 bg-white rounded-2xl p-6 shadow-xl"
             >
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-ukon-red rounded-full flex items-center justify-center">
+                <div className="trusted-badge w-14 h-14 bg-emerald-500 rounded-full flex items-center justify-center">
                   <CheckCircle size={28} className="text-white" />
                 </div>
                 <div>

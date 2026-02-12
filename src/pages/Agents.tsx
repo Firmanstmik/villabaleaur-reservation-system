@@ -5,6 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { agents, whatsappNumber } from '@/data/mockData';
+import { useLanguage } from '@/contexts/LanguageContext';
 import heroBg from '@/assets/hero-bg.png';
 import heroVideo from '@/assets/hero-video.mp4';
 
@@ -32,6 +33,7 @@ const agentPhotos: Record<string, string> = {
 import { useInView } from '@/hooks/useInView';
 
 const Agents = () => {
+  const { t } = useLanguage();
   const { ref, isInView } = useInView();
   const videoRef = useRef<HTMLVideoElement>(null);
   const cloneRef = useRef<HTMLVideoElement>(null);
@@ -127,7 +129,7 @@ const Agents = () => {
                 transition={{ duration: 0.5 }}
                 className="inline-block px-4 py-2 bg-white/10 text-white rounded-full text-sm font-medium mb-6"
               >
-                Our Team
+                {t('agents.ourTeam')}
               </motion.span>
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
@@ -135,7 +137,7 @@ const Agents = () => {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
               >
-                Meet Our Expert Agents
+                {t('agents.meetOurExperts')}
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -143,7 +145,7 @@ const Agents = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-white/70 text-lg max-w-2xl mx-auto"
               >
-                Our dedicated team of real estate professionals is ready to help you find your dream property.
+                {t('agents.dedicatedTeam')}
               </motion.p>
             </div>
           </div>
@@ -193,7 +195,7 @@ const Agents = () => {
                           onClick={() => handleContactAgent(agent.name)}
                           className="w-full bg-ukon-red hover:bg-ukon-red/90 text-white"
                         >
-                          Contact Agent
+                          {t('agents.contactAgent')}
                         </Button>
                       </div>
                     </div>
@@ -235,16 +237,16 @@ const Agents = () => {
               
               <div className="relative z-10">
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                  Join Our Team
+                  {t('agents.joinOurTeam')}
                 </h2>
                 <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
-                  Are you passionate about real estate? We're always looking for talented professionals to join our growing team.
+                  {t('agents.passionate')}
                 </p>
                 <Button
                   size="lg"
                   className="bg-white text-ukon-navy hover:bg-white/90"
                 >
-                  View Career Opportunities
+                  {t('agents.viewCareerOpportunities')}
                 </Button>
               </div>
             </motion.div>

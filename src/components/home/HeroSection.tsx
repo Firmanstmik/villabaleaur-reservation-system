@@ -4,6 +4,7 @@ import { Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import heroBg from '@/assets/hero-bg.png';
 import heroVideo from '@/assets/hero-video.mp4';
 import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
@@ -12,8 +13,25 @@ import marcoLoureiroPhoto from '@/assets/Marco_Loureiro.avif';
 import afifahUkonPhoto from '@/assets/Afifah_Ukon.avif';
 import { stats } from '@/data/mockData';
 
+// Currency symbols
+const currencySymbols: Record<string, string> = {
+  USD: '$',
+  EUR: '€',
+  IDR: 'Rp',
+  GBP: '£',
+};
+
+// Project value amounts by currency (in millions)
+const currencyAmounts: Record<string, number> = {
+  USD: 500,
+  EUR: 450,
+  GBP: 400,
+  IDR: 5000,
+};
+
 export function HeroSection() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
+  const { currency } = useCurrency();
   const videoRef = useRef<HTMLVideoElement>(null);
   const cloneRef = useRef<HTMLVideoElement>(null);
   const [showClone, setShowClone] = useState(false);
@@ -110,7 +128,15 @@ export function HeroSection() {
             className="font-bold text-white leading-[1.05] tracking-tight"
             style={{ fontSize: '5.5vw', marginBottom: '1.5vw' }}
           >
-            WHERE DREAMS<br />COME TRUE.
+            {(() => {
+              const parts = t('hero.headline').split('|');
+              return parts.map((line, i) => (
+                <span key={i}>
+                  {line}
+                  {i < parts.length - 1 && <br />}
+                </span>
+              ));
+            })()}
           </motion.h1>
 
           {/* Subheadline */}
@@ -127,7 +153,7 @@ export function HeroSection() {
               lineHeight: '1.6'
             }}
           >
-            We provide tailored real estate solutions, guiding you through every step with personalized experiences that meet your unique needs and aspirations.
+            {t('hero.subheadline')}
           </motion.p>
 
           {/* CTA Button */}
@@ -150,7 +176,7 @@ export function HeroSection() {
               asChild
             >
               <Link to={`/${language}/properties`}>
-                Explore Properties
+                {t('hero.exploreProperties')}
                 <div
                   className="bg-black text-white rounded-full flex items-center justify-center transition-transform group-hover:bg-black/80"
                   style={{ width: '2.5vw', height: '2.5vw' }}
@@ -172,15 +198,15 @@ export function HeroSection() {
           >
             <div>
               <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>{stats.projects}+</div>
-              <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>Projects Complete</div>
+              <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>{t('hero.stats.projectsComplete')}</div>
             </div>
             <div>
               <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>{stats.clients}+</div>
-              <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>Happy Clients</div>
+              <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>{t('hero.stats.happyClients')}</div>
             </div>
             <div>
-              <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>${stats.value}M+</div>
-              <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>Project Value</div>
+              <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>{currencySymbols[currency]}{currencyAmounts[currency]}M+</div>
+              <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>{t('hero.stats.projectValue')}</div>
             </div>
           </motion.div>
         </div>
@@ -228,7 +254,7 @@ export function HeroSection() {
           {/* Text */}
           <div className="flex flex-col justify-end" style={{ paddingBottom: '0.15vw' }}>
             <span className="font-medium text-muted-foreground leading-none" style={{ fontSize: '1vw' }}>
-              47+ Google Reviews
+              {t('hero.stats.googleReviews')}
             </span>
             <div className="flex items-center mt-[0.4vw] leading-none" style={{ gap: '0.4vw' }}>
               <div className="flex gap-[0.1vw]">
@@ -236,7 +262,7 @@ export function HeroSection() {
                   <Star key={i} className="fill-amber-400 text-amber-400" style={{ width: '1.1vw', height: '1.1vw' }} />
                 ))}
               </div>
-              <span className="text-foreground font-bold" style={{ fontSize: '1.1vw' }}>4.8 / 5</span>
+              <span className="text-foreground font-bold" style={{ fontSize: '1.1vw' }}>{t('hero.stats.rating')}</span>
             </div>
           </div>
         </div>

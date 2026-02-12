@@ -2,6 +2,7 @@ import { motion, useAnimationControls, useMotionValue } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { agents } from '@/data/mockData';
 import { useRef, useEffect, useCallback } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
 import pakKumisPhoto from '@/assets/Pak_Kumis.avif';
 import paulWenninkPhoto from '@/assets/Paul_Wennink.avif';
@@ -25,6 +26,7 @@ const agentPhotos: Record<string, string> = {
 };
 
 export function AgentsCarousel() {
+  const { t } = useLanguage();
   const duplicatedAgents = [...agents, ...agents, ...agents, ...agents];
   const containerRef = useRef<HTMLDivElement>(null);
   const controls = useAnimationControls();
@@ -85,10 +87,10 @@ export function AgentsCarousel() {
     <section className="py-24 bg-background overflow-hidden w-full relative">
       <div className="container mx-auto px-4 mb-12 text-center">
         <span className="inline-block px-4 py-2 bg-ukon-red/10 text-ukon-red rounded-full text-sm font-medium mb-4">
-          Our Team
+          {t('agents.ourTeam')}
         </span>
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-          Meet Our Expert Agents
+          {t('agents.meetOurExperts')}
         </h2>
       </div>
 
