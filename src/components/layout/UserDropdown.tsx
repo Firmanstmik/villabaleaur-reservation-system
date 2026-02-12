@@ -12,11 +12,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LayoutDashboard, Heart, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 
 export default function UserDropdown() {
   const { user, userType, signOut } = useAuth();
   const navigate = useNavigate();
+  const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
   const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
@@ -27,7 +29,7 @@ export default function UserDropdown() {
     try {
       await signOut();
       toast.success('Logged out successfully');
-      navigate('/');
+      navigate(`/${language}/`);
     } catch (error: any) {
       toast.error('Failed to log out. Please try again.');
     }
@@ -41,7 +43,7 @@ export default function UserDropdown() {
           <button
             onClick={(e) => {
               e.preventDefault();
-              navigate('/account');
+              navigate(`/${language}/account`);
             }}
             onMouseEnter={() => setIsOpen(true)}
             onMouseLeave={() => setIsOpen(false)}
@@ -78,7 +80,7 @@ export default function UserDropdown() {
               <DropdownMenuItem
                 onClick={() => {
                   setIsOpen(false);
-                  navigate('/account');
+                  navigate(`/${language}/account`);
                 }}
                 className="cursor-pointer transition-colors"
               >
@@ -90,7 +92,7 @@ export default function UserDropdown() {
               <DropdownMenuItem
                 onClick={() => {
                   setIsOpen(false);
-                  navigate('/account');
+                  navigate(`/${language}/account`);
                 }}
                 className="cursor-pointer transition-colors"
               >
@@ -145,7 +147,7 @@ export default function UserDropdown() {
         <DropdownMenuGroup>
           {/* Agent Dashboard */}
           <DropdownMenuItem
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate(`/${language}/dashboard`)}
             className="cursor-pointer transition-colors"
           >
             <LayoutDashboard className="mr-2 h-4 w-4" />
@@ -153,7 +155,7 @@ export default function UserDropdown() {
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate(`/${language}/dashboard`)}
             className="cursor-pointer transition-colors"
           >
             <Heart className="mr-2 h-4 w-4" />
@@ -162,7 +164,7 @@ export default function UserDropdown() {
 
           {/* Settings - goes to account page */}
           <DropdownMenuItem
-            onClick={() => navigate('/account')}
+            onClick={() => navigate(`/${language}/account`)}
             className="cursor-pointer transition-colors"
           >
             <Settings className="mr-2 h-4 w-4" />

@@ -163,16 +163,19 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
       try {
         // Load exchange rates (this is blocking for initialization)
         const rates = await getExchangeRates();
+        console.log('🔄 CurrencyContext: Exchange rates loaded:', rates);
         setExchangeRates(rates);
 
         // Check for stored currency preference
         const storedCurrency = localStorage.getItem(STORAGE_KEY);
         if (storedCurrency && SUPPORTED_CURRENCIES.includes(storedCurrency as SupportedCurrency)) {
+          console.log('💾 CurrencyContext: Using stored currency:', storedCurrency);
           setCurrencyState(storedCurrency as SupportedCurrency);
           setIsDetecting(false);
         } else {
           // Auto-detect currency (non-blocking)
           const detected = await detectCurrency();
+          console.log('🌍 CurrencyContext: Detected currency:', detected);
           setCurrencyState(detected);
           setIsDetecting(false);
         }
