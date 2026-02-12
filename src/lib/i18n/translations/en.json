@@ -8,7 +8,8 @@
     "blog": "Blog",
     "signIn": "Sign In",
     "contact": "Contact",
-    "contactUsNow": "Contact Us Now"
+    "contactUsNow": "Contact Us Now",
+    "logout": "Logout"
   },
   "hero": {
     "headline": "WHERE DREAMS COME TRUE.",
@@ -185,6 +186,29 @@
     "successfulLogout": "Logged out successfully",
     "failedLogout": "Failed to log out. Please try again.",
     "welcomeBack": "Welcome back!"
+  },
+  "dashboard": {
+    "overview": "Overview",
+    "listings": "Listings",
+    "addNew": "Add New",
+    "settings": "Settings",
+    "welcomeBack": "Welcome back, Admin",
+    "propertiesUpdates": "Here's what's happening with your properties today.",
+    "publishListing": "Publish Listing",
+    "totalListings": "Total Listings",
+    "activeLeads": "Active Leads",
+    "views30d": "Views (30d)",
+    "recentListings": "Recent Listings",
+    "filterByAddress": "Filter by address...",
+    "noPropertiesYet": "No properties published yet. Use the 'Add New' button to create your first listing!",
+    "viewAll": "View all",
+    "properties": "properties",
+    "publishNewProperty": "Publish New Property",
+    "fillDetails": "Fill in the details below to add a new listing to your catalog.",
+    "allListings": "All Listings",
+    "manageListings": "Manage and monitor all your property listings in one place.",
+    "searchListings": "Search listings...",
+    "noPropertiesFound": "No properties found. Try adding a new listing!"
   },
   "footer": {
     "aboutUs": "About Us",

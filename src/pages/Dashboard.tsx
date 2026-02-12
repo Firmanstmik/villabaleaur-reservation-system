@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import AddPropertyForm from '@/components/admin/AddPropertyForm';
@@ -28,7 +29,8 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<Tab>('overview');
     const navigate = useNavigate();
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
+    const { formatPrice, currency } = useCurrency();
 
     const [properties, setProperties] = useState<any[]>([]);
     const [statsLoading, setStatsLoading] = useState(true);
@@ -94,10 +96,10 @@ const Dashboard = () => {
     }
 
     const navigationItems = [
-        { id: 'overview' as Tab, icon: LayoutDashboard, label: 'Overview' },
-        { id: 'listings' as Tab, icon: Home, label: 'Listings' },
-        { id: 'add-new' as Tab, icon: PlusCircle, label: 'Add New' },
-        { id: 'settings' as Tab, icon: Settings, label: 'Settings' },
+        { id: 'overview' as Tab, icon: LayoutDashboard, label: t('dashboard.overview') },
+        { id: 'listings' as Tab, icon: Home, label: t('dashboard.listings') },
+        { id: 'add-new' as Tab, icon: PlusCircle, label: t('dashboard.addNew') },
+        { id: 'settings' as Tab, icon: Settings, label: t('dashboard.settings') },
     ];
 
     const recentListings = properties.slice(0, 5);
@@ -139,7 +141,7 @@ const Dashboard = () => {
                     className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-ukon-red/20 transition-all mt-auto border border-transparent hover:border-ukon-red/30"
                 >
                     <LogOut size={20} />
-                    Logout
+                    {t('navigation.logout')}
                 </button>
             </aside>
 
@@ -157,24 +159,24 @@ const Dashboard = () => {
                                 {/* Header */}
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
                                     <div>
-                                        <h2 className="text-3xl lg:text-4xl font-bold text-[#0e2e50]">Welcome back, Admin</h2>
-                                        <p className="text-muted-foreground mt-2 font-medium">Here's what's happening with your properties today.</p>
+                                        <h2 className="text-3xl lg:text-4xl font-bold text-[#0e2e50]">{t('dashboard.welcomeBack')}</h2>
+                                        <p className="text-muted-foreground mt-2 font-medium">{t('dashboard.propertiesUpdates')}</p>
                                     </div>
                                     <Button
                                         onClick={() => setActiveTab('add-new')}
                                         className="bg-[#0e2e50] text-white gap-2 rounded-2xl h-14 px-8 shadow-xl hover:bg-[#0e2e50]/90 transition-all hover:scale-105 active:scale-95"
                                     >
                                         <Plus size={20} />
-                                        Publish Listing
+                                        {t('dashboard.publishListing')}
                                     </Button>
                                 </div>
 
                                 {/* Stats Grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                                     {[
-                                        { label: 'Total Listings', value: statsLoading ? '...' : properties.length.toString(), icon: Building2, color: 'text-blue-600', bg: 'bg-blue-50' },
-                                        { label: 'Active Leads', value: '0', icon: Users, color: 'text-green-600', bg: 'bg-green-50' },
-                                        { label: 'Views (30d)', value: '0', icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50' },
+                                        { label: t('dashboard.totalListings'), value: statsLoading ? '...' : properties.length.toString(), icon: Building2, color: 'text-blue-600', bg: 'bg-blue-50' },
+                                        { label: t('dashboard.activeLeads'), value: '0', icon: Users, color: 'text-green-600', bg: 'bg-green-50' },
+                                        { label: t('dashboard.views30d'), value: '0', icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50' },
                                     ].map((stat) => (
                                         <div key={stat.label} className="p-8 rounded-[2rem] border border-border bg-white shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
                                             <div className={`absolute top-0 right-0 w-32 h-32 ${stat.bg} rounded-bl-[4rem] -mr-8 -mt-8 opacity-50 group-hover:scale-110 transition-transform`} />
@@ -192,10 +194,10 @@ const Dashboard = () => {
                                 {/* Desktop Table (Summary) */}
                                 <div className="bg-white rounded-[2.5rem] border border-border shadow-sm overflow-hidden mb-12">
                                     <div className="p-8 border-b border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                        <h3 className="font-bold text-xl text-[#0e2e50]">Recent Listings</h3>
+                                        <h3 className="font-bold text-xl text-[#0e2e50]">{t('dashboard.recentListings')}</h3>
                                         <div className="relative w-full sm:w-72">
                                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                                            <Input placeholder="Filter by address..." className="pl-12 h-11 rounded-2xl bg-secondary/30 border-none text-sm focus:ring-1 focus:ring-[#0e2e50]/10" />
+                                            <Input placeholder={t('dashboard.filterByAddress')} className="pl-12 h-11 rounded-2xl bg-secondary/30 border-none text-sm focus:ring-1 focus:ring-[#0e2e50]/10" />
                                         </div>
                                     </div>
                                     <div className="overflow-x-auto">
@@ -226,7 +228,7 @@ const Dashboard = () => {
                                                                     {p.status || p.price_type || 'Published'}
                                                                 </span>
                                                             </td>
-                                                            <td className="px-8 py-6 font-bold text-[#0e2e50]">${(p.price || 0).toLocaleString()}</td>
+                                                            <td className="px-8 py-6 font-bold text-[#0e2e50]">{formatPrice(p.price || 0, currency, language)}</td>
                                                             <td className="px-8 py-6 text-right">
                                                                 <button className="p-3 hover:bg-white hover:shadow-md rounded-2xl transition-all text-muted-foreground">
                                                                     <MoreVertical size={18} />
@@ -237,7 +239,7 @@ const Dashboard = () => {
                                                 ) : (
                                                     <tr>
                                                         <td colSpan={4} className="px-8 py-12 text-center text-muted-foreground font-medium">
-                                                            No properties published yet. Use the "Add New" button to create your first listing!
+                                                            {t('dashboard.noPropertiesYet')}
                                                         </td>
                                                     </tr>
                                                 )}
@@ -249,7 +251,7 @@ const Dashboard = () => {
                                             onClick={() => setActiveTab('listings')}
                                             className="text-sm font-bold text-[#0e2e50] hover:underline"
                                         >
-                                            View all {properties.length} properties
+                                            {t('dashboard.viewAll')} {properties.length} {t('dashboard.properties')}
                                         </button>
                                     </div>
                                 </div>
@@ -264,8 +266,8 @@ const Dashboard = () => {
                                 exit={{ opacity: 0, x: -20 }}
                             >
                                 <div className="mb-10">
-                                    <h2 className="text-3xl font-bold text-[#0e2e50]">Publish New Property</h2>
-                                    <p className="text-muted-foreground mt-2 font-medium">Fill in the details below to add a new listing to your catalog.</p>
+                                    <h2 className="text-3xl font-bold text-[#0e2e50]">{t('dashboard.publishNewProperty')}</h2>
+                                    <p className="text-muted-foreground mt-2 font-medium">{t('dashboard.fillDetails')}</p>
                                 </div>
                                 <AddPropertyForm onComplete={() => setActiveTab('overview')} />
                             </motion.div>
@@ -280,13 +282,13 @@ const Dashboard = () => {
                             >
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                     <div>
-                                        <h2 className="text-3xl font-bold text-[#0e2e50]">All Listings</h2>
-                                        <p className="text-muted-foreground mt-2 font-medium">Manage and monitor all your property listings in one place.</p>
+                                        <h2 className="text-3xl font-bold text-[#0e2e50]">{t('dashboard.allListings')}</h2>
+                                        <p className="text-muted-foreground mt-2 font-medium">{t('dashboard.manageListings')}</p>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <div className="relative w-64">
                                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                                            <Input placeholder="Search listings..." className="pl-12 h-12 rounded-2xl bg-white border-border shadow-sm focus:ring-1 focus:ring-[#0e2e50]/20" />
+                                            <Input placeholder={t('dashboard.searchListings')} className="pl-12 h-12 rounded-2xl bg-white border-border shadow-sm focus:ring-1 focus:ring-[#0e2e50]/20" />
                                         </div>
                                     </div>
                                 </div>
@@ -321,7 +323,7 @@ const Dashboard = () => {
                                                                     {p.status || p.price_type || 'Published'}
                                                                 </span>
                                                             </td>
-                                                            <td className="px-8 py-6 font-bold text-[#0e2e50]">${(p.price || 0).toLocaleString()}</td>
+                                                            <td className="px-8 py-6 font-bold text-[#0e2e50]">{formatPrice(p.price || 0, currency, language)}</td>
                                                             <td className="px-8 py-6 text-sm text-muted-foreground font-medium">{p.address}</td>
                                                             <td className="px-8 py-6 text-right">
                                                                 <button className="p-3 hover:bg-white hover:shadow-md rounded-2xl transition-all text-muted-foreground">
@@ -333,7 +335,7 @@ const Dashboard = () => {
                                                 ) : (
                                                     <tr>
                                                         <td colSpan={5} className="px-8 py-16 text-center text-muted-foreground font-medium">
-                                                            No properties found. Try adding a new listing!
+                                                            {t('dashboard.noPropertiesFound')}
                                                         </td>
                                                     </tr>
                                                 )}

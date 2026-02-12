@@ -8,7 +8,8 @@
     "blog": "Blog",
     "signIn": "Iniciar Sesión",
     "contact": "Contacto",
-    "contactUsNow": "Contáctanos Ahora"
+    "contactUsNow": "Contáctanos Ahora",
+    "logout": "Cerrar Sesión"
   },
   "hero": {
     "headline": "DONDE LOS SUEÑOS SE HACEN REALIDAD.",
@@ -184,6 +185,29 @@
     "successfulLogout": "Sesión cerrada correctamente",
     "failedLogout": "Error al cerrar sesión. Por favor, inténtelo de nuevo.",
     "welcomeBack": "¡Bienvenido de vuelta!"
+  },
+  "dashboard": {
+    "overview": "Descripción General",
+    "listings": "Listados",
+    "addNew": "Añadir Nuevo",
+    "settings": "Configuración",
+    "welcomeBack": "Bienvenido de vuelta, Administrador",
+    "propertiesUpdates": "Esto es lo que sucede con tus propiedades hoy.",
+    "publishListing": "Publicar Anuncio",
+    "totalListings": "Anuncios Totales",
+    "activeLeads": "Leads Activos",
+    "views30d": "Vistas (30d)",
+    "recentListings": "Anuncios Recientes",
+    "filterByAddress": "Filtrar por dirección...",
+    "noPropertiesYet": "Aún no hay propiedades publicadas. ¡Utiliza el botón 'Añadir Nuevo' para crear tu primer anuncio!",
+    "viewAll": "Ver todos",
+    "properties": "propiedades",
+    "publishNewProperty": "Publicar Nueva Propiedad",
+    "fillDetails": "Rellena los detalles a continuación para añadir un nuevo anuncio a tu catálogo.",
+    "allListings": "Todos los Anuncios",
+    "manageListings": "Gestiona y supervisa todos tus anuncios de propiedades en un solo lugar.",
+    "searchListings": "Buscar anuncios...",
+    "noPropertiesFound": "No se encontraron propiedades. ¡Intenta añadir un nuevo anuncio!"
   },
   "footer": {
     "aboutUs": "Acerca de Nosotros",

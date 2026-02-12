@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, useCallback, ReactNode } from 'react';
 
 export type SupportedCurrency = 'USD' | 'EUR' | 'IDR' | 'GBP';
 
@@ -45,36 +45,57 @@ const COUNTRY_TO_CURRENCY: Record<string, SupportedCurrency> = {
 
 // Fetch exchange rates from exchangerate.host (EUR base)
 async function fetchExchangeRates(): Promise<ExchangeRates> {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1000); // 1 second timeout
+  const apis = [
+    'https://api.exchangerate.host/latest?base=EUR&symbols=USD,EUR,IDR,GBP',
+    'https://api.exchangerate-api.com/v4/latest/EUR',
+    'https://open.er-api.com/v6/latest/EUR',
+  ];
 
-    const response = await fetch(
-      'https://api.exchangerate.host/latest?base=EUR&symbols=USD,EUR,IDR,GBP',
-      { signal: controller.signal }
-    );
+  for (const url of apis) {
+    try {
+      console.log(`🌐 Fetching from: ${url}`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-    clearTimeout(timeoutId);
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: { 'Accept': 'application/json' }
+      });
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(`📊 Raw API response from ${url}:`, data);
+
+      let rates: ExchangeRates;
+
+      // Handle different API response formats
+      if (data.rates) {
+        rates = {
+          EUR: 1,
+          USD: data.rates.USD || 1,
+          IDR: data.rates.IDR || 1,
+          GBP: data.rates.GBP || 1,
+        };
+      } else {
+        throw new Error('Invalid response format');
+      }
+
+      console.log('✅ Exchange rates fetched successfully:', rates);
+      return rates;
+    } catch (error) {
+      console.error(`❌ Failed to fetch from ${url}:`, error instanceof Error ? error.message : error);
+      // Continue to next API
     }
-
-    const data = await response.json();
-
-    if (!data.rates) {
-      throw new Error('Invalid response format');
-    }
-
-    // Ensure EUR is always 1 (base currency)
-    return {
-      EUR: 1,
-      ...data.rates,
-    };
-  } catch (error) {
-    console.warn('Failed to fetch exchange rates:', error);
-    return null as any;
   }
+
+  // All APIs failed
+  console.error('❌ All exchange rate APIs failed');
+  return null as any;
 }
 
 // Get cached exchange rates or fetch new ones
@@ -87,6 +108,7 @@ async function getExchangeRates(): Promise<ExchangeRates> {
   if (cachedTimestamp && cachedRates) {
     const cacheAge = now - parseInt(cachedTimestamp, 10);
     if (cacheAge < CACHE_DURATION_MS) {
+      console.log('💾 Using cached exchange rates:', JSON.parse(cachedRates));
       return JSON.parse(cachedRates);
     }
   }
@@ -98,17 +120,18 @@ async function getExchangeRates(): Promise<ExchangeRates> {
     // Cache with timestamp
     localStorage.setItem(EXCHANGE_RATES_KEY, JSON.stringify(newRates));
     localStorage.setItem(EXCHANGE_RATES_TIMESTAMP_KEY, now.toString());
+    console.log('💾 Cached new exchange rates');
     return newRates;
   }
 
   // Fallback to cached rates if fetch fails
   if (cachedRates) {
-    console.warn('Using cached exchange rates (API failed)');
+    console.warn('⚠️ Using cached exchange rates (API failed):', JSON.parse(cachedRates));
     return JSON.parse(cachedRates);
   }
 
   // Fallback to 1:1 if no cache available
-  console.error('Exchange rates unavailable, using 1:1 fallback');
+  console.error('❌ Exchange rates unavailable, using 1:1 fallback');
   return { USD: 1, EUR: 1, IDR: 1, GBP: 1 };
 }
 
@@ -210,14 +233,17 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
       return amountInEUR;
     }
 
+    const converted = amountInEUR * rate;
+    console.log(`💱 Converting: ${amountInEUR} EUR × ${rate} (${targetCurrency}) = ${converted}`);
     // Always convert from EUR base to avoid cumulative rounding errors
-    return amountInEUR * rate;
+    return converted;
   }, [exchangeRates]);
 
   // Format price with currency and locale-specific formatting
   const formatPrice = useCallback(
     (amountInEUR: number, targetCurrency: SupportedCurrency, language: string): string => {
       const convertedAmount = convert(amountInEUR, targetCurrency);
+      console.log(`📍 formatPrice called: ${amountInEUR} EUR → ${convertedAmount} ${targetCurrency}`);
 
       // Map language code to locale for Intl.NumberFormat
       const localeMap: Record<string, string> = {
@@ -230,12 +256,14 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
       const locale = localeMap[language] || 'en-US';
 
       try {
-        return new Intl.NumberFormat(locale, {
+        const formatted = new Intl.NumberFormat(locale, {
           style: 'currency',
           currency: targetCurrency,
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
         }).format(convertedAmount);
+        console.log(`✅ Formatted: ${formatted}`);
+        return formatted;
       } catch (error) {
         console.warn(`Failed to format price for ${targetCurrency}:`, error);
         return `${targetCurrency} ${convertedAmount.toLocaleString()}`;

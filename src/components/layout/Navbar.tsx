@@ -179,7 +179,7 @@ export function Navbar() {
           <nav className="hidden lg:flex items-center" style={{ gap: '2.5vw' }}>
             {navLinks.map((link) => (
               <Link
-                key={link.path}
+                key={link.key}
                 to={link.localizedPath}
                 onClick={(e) => handleNavClick(e, link)}
                 className={`font-medium transition-colors hover:text-[#D92C2C] ${isLinkActive(link) ? 'text-[#D92C2C]' : 'text-foreground'
@@ -277,7 +277,7 @@ export function Navbar() {
             <div className="flex flex-col h-full pt-24 px-6 gap-6 relative z-50">
               {navLinks.map((link) => (
                 <Link
-                  key={link.path}
+                  key={link.key}
                   to={link.localizedPath}
                   onClick={(e) => {
                     handleNavClick(e, link);

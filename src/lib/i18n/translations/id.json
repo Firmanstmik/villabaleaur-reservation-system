@@ -8,7 +8,8 @@
     "blog": "Blog",
     "signIn": "Masuk",
     "contact": "Hubungi",
-    "contactUsNow": "Hubungi Kami Sekarang"
+    "contactUsNow": "Hubungi Kami Sekarang",
+    "logout": "Keluar"
   },
   "hero": {
     "headline": "DI MANA IMPIAN MENJADI KENYATAAN.",
@@ -184,6 +185,29 @@
     "successfulLogout": "Keluar dengan berhasil",
     "failedLogout": "Gagal keluar. Silakan coba lagi.",
     "welcomeBack": "Selamat datang kembali!"
+  },
+  "dashboard": {
+    "overview": "Ikhtisar",
+    "listings": "Daftar Properti",
+    "addNew": "Tambah Baru",
+    "settings": "Pengaturan",
+    "welcomeBack": "Selamat datang kembali, Admin",
+    "propertiesUpdates": "Berikut apa yang terjadi dengan properti Anda hari ini.",
+    "publishListing": "Terbitkan Daftar",
+    "totalListings": "Total Daftar",
+    "activeLeads": "Lead Aktif",
+    "views30d": "Tampilan (30h)",
+    "recentListings": "Daftar Terbaru",
+    "filterByAddress": "Filter berdasarkan alamat...",
+    "noPropertiesYet": "Tidak ada properti yang diterbitkan. Gunakan tombol 'Tambah Baru' untuk membuat daftar pertama Anda!",
+    "viewAll": "Lihat semua",
+    "properties": "properti",
+    "publishNewProperty": "Terbitkan Properti Baru",
+    "fillDetails": "Isi detail di bawah ini untuk menambahkan daftar baru ke katalog Anda.",
+    "allListings": "Semua Daftar",
+    "manageListings": "Kelola dan pantau semua daftar properti Anda di satu tempat.",
+    "searchListings": "Cari daftar...",
+    "noPropertiesFound": "Tidak ada properti yang ditemukan. Coba tambahkan daftar baru!"
   },
   "footer": {
     "aboutUs": "Tentang Kami",

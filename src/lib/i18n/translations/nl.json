@@ -8,7 +8,8 @@
     "blog": "Blog",
     "signIn": "Inloggen",
     "contact": "Contact",
-    "contactUsNow": "Neem Nu Contact Met Ons Op"
+    "contactUsNow": "Neem Nu Contact Met Ons Op",
+    "logout": "Afmelden"
   },
   "hero": {
     "headline": "WAAR DROMEN WERKELIJKHEID WORDEN.",
@@ -184,6 +185,29 @@
     "successfulLogout": "Succesvol afgemeld",
     "failedLogout": "Afmelden mislukt. Probeer het opnieuw.",
     "welcomeBack": "Welkom terug!"
+  },
+  "dashboard": {
+    "overview": "Overzicht",
+    "listings": "Aanbiedingen",
+    "addNew": "Nieuw Toevoegen",
+    "settings": "Instellingen",
+    "welcomeBack": "Welkom terug, beheerder",
+    "propertiesUpdates": "Dit gebeurt vandaag met uw eigenschappen.",
+    "publishListing": "Aanbieding Publiceren",
+    "totalListings": "Totale Aanbiedingen",
+    "activeLeads": "Actieve Leads",
+    "views30d": "Weergaven (30d)",
+    "recentListings": "Recente Aanbiedingen",
+    "filterByAddress": "Filteren op adres...",
+    "noPropertiesYet": "Nog geen onroerend goed gepubliceerd. Gebruik de knop 'Nieuw toevoegen' om uw eerste aanbieding te maken!",
+    "viewAll": "Alles weergeven",
+    "properties": "eigenschappen",
+    "publishNewProperty": "Nieuw Onroerend Goed Publiceren",
+    "fillDetails": "Vul de onderstaande gegevens in om een nieuwe aanbieding aan uw catalogus toe te voegen.",
+    "allListings": "Alle Aanbiedingen",
+    "manageListings": "Beheer en controleer al uw onroerendgoedaanbiedingen op één plaats.",
+    "searchListings": "Aanbiedingen doorzoeken...",
+    "noPropertiesFound": "Geen onroerend goed gevonden. Probeer een nieuwe aanbieding toe te voegen!"
   },
   "footer": {
     "aboutUs": "Over Ons",
