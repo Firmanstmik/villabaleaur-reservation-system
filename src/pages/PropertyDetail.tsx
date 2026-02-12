@@ -1,5 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { motion } from 'framer-motion';
 import {
     Bed,
@@ -48,6 +50,8 @@ import NearbyAmenities from '@/components/property/NearbyAmenities';
 
 const PropertyDetail = () => {
     const { id } = useParams();
+    const { t, language } = useLanguage();
+    const { currency, formatPrice: formatCurrencyPrice } = useCurrency();
     const [property, setProperty] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -131,10 +135,10 @@ const PropertyDetail = () => {
     if (!property) {
         return (
             <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-                <h1 className="text-2xl font-bold mb-4 text-[#0e2e50]">Property not found</h1>
-                <Link to="/properties">
+                <h1 className="text-2xl font-bold mb-4 text-[#0e2e50]">{t('properties.notFound')}</h1>
+                <Link to={`/${language}/properties`}>
                     <Button variant="default" className="bg-ukon-red hover:bg-ukon-red/90 rounded-full h-12 px-8">
-                        Back to Properties
+                        {t('properties.backToProperties')}
                     </Button>
                 </Link>
             </div>
@@ -144,10 +148,6 @@ const PropertyDetail = () => {
     const similarProperties = mockProperties
         .filter((p) => p.id !== property.id && (p.status === property.status || p.status === (property as any).price_type))
         .slice(0, 3);
-
-    const formatPrice = (price: number) => {
-        return `$ ${(price || 0).toLocaleString()}`;
-    };
 
     return (
         <div className="min-h-screen bg-background">
@@ -470,10 +470,10 @@ const PropertyDetail = () => {
                                     <div className="absolute top-0 left-0 w-2 h-full bg-[#0e2e50]" />
 
                                     <div className="mb-8 p-4 bg-secondary/30 rounded-2xl">
-                                        <p className="text-muted-foreground text-sm mb-1">Pricing starting from</p>
+                                        <p className="text-muted-foreground text-sm mb-1">{t('propertyDetail.pricingStartingFrom')}</p>
                                         <h2 className="text-4xl font-black text-[#0e2e50]">
-                                            {formatPrice(property.price)}
-                                            {property.priceType === 'rent' && <span className="text-lg font-normal text-muted-foreground">/mo</span>}
+                                            {formatCurrencyPrice(property.price, currency, language)}
+                                            {property.priceType === 'rent' && <span className="text-lg font-normal text-muted-foreground">{t('propertyDetail.perMonth')}</span>}
                                         </h2>
                                     </div>
 
@@ -536,11 +536,11 @@ const PropertyDetail = () => {
                     <section className="mt-24 border-t border-border pt-16">
                         <div className="flex items-center justify-between mb-12">
                             <div>
-                                <h3 className="text-3xl font-bold mb-2">Similar Properties</h3>
-                                <p className="text-muted-foreground">Discover other exceptional properties in the area</p>
+                                <h3 className="text-3xl font-bold mb-2">{t('propertyDetail.similarProperties')}</h3>
+                                <p className="text-muted-foreground">{t('propertyDetail.discoverOtherProperties')}</p>
                             </div>
-                            <Link to="/properties" className="text-ukon-red font-bold flex items-center gap-1 group">
-                                See more <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                            <Link to={`/${language}/properties`} className="text-ukon-red font-bold flex items-center gap-1 group">
+                                {t('propertyDetail.seeMore')} <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
                             </Link>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
