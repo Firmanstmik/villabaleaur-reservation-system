@@ -19,6 +19,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
@@ -41,6 +43,8 @@ interface SearchAlert {
 
 const Account = () => {
   const { user, signOut, userType } = useAuth();
+  const { t, language } = useLanguage();
+  const { formatPrice, currency } = useCurrency();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('saved');
   const [loading, setLoading] = useState(true);
@@ -218,7 +222,7 @@ const Account = () => {
           className="bg-white border-b border-border"
         >
           <div className="max-w-6xl mx-auto px-6 py-8">
-            <h1 className="text-3xl font-bold text-foreground">My Account</h1>
+            <h1 className="text-3xl font-bold text-foreground">{t('account.myAccount')}</h1>
             <p className="text-sm text-muted-foreground mt-1">{user.email}</p>
           </div>
         </motion.div>
@@ -229,22 +233,22 @@ const Account = () => {
           <TabsList className="grid w-full max-w-md grid-cols-3">
             <TabsTrigger value="saved" className="flex items-center gap-2">
               <Heart className="h-4 w-4" />
-              <span className="hidden sm:inline">Saved</span>
+              <span className="hidden sm:inline">{t('account.saved')}</span>
             </TabsTrigger>
             <TabsTrigger value="alerts" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
-              <span className="hidden sm:inline">Alerts</span>
+              <span className="hidden sm:inline">{t('account.alerts')}</span>
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Settings</span>
+              <span className="hidden sm:inline">{t('account.settings')}</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Saved Properties Tab */}
           <TabsContent value="saved" className="space-y-6 mt-8">
             <div>
-              <h2 className="text-xl font-semibold mb-4">Saved Properties</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('account.savedProperties')}</h2>
 
               {savedProperties.length === 0 ? (
                 <motion.div
@@ -253,12 +257,12 @@ const Account = () => {
                   className="bg-white rounded-2xl p-12 text-center border border-border"
                 >
                   <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <p className="text-muted-foreground">No saved properties yet</p>
+                  <p className="text-muted-foreground">{t('account.noSavedProperties')}</p>
                   <Button
                     onClick={() => navigate('/properties')}
                     className="mt-4 bg-ukon-navy hover:bg-ukon-navy/90"
                   >
-                    Browse Properties
+                    {t('account.browseProperties')}
                   </Button>
                 </motion.div>
               ) : (
@@ -310,15 +314,15 @@ const Account = () => {
                             <div className="flex items-center gap-1">
                               <DollarSign className="h-4 w-4 text-ukon-red" />
                               <span className="font-bold text-lg text-ukon-red">
-                                €{saved.property?.price?.toLocaleString()}
+                                {formatPrice(saved.property?.price || 0, currency, language)}
                               </span>
                             </div>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => navigate(`/property/${saved.property?.id}`)}
+                              onClick={() => navigate(`/${language}/property/${saved.property?.id}`)}
                             >
-                              View
+                              {t('propertyDetail.seeMore')}
                             </Button>
                           </div>
                         </div>
@@ -334,10 +338,10 @@ const Account = () => {
           <TabsContent value="alerts" className="space-y-6 mt-8">
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold">Search Alerts</h2>
+                <h2 className="text-xl font-semibold">{t('account.searchAlerts')}</h2>
                 <Button className="bg-ukon-navy hover:bg-ukon-navy/90">
                   <Bell className="h-4 w-4 mr-2" />
-                  Create Alert
+                  {t('account.createAlert')}
                 </Button>
               </div>
 
