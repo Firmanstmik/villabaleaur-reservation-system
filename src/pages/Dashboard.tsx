@@ -8,11 +8,11 @@ import {
     Settings,
     LogOut,
     Search,
-    MoreVertical,
     Plus,
     Building2,
     Users,
-    TrendingUp
+    TrendingUp,
+    Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +21,7 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import AddPropertyForm from '@/components/admin/AddPropertyForm';
+import { PropertyListingMenu } from '@/components/admin/PropertyListingMenu';
 
 type Tab = 'overview' | 'listings' | 'add-new' | 'settings';
 
@@ -207,6 +208,7 @@ const Dashboard = () => {
                                                     <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Property Details</th>
                                                     <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Status</th>
                                                     <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Pricing</th>
+                                                    <th className="px-8 py-5 text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Featured</th>
                                                     <th className="px-8 py-5 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Options</th>
                                                 </tr>
                                             </thead>
@@ -229,10 +231,15 @@ const Dashboard = () => {
                                                                 </span>
                                                             </td>
                                                             <td className="px-8 py-6 font-bold text-[#0e2e50]">{formatPrice(p.price || 0, currency, language)}</td>
+                                                            <td className="px-8 py-6 text-center">
+                                                                {p.featured ? (
+                                                                    <Star size={18} className="fill-amber-400 text-amber-400 mx-auto" />
+                                                                ) : (
+                                                                    <span className="text-xs text-muted-foreground">-</span>
+                                                                )}
+                                                            </td>
                                                             <td className="px-8 py-6 text-right">
-                                                                <button className="p-3 hover:bg-white hover:shadow-md rounded-2xl transition-all text-muted-foreground">
-                                                                    <MoreVertical size={18} />
-                                                                </button>
+                                                                <PropertyListingMenu property={p} onRefresh={() => fetchDashboardData(user.id)} />
                                                             </td>
                                                         </tr>
                                                     ))
@@ -302,6 +309,7 @@ const Dashboard = () => {
                                                     <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Status</th>
                                                     <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Pricing</th>
                                                     <th className="px-8 py-5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Location</th>
+                                                    <th className="px-8 py-5 text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Featured</th>
                                                     <th className="px-8 py-5 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Options</th>
                                                 </tr>
                                             </thead>
@@ -325,10 +333,15 @@ const Dashboard = () => {
                                                             </td>
                                                             <td className="px-8 py-6 font-bold text-[#0e2e50]">{formatPrice(p.price || 0, currency, language)}</td>
                                                             <td className="px-8 py-6 text-sm text-muted-foreground font-medium">{p.address}</td>
+                                                            <td className="px-8 py-6 text-center">
+                                                                {p.featured ? (
+                                                                    <Star size={18} className="fill-amber-400 text-amber-400 mx-auto" />
+                                                                ) : (
+                                                                    <span className="text-xs text-muted-foreground">-</span>
+                                                                )}
+                                                            </td>
                                                             <td className="px-8 py-6 text-right">
-                                                                <button className="p-3 hover:bg-white hover:shadow-md rounded-2xl transition-all text-muted-foreground">
-                                                                    <MoreVertical size={18} />
-                                                                </button>
+                                                                <PropertyListingMenu property={p} onRefresh={() => fetchDashboardData(user.id)} />
                                                             </td>
                                                         </tr>
                                                     ))
