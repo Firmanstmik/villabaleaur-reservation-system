@@ -1,19 +1,17 @@
-import { useRef, useEffect, useState, useMemo } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { PropertyCard } from '@/components/PropertyCard';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FilterBar } from '@/components/properties/FilterBar';
 import { properties as mockProperties } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useFilters } from '@/hooks/useFilters';
+import type { FilterState } from '@/types/filters';
 import { supabase } from '@/lib/supabase';
-import heroBg from '@/assets/hero-bg.png';
-import heroVideo from '@/assets/hero-video.mp4';
-
-type FilterType = 'all' | 'rent' | 'sale';
+import heroBg from '@/assets/Ukon_Estate_Hero.webp';
+import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 
 const Properties = () => {
   const { ref, isInView } = useInView();
@@ -21,8 +19,6 @@ const Properties = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const cloneRef = useRef<HTMLVideoElement>(null);
   const [showClone, setShowClone] = useState(false);
-  const [filter, setFilter] = useState<FilterType>('all');
-  const [searchQuery, setSearchQuery] = useState('');
   const [displayProperties, setDisplayProperties] = useState<any[]>([]);
 
   useEffect(() => {
@@ -97,21 +93,9 @@ const Properties = () => {
     };
   }, [showClone]);
 
-  const filteredProperties = useMemo(() => {
-    return displayProperties.filter((property) => {
-      const propertyStatus = property.status || property.price_type || 'sale';
-      const matchesFilter = filter === 'all' || propertyStatus === filter ||
-        (filter === 'sale' && propertyStatus === 'investment');
-
-      const title = property.title || '';
-      const address = property.address || '';
-
-      const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        address.toLowerCase().includes(searchQuery.toLowerCase());
-
-      return matchesFilter && matchesSearch;
-    });
-  }, [filter, searchQuery, displayProperties]);
+  // Initialize filters and get filtered results
+  const { filters, setFilter, resetFilters, filteredProperties, activeFilterCount } =
+    useFilters(displayProperties);
 
   return (
     <div className="min-h-screen bg-background">
@@ -176,62 +160,21 @@ const Properties = () => {
           </div>
         </section>
 
-        {/* Filters Section */}
-        <section className="py-12 bg-secondary/30 border-b border-border">
+        {/* Premium Filter Bar */}
+        <section className="py-8 bg-card border-b border-border/20">
           <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              {/* Search */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                className="relative w-full md:w-96"
-              >
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
-                <Input
-                  type="text"
-                  placeholder={t('properties.search')}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-12 rounded-full border-2 focus:border-ukon-red"
-                />
-              </motion.div>
-
-              {/* Tabs */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Tabs value={filter} onValueChange={(v) => setFilter(v as FilterType)}>
-                  <TabsList className="bg-card border border-border">
-                    <TabsTrigger
-                      value="all"
-                      className="data-[state=active]:bg-ukon-red data-[state=active]:text-white"
-                    >
-                      {t('properties.allProperties')}
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="rent"
-                      className="data-[state=active]:bg-ukon-red data-[state=active]:text-white"
-                    >
-                      {t('properties.forRent')}
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="sale"
-                      className="data-[state=active]:bg-ukon-red data-[state=active]:text-white"
-                    >
-                      {t('properties.forSale')}
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </motion.div>
-            </div>
+            <FilterBar
+              filters={filters}
+              setFilter={setFilter}
+              resetFilters={resetFilters}
+              activeFilterCount={activeFilterCount}
+              resultCount={filteredProperties.length}
+            />
           </div>
         </section>
 
         {/* Properties Grid */}
-        <section className="py-16">
+        <section className="pt-8 pb-16">
           <div className="container mx-auto px-4">
             {filteredProperties.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -8,8 +8,8 @@ import { useInView } from '@/hooks/useInView';
 import { useCountUp } from '@/hooks/useCountUp';
 import { whatsappUrl } from '@/data/mockData';
 import { useLanguage } from '@/contexts/LanguageContext';
-import heroBg from '@/assets/hero-bg.png';
-import heroVideo from '@/assets/hero-video.mp4';
+import heroBg from '@/assets/Ukon_Estate_Hero.webp';
+import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 
 function StatItem({ value, label, suffix = '', delay = 0 }: { value: number; label: string; suffix?: string; delay?: number }) {
   const { ref, isInView } = useInView({ threshold: 0.5 });
@@ -72,7 +72,7 @@ const About = () => {
 
       if (timeLeft <= FADE_DURATION && !showClone) {
         cloneRef.current.currentTime = 0;
-        cloneRef.current.play().catch(() => {});
+        cloneRef.current.play().catch(() => { });
         setShowClone(true);
       }
     };

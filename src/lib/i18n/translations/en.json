@@ -40,6 +40,46 @@
     "noPropertiesFound": "No properties found matching your criteria.",
     "notFound": "Property not found"
   },
+  "filters": {
+    "transactionType": {
+      "all": "All",
+      "sale": "For Sale",
+      "rent": "For Rent"
+    },
+    "location": "Location",
+    "locationPlaceholder": "City, district, address...",
+    "priceRange": "Price Range",
+    "bedrooms": "Bedrooms",
+    "beds": "Beds",
+    "propertyType": "Property Type",
+    "allTypes": "All Types",
+    "propertyTypes": {
+      "villa": "Villa",
+      "apartment": "Apartment",
+      "penthouse": "Penthouse",
+      "commercial": "Commercial",
+      "land": "Land"
+    },
+    "refine": "Refine",
+    "any": "Any",
+    "clearAll": "Clear All",
+    "propertiesFound": "properties found",
+    "bathrooms": "Bathrooms",
+    "baths": "Baths",
+    "interiorSize": "Interior Size (m²)",
+    "minSize": "Min m²",
+    "maxSize": "Max m²",
+    "lifestyle": {
+      "waterfront": "Waterfront",
+      "beachfront": "Beachfront",
+      "city_center": "City Center",
+      "gated": "Gated",
+      "pool": "Pool",
+      "garden": "Garden"
+    },
+    "minPrice": "Min",
+    "maxPrice": "Max"
+  },
   "propertyDetail": {
     "description": "Description",
     "homeInfoAmenities": "Home Info & Amenities",
@@ -95,8 +135,8 @@
   },
   "about": {
     "aboutUkon": "About Ukon Estate",
-    "buildingDreams": "Building Dreams,",
-    "creatingHomes": "Creating Homes",
+    "buildingDreams": "Local expertise,",
+    "creatingHomes": "worldwide network",
     "description": "With years of experience in the real estate industry, Ukon Estate has helped countless families find their perfect homes. Our dedicated team combines local expertise with global vision to deliver exceptional results.",
     "yearsExperience": "Years Experience",
     "propertiesSold": "Properties Sold",

@@ -7,8 +7,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useAuthPanel } from '@/contexts/AuthPanelContext';
 import { AuthPanel } from '@/components/auth/AuthPanel';
-import heroBg from '@/assets/hero-bg.png';
-import heroVideo from '@/assets/hero-video.mp4';
+import heroBg from '@/assets/Ukon_Estate_Hero.webp';
+import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
 import roselynnChaiPhoto from '@/assets/Roselynn_Chai.avif';
 import marcoLoureiroPhoto from '@/assets/Marco_Loureiro.avif';
@@ -67,7 +67,7 @@ export function HeroSection() {
       if (timeLeft <= FADE_DURATION && !showClone) {
         // Start clone at beginning, fade it in
         cloneRef.current.currentTime = 0;
-        cloneRef.current.play().catch(() => {});
+        cloneRef.current.play().catch(() => { });
         setShowClone(true);
       }
     };

@@ -102,7 +102,9 @@ export function AgentsCarousel() {
           animate={controls}
           drag="x"
           dragConstraints={{ left: -99999, right: 0 }}
-          dragElastic={0.1}
+          dragElastic={0}
+          dragMomentum={false}
+          dragTransition={{ power: 0, timeConstant: 200, restDelta: 0.001 }}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >

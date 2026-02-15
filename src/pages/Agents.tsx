@@ -6,8 +6,8 @@ import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { agents, whatsappNumber } from '@/data/mockData';
 import { useLanguage } from '@/contexts/LanguageContext';
-import heroBg from '@/assets/hero-bg.png';
-import heroVideo from '@/assets/hero-video.mp4';
+import heroBg from '@/assets/Ukon_Estate_Hero.webp';
+import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 
 import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
 import pakKumisPhoto from '@/assets/Pak_Kumis.avif';
@@ -55,7 +55,7 @@ const Agents = () => {
 
       if (timeLeft <= FADE_DURATION && !showClone) {
         cloneRef.current.currentTime = 0;
-        cloneRef.current.play().catch(() => {});
+        cloneRef.current.play().catch(() => { });
         setShowClone(true);
       }
     };
@@ -174,7 +174,7 @@ const Agents = () => {
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      
+
                       {/* Overlay Content */}
                       <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                         <div className="flex gap-3 mb-4">
@@ -234,7 +234,7 @@ const Agents = () => {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-ukon-red rounded-full blur-3xl" />
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl" />
               </div>
-              
+
               <div className="relative z-10">
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
                   {t('agents.joinOurTeam')}

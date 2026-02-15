@@ -139,9 +139,10 @@ async function getExchangeRates(): Promise<ExchangeRates> {
 async function detectCurrency(): Promise<SupportedCurrency> {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1000); // 1 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 800); // Very short 800ms timeout
 
-    const response = await fetch('https://ipwho.is/json', {
+    // ipapi.co is generally more reliable for CORS-enabled free IP detection
+    const response = await fetch('https://ipapi.co/json/', {
       signal: controller.signal,
     });
 
@@ -152,7 +153,7 @@ async function detectCurrency(): Promise<SupportedCurrency> {
     }
 
     const data = await response.json();
-    const countryCode = data.country_code?.toUpperCase();
+    const countryCode = data.country?.toUpperCase(); // ipapi uses 'country'
 
     if (countryCode && COUNTRY_TO_CURRENCY[countryCode]) {
       return COUNTRY_TO_CURRENCY[countryCode];
@@ -160,8 +161,8 @@ async function detectCurrency(): Promise<SupportedCurrency> {
 
     return 'EUR'; // Default to EUR
   } catch (error) {
-    console.warn('Failed to detect currency via IP:', error);
-    return 'EUR'; // Default to EUR
+    // Fail silently and quickly to avoid delaying the UI
+    return 'EUR';
   }
 }
 

@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { whatsappUrl } from '@/data/mockData';
 import logoImage from '@/assets/Ukon-Estate.png';
 
 const footerLinksKeys = {
@@ -30,10 +28,6 @@ const footerLinksKeys = {
 export function Footer() {
   const { language, t } = useLanguage();
 
-  const handleWhatsAppClick = () => {
-    window.open(whatsappUrl, '_blank');
-  };
-
   // Helper to add language prefix to paths
   const getLocalizedPath = (path: string) => {
     if (path === '#') return path;
@@ -42,33 +36,6 @@ export function Footer() {
 
   return (
     <footer className="bg-ukon-navy text-white">
-      {/* CTA Section */}
-      <div className="py-16 border-b border-white/10">
-        <div className="container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              {t('footer.whereServiceDreamsComeTrueDesc')}
-            </h2>
-            <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
-              {t('footer.readyToFindPerfectProperty')}
-            </p>
-            <Button
-              onClick={handleWhatsAppClick}
-              size="lg"
-              className="bg-ukon-red hover:bg-ukon-red/90 text-white glow-effect flex items-center gap-2 mx-auto"
-            >
-              <span className="blink-dot" />
-              {t('footer.contactUsOnWhatsApp')}
-            </Button>
-          </motion.div>
-        </div>
-      </div>
-
       {/* Main Footer */}
       <div className="py-16">
         <div className="container mx-auto px-4">

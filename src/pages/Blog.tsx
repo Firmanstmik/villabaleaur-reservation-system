@@ -8,8 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { blogPosts } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
 import { useLanguage } from '@/contexts/LanguageContext';
-import heroBg from '@/assets/hero-bg.png';
-import heroVideo from '@/assets/hero-video.mp4';
+import heroBg from '@/assets/Ukon_Estate_Hero.webp';
+import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 
 const Blog = () => {
   const { ref, isInView } = useInView();
@@ -36,7 +36,7 @@ const Blog = () => {
 
       if (timeLeft <= FADE_DURATION && !showClone) {
         cloneRef.current.currentTime = 0;
-        cloneRef.current.play().catch(() => {});
+        cloneRef.current.play().catch(() => { });
         setShowClone(true);
       }
     };
@@ -187,11 +187,10 @@ const Blog = () => {
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      selectedCategory === category
-                        ? 'bg-ukon-red text-white'
-                        : 'bg-card border border-border hover:border-ukon-red/50'
-                    }`}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedCategory === category
+                      ? 'bg-ukon-red text-white'
+                      : 'bg-card border border-border hover:border-ukon-red/50'
+                      }`}
                   >
                     {t(categoryMap[category])}
                   </button>
@@ -225,7 +224,7 @@ const Blog = () => {
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        
+
                         {/* Category Badge */}
                         <Badge
                           className="absolute top-4 left-4 bg-ukon-red text-white border-0"
@@ -293,7 +292,7 @@ const Blog = () => {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-ukon-red rounded-full blur-3xl" />
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl" />
               </div>
-              
+
               <div className="relative z-10">
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
                   {t('blog.stayUpdated')}

@@ -42,6 +42,7 @@ export interface Testimonial {
   photo: string;
   review: string;
   rating: number;
+  location?: string;
 }
 
 export interface BlogPost {
@@ -229,48 +230,70 @@ export const properties: Property[] = [
 ];
 
 export const agents: Agent[] = [
-  { id: '1', name: 'Gino Beelt', location: 'Miami, FL', photo: '', specialty: 'Luxury Homes' },
-  { id: '2', name: 'Pak Kumis', location: 'New York, NY', photo: '', specialty: 'Commercial Properties' },
-  { id: '3', name: 'Paul Wennink', location: 'Los Angeles, CA', photo: '', specialty: 'Beachfront Properties' },
-  { id: '4', name: 'Raffy Ukon', location: 'Austin, TX', photo: '', specialty: 'Investment Properties' },
-  { id: '5', name: 'Roselynn Chai', location: 'Denver, CO', photo: '', specialty: 'Mountain Retreats' },
-  { id: '6', name: 'Marco Loureiro', location: 'Chicago, IL', photo: '', specialty: 'Urban Living' },
-  { id: '7', name: 'Jeroen Egbers', location: 'San Francisco, CA', photo: '', specialty: 'Tech Hub Living' },
-  { id: '8', name: 'Hendrik Ukon', location: 'Barcelona, Spain', photo: '', specialty: 'Historic Villas' },
-  { id: '9', name: 'Afifah Ukon', location: 'London, UK', photo: '', specialty: 'Modern Apartments' },
+  { id: '1', name: 'Gino Beelt', location: 'Utrecht, NL', photo: '', specialty: 'Luxury Homes' },
+  { id: '2', name: 'Pak Kumis', location: 'Pangandaran, Indonesia', photo: '', specialty: 'Commercial Properties' },
+  { id: '3', name: 'Paul Wennink', location: 'Almere, NL', photo: '', specialty: 'Beachfront Properties' },
+  { id: '4', name: 'Raffy Ukon', location: 'Bali, Indonesia', photo: '', specialty: 'Investment Properties' },
+  { id: '5', name: 'Roselynn Chai', location: 'Johor Bahru, Malaysia', photo: '', specialty: 'Mountain Retreats' },
+  { id: '6', name: 'Marco Loureiro', location: 'Lisbon, Portugal', photo: '', specialty: 'Urban Living' },
+  { id: '7', name: 'Jeroen Egbers', location: 'Amsterdam, NL', photo: '', specialty: 'Tech Hub Living' },
+  { id: '8', name: 'Hendrik Ukon', location: 'Bandung, Indonesia', photo: '', specialty: 'Historic Villas' },
+  { id: '9', name: 'Afifah Ukon', location: 'Lombok, Indonesia', photo: '', specialty: 'Modern Apartments' },
 ];
 
 export const testimonials: Testimonial[] = [
   {
     id: '1',
-    clientName: 'Jennifer Adams',
+    clientName: 'Giovanni Bertè',
     clientType: 'Home Buyer',
-    photo: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&q=80',
-    review: 'UKON Estate made our dream home a reality! Their team was professional, patient, and truly understood what we were looking for. Highly recommend!',
+    location: 'Amsterdam, NL',
+    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
+    review: 'Raffy was incredibly helpful throughout our search. We were able to find our dream house within just one month. His serious and dedicated approach to the process made all the difference. I can highly recommend this service to anyone looking to buy.',
     rating: 5,
   },
   {
     id: '2',
-    clientName: 'Marcus Thompson',
-    clientType: 'Property Investor',
-    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
-    review: 'As an investor, I need a team that understands the market. UKON Estate delivered exceptional ROI on all my investments. They are the best in the business!',
+    clientName: 'Adriaan Vorster',
+    clientType: 'Home Buyer',
+    location: 'Amsterdam, NL',
+    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80',
+    review: 'Raffy is very professional and offers a great all round service. He is always responsive and goes the extra mile to ensure everything is done perfectly. His attention to detail and genuine care for his clients is truly exceptional. I highly recommend his services.',
     rating: 5,
   },
   {
     id: '3',
-    clientName: 'Amanda Foster',
-    clientType: 'Home Seller',
-    photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80',
-    review: 'Sold my property above asking price in just 2 weeks! The marketing and negotiation skills of the UKON team are unmatched.',
-    rating: 5,
+    clientName: 'Dario Tasende',
+    clientType: 'Home Buyer',
+    location: 'Bali, Indonesia',
+    photo: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&q=80',
+    review: 'Raffy found us an excellent apartment within just one month of searching. The communication was easy and transparent throughout the entire process. His dedication to finding us the perfect property was evident. Highly recommend his services to anyone.',
+    rating: 4,
   },
   {
     id: '4',
-    clientName: 'Robert Chen',
-    clientType: 'Rental Client',
+    clientName: 'Vincent Speed',
+    clientType: 'Home Seller',
+    location: 'Almere, NL',
     photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80',
-    review: 'Found the perfect rental apartment through UKON Estate. The process was smooth and the team was incredibly helpful throughout.',
+    review: 'I\'d like to thank Ukon Estate for the fast and excellent service I received throughout the process. The sale of my house went very smoothly from start to finish. Their professionalism and expertise were invaluable. I recommend Ukon Estate to everyone looking to sell.',
+    rating: 5,
+  },
+  {
+    id: '5',
+    clientName: 'Ben van Bree',
+    clientType: 'Home Buyer',
+    location: 'Lombok, Indonesia',
+    photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80',
+    review: 'An truly excellent buyer\'s agent who helped me immensely throughout the entire process. Always available, even in the evenings, which is truly exceptional. After a year of searching, I found a suitable property in just one month thanks to Ukon Estate. Highly recommended.',
+    rating: 5,
+  },
+  {
+    id: '6',
+    clientName: 'Adrian Marcelo',
+    clientType: 'Home Buyer',
+    location: 'Johor Bahru, Malaysia',
+    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
+    review: 'A pleasant and professional person who helps you from start to finish with genuine care. They treat your purchase as if it were their own and never leave you without guidance. Their valuable recommendations and consistent support throughout made a real difference. Definitely worth it.',
     rating: 5,
   },
 ];
