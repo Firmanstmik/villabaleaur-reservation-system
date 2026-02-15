@@ -46,21 +46,18 @@ export function FeaturedProperties() {
   }, []);
 
   const featuredProperties = useMemo(() => {
-    // If we have real properties from the database, use them (marked with featured: true or just take the first 6)
-    const hasRealData = displayProperties.some(p => !mockProperties.find(mp => mp.id === p.id));
+    const DISPLAY_COUNT = 6;
+    const featured = displayProperties.filter((p) => p.featured);
 
-    if (hasRealData) {
-      // Show real properties that are marked as featured, or if none are featured, show the most recent ones
-      const featured = displayProperties.filter((p) => p.featured);
-      if (featured.length > 0) {
-        return featured.slice(0, 6);
-      }
-      // If no properties are explicitly marked as featured, show the most recent real properties
-      return displayProperties.slice(0, 6);
+    // If we have 6+ featured properties, return the first 6
+    if (featured.length >= DISPLAY_COUNT) {
+      return featured.slice(0, DISPLAY_COUNT);
     }
 
-    // Otherwise use the mock data that has featured flag set
-    return displayProperties.filter((p) => p.featured).slice(0, 6);
+    // Otherwise, pad with non-featured properties to reach 6
+    const featuredIds = new Set(featured.map((p) => p.id));
+    const nonFeatured = displayProperties.filter((p) => !featuredIds.has(p.id));
+    return [...featured, ...nonFeatured].slice(0, DISPLAY_COUNT);
   }, [displayProperties]);
 
   return (
