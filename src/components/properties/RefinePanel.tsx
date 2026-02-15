@@ -57,9 +57,14 @@ export function RefinePanel({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="absolute right-0 top-[calc(100%+8px)] z-50 w-96
-                     bg-background/96 backdrop-blur-md rounded-xl shadow-xl
-                     border border-border/25 p-5"
+          className="absolute right-0 top-[calc(100%+8px)] z-50 w-[420px]
+                     rounded-xl shadow-xl border border-border/25 p-5 backdrop-blur-lg"
+          style={{
+            background: `
+              linear-gradient(135deg, rgba(250, 249, 246, 0.95) 0%, rgba(253, 252, 251, 0.95) 100%),
+              url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E")
+            `,
+          }}
         >
           {/* Bathrooms Section */}
           <div className="mb-5">
@@ -116,7 +121,7 @@ export function RefinePanel({
           {/* Lifestyle Tags Section */}
           <div className="mb-5">
             <label className="block text-xs uppercase tracking-wide text-muted-foreground font-medium mb-3">
-              {t('filters.lifestyle')}
+              Lifestyle
             </label>
             <div className="flex flex-wrap gap-2">
               {LIFESTYLE_TAGS.map((tag) => {

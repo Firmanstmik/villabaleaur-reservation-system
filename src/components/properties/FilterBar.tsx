@@ -50,7 +50,7 @@ export function FilterBar({
   resultCount,
 }: FilterBarProps) {
   const { t } = useLanguage();
-  const { currency, formatPrice, isLoading: currencyLoading } = useCurrency();
+  const { currency, formatPrice } = useCurrency();
   const barRef = useRef<HTMLDivElement>(null);
   const refineButtonRef = useRef<HTMLButtonElement>(null);
   const locationAnchorRef = useRef<HTMLDivElement>(null);
@@ -81,10 +81,10 @@ export function FilterBar({
       {/* Main Filter Bar */}
       <div
         className="h-14 bg-background/95 backdrop-blur-sm rounded-2xl shadow-lg
-                   border border-border/30 relative px-6 overflow-visible"
+                   border border-border/30 relative px-6"
       >
-        {/* Inner scrollable flex container - no overflow, dropdowns escape freely */}
-        <div className="h-full flex items-stretch gap-4 overflow-x-auto overflow-y-visible no-scrollbar">
+        {/* Inner flex container - buttons and dropdowns */}
+        <div className="h-full flex items-stretch gap-4">
           {/* Section 1: Transaction Type (inline pills) */}
           <div className="flex items-center gap-1 px-3 flex-shrink-0 relative">
           {(['all', 'sale', 'rent'] as const).map((type) => (
@@ -144,8 +144,13 @@ export function FilterBar({
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
                 className="absolute left-0 top-[calc(100%+8px)] z-50 w-64
-                           bg-background/96 backdrop-blur-md rounded-xl shadow-xl
-                           border border-border/25 p-4"
+                           rounded-xl shadow-xl border border-border/25 p-4 backdrop-blur-lg"
+                style={{
+                  background: `
+                    linear-gradient(135deg, rgba(250, 249, 246, 0.95) 0%, rgba(253, 252, 251, 0.95) 100%),
+                    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E")
+                  `,
+                }}
               >
                 <div className="relative">
                   <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -199,8 +204,13 @@ export function FilterBar({
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
                 className="absolute left-0 top-[calc(100%+8px)] z-50 w-80
-                           bg-background/96 backdrop-blur-md rounded-xl shadow-xl
-                           border border-border/25 p-5"
+                           rounded-xl shadow-xl border border-border/25 p-5 backdrop-blur-lg"
+                style={{
+                  background: `
+                    linear-gradient(135deg, rgba(250, 249, 246, 0.95) 0%, rgba(253, 252, 251, 0.95) 100%),
+                    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E")
+                  `,
+                }}
               >
                 <div className="text-xs uppercase tracking-wide text-muted-foreground font-medium mb-4">
                   {currency} {t('filters.priceRange')}
@@ -252,8 +262,13 @@ export function FilterBar({
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
                 className="absolute left-0 top-[calc(100%+8px)] z-50 w-56
-                           bg-background/96 backdrop-blur-md rounded-xl shadow-xl
-                           border border-border/25 p-4"
+                           rounded-xl shadow-xl border border-border/25 p-4 backdrop-blur-lg"
+                style={{
+                  background: `
+                    linear-gradient(135deg, rgba(250, 249, 246, 0.95) 0%, rgba(253, 252, 251, 0.95) 100%),
+                    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E")
+                  `,
+                }}
               >
                 <div className="flex flex-wrap gap-2">
                   {BEDROOM_OPTIONS.map((opt) => (
@@ -313,8 +328,13 @@ export function FilterBar({
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
                 className="absolute left-0 top-[calc(100%+8px)] z-50 w-56
-                           bg-background/96 backdrop-blur-md rounded-xl shadow-xl
-                           border border-border/25 py-2"
+                           rounded-xl shadow-xl border border-border/25 py-2 backdrop-blur-lg"
+                style={{
+                  background: `
+                    linear-gradient(135deg, rgba(250, 249, 246, 0.95) 0%, rgba(253, 252, 251, 0.95) 100%),
+                    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E")
+                  `,
+                }}
               >
                 <div className="flex flex-col">
                   {PROPERTY_TYPES.map((type) => (

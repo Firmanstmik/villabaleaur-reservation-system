@@ -8,7 +8,6 @@ import { properties as mockProperties } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useFilters } from '@/hooks/useFilters';
-import type { FilterState } from '@/types/filters';
 import { supabase } from '@/lib/supabase';
 import heroBg from '@/assets/Ukon_Estate_Hero.webp';
 import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
@@ -161,7 +160,7 @@ const Properties = () => {
         </section>
 
         {/* Premium Filter Bar */}
-        <section className="py-8 bg-card border-b border-border/20">
+        <section className="relative z-20 py-8 bg-card border-b border-border/20">
           <div className="container mx-auto px-4">
             <FilterBar
               filters={filters}
@@ -174,7 +173,7 @@ const Properties = () => {
         </section>
 
         {/* Properties Grid */}
-        <section className="pt-8 pb-16">
+        <section className="relative z-0 pt-8 pb-16">
           <div className="container mx-auto px-4">
             {filteredProperties.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
