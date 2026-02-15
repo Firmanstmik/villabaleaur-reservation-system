@@ -33,6 +33,7 @@ export function FeaturedProperties() {
           sqft: p.m2 || p.sqft || 0,
           priceType: p.price_type || p.priceType,
           isUkonAgent: p.is_ukon_agent || p.isUkonAgent,
+          featured: p.is_featured ?? p.featured,
         }));
 
         setDisplayProperties(normalized);
