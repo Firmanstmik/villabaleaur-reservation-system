@@ -114,6 +114,7 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
         latitude: null as number | null,
         longitude: null as number | null,
         formatted_address: '',
+        countryCode: '' as string,
         price: '',
         price_type: 'sale',
         bedrooms: '',
@@ -480,6 +481,7 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                                 formatted_address: result.formattedAddress,
                                                 latitude: result.latitude,
                                                 longitude: result.longitude,
+                                                countryCode: result.countryCode || '',
                                                 nearby_amenities: [], // Clear old POIs
                                             }));
 
@@ -608,7 +610,46 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                         </div>
                                     </div>
                                 </div>
+
+                                {formData.countryCode === 'ID' && (
+                                    <div className="space-y-4">
+                                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Details</h4>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-[#0e2e50] ml-1 uppercase">Ownership</label>
+                                                <Select value={formData.ownership} onValueChange={(v) => handleSelectChange('ownership', v)}>
+                                                    <SelectTrigger className="h-14 rounded-2xl bg-secondary/5 font-bold border-border">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent className="rounded-xl">
+                                                        <SelectItem value="Freehold">Freehold</SelectItem>
+                                                        <SelectItem value="Leasehold">Leasehold</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+
+                            {formData.countryCode === 'NL' && (
+                                <div className="space-y-4 p-8 bg-secondary/5 rounded-[2.5rem] border border-border/50">
+                                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Energy Rating</h4>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Energy Rating</label>
+                                        <Select value={formData.energy_rating} onValueChange={(v) => handleSelectChange('energy_rating', v)}>
+                                            <SelectTrigger className="h-14 rounded-2xl bg-white font-bold border-border">
+                                                <SelectValue placeholder="A-G" />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-xl">
+                                                {['A++', 'A+', 'A', 'B', 'C', 'D', 'E', 'F', 'G'].map(r => (
+                                                    <SelectItem key={r} value={r}>{r}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="space-y-4 p-8 bg-secondary/5 rounded-[2.5rem] border border-border/50">
                                 <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Timeline & Build</h4>
