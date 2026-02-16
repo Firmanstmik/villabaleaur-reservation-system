@@ -553,7 +553,6 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                     { label: 'Bedrooms', name: 'bedrooms', icon: Home },
                                     { label: 'Bathrooms', name: 'bathrooms', icon: Waves },
                                     { label: 'Area (m²)', name: 'm2', icon: Layers },
-                                    { label: 'Stories', name: 'stories', icon: Building2 },
                                 ].map((item) => (
                                     <div key={item.name} className="space-y-2">
                                         <label className="text-sm font-bold text-[#0e2e50] ml-1">{item.label}</label>
@@ -571,32 +570,28 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                 ))}
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-4">
-                                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Details</h4>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-[#0e2e50] ml-1 uppercase">Ownership</label>
-                                            <Select value={formData.ownership} onValueChange={(v) => handleSelectChange('ownership', v)}>
-                                                <SelectTrigger className="h-14 rounded-2xl bg-secondary/5 font-bold border-border">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent className="rounded-xl">
-                                                    <SelectItem value="Freehold">Freehold</SelectItem>
-                                                    <SelectItem value="Leasehold">Leasehold</SelectItem>
-                                                </SelectContent>
-                                            </Select>
+                            {formData.property_type === 'Apartment' && (
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Stories</label>
+                                        <div className="relative">
+                                            <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0e2e50]/50" size={16} />
+                                            <Input
+                                                name="stories"
+                                                type="number"
+                                                value={formData.stories}
+                                                onChange={handleInputChange}
+                                                className="pl-12 h-14 rounded-2xl bg-secondary/5 border-border font-bold"
+                                            />
                                         </div>
                                     </div>
                                 </div>
+                            )}
 
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-4">
                                     <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Parking Specifications</h4>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-[#0e2e50] ml-1 uppercase">Spaces</label>
-                                            <Input name="parking_spaces" type="number" value={formData.parking_spaces} onChange={handleInputChange} className="h-14 rounded-2xl bg-secondary/5 font-bold border-border" />
-                                        </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-[#0e2e50] ml-1 uppercase">Type</label>
                                             <Select value={formData.parking_type} onValueChange={(v) => handleSelectChange('parking_type', v)}>
@@ -615,53 +610,20 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 bg-secondary/5 rounded-[2.5rem] border border-border/50">
-                                <div className="space-y-4">
-                                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Financials & Size</h4>
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">HOA Fees</label>
-                                            <Input name="hoa_fees" type="number" value={formData.hoa_fees} onChange={handleInputChange} placeholder="0" className="h-14 rounded-2xl bg-white font-bold border-border" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Tax (Yr)</label>
-                                            <Input name="property_tax" type="number" value={formData.property_tax} onChange={handleInputChange} placeholder="0" className="h-14 rounded-2xl bg-white font-bold border-border" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Lot Size</label>
-                                            <Input name="lot_size" type="number" value={formData.lot_size} onChange={handleInputChange} placeholder="0" className="h-14 rounded-2xl bg-white font-bold border-border" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Energy Rating</label>
-                                            <Select value={formData.energy_rating} onValueChange={(v) => handleSelectChange('energy_rating', v)}>
-                                                <SelectTrigger className="h-14 rounded-2xl bg-white font-bold border-border">
-                                                    <SelectValue placeholder="A-G" />
-                                                </SelectTrigger>
-                                                <SelectContent className="rounded-xl">
-                                                    {['A++', 'A+', 'A', 'B', 'C', 'D', 'E', 'F', 'G'].map(r => (
-                                                        <SelectItem key={r} value={r}>{r}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
+                            <div className="space-y-4 p-8 bg-secondary/5 rounded-[2.5rem] border border-border/50">
+                                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Timeline & Build</h4>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Available From</label>
+                                        <Input name="available_date" type="date" value={formData.available_date} onChange={handleInputChange} className="h-14 rounded-2xl bg-white font-bold border-border" />
                                     </div>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Timeline & Build</h4>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Available From</label>
-                                            <Input name="available_date" type="date" value={formData.available_date} onChange={handleInputChange} className="h-14 rounded-2xl bg-white font-bold border-border" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Year Built</label>
-                                            <Input name="year_built" type="number" value={formData.year_built} onChange={handleInputChange} placeholder="2024" className="h-14 rounded-2xl bg-white font-bold border-border" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Last Renovated</label>
-                                            <Input name="last_renovated" type="number" value={formData.last_renovated} onChange={handleInputChange} placeholder="YYYY" className="h-14 rounded-2xl bg-white font-bold border-border" />
-                                        </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Year Built</label>
+                                        <Input name="year_built" type="number" value={formData.year_built} onChange={handleInputChange} placeholder="2024" className="h-14 rounded-2xl bg-white font-bold border-border" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Last Renovated</label>
+                                        <Input name="last_renovated" type="number" value={formData.last_renovated} onChange={handleInputChange} placeholder="YYYY" className="h-14 rounded-2xl bg-white font-bold border-border" />
                                     </div>
                                 </div>
                             </div>
