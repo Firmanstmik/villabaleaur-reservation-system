@@ -655,6 +655,75 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                     </div>
                                 </div>
 
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Land Size (m²)</label>
+                                        <Input name="land_size" type="number" value={formData.land_size} onChange={handleInputChange} placeholder="0" className="h-14 rounded-2xl bg-secondary/5 font-bold border-border" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Zoning</label>
+                                        <Select value={formData.zoning} onValueChange={(v) => handleSelectChange('zoning', v)}>
+                                            <SelectTrigger className="h-14 rounded-2xl bg-secondary/5 font-bold border-border">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-xl">
+                                                <SelectItem value="Residential">Residential</SelectItem>
+                                                <SelectItem value="Commercial">Commercial</SelectItem>
+                                                <SelectItem value="Mixed-Use">Mixed-Use</SelectItem>
+                                                <SelectItem value="Agricultural">Agricultural</SelectItem>
+                                                <SelectItem value="Industrial">Industrial</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Furnishing</label>
+                                        <Select value={formData.furnishing} onValueChange={(v) => handleSelectChange('furnishing', v)}>
+                                            <SelectTrigger className="h-14 rounded-2xl bg-secondary/5 font-bold border-border">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-xl">
+                                                <SelectItem value="unfurnished">Unfurnished</SelectItem>
+                                                <SelectItem value="semi-furnished">Semi-Furnished</SelectItem>
+                                                <SelectItem value="fully-furnished">Fully Furnished</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+
+                                {/* Investment Property Toggle */}
+                                <div className="space-y-4 p-8 bg-secondary/5 rounded-[2.5rem] border border-border/50">
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, is_investment: !prev.is_investment }))}
+                                        className="flex items-center gap-4 w-full"
+                                    >
+                                        <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-colors ${formData.is_investment ? 'bg-ukon-red border-ukon-red' : 'border-border'}`}>
+                                            {formData.is_investment && <Check size={16} className="text-white" />}
+                                        </div>
+                                        <span className="text-sm font-bold text-[#0e2e50]">Mark as Investment Property</span>
+                                    </button>
+
+                                    <AnimatePresence>
+                                        {formData.is_investment && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                className="grid grid-cols-2 gap-6 pt-4 border-t border-border/25"
+                                            >
+                                                <div className="space-y-2">
+                                                    <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Est. Monthly Rental Income</label>
+                                                    <Input name="rental_income_estimate" type="number" value={formData.rental_income_estimate} onChange={handleInputChange} placeholder="0" className="h-14 rounded-2xl bg-white font-bold border-border" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">ROI Estimate (%)</label>
+                                                    <Input name="roi_percent" type="number" value={formData.roi_percent} onChange={handleInputChange} placeholder="0" className="h-14 rounded-2xl bg-white font-bold border-border" />
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+
                                 {formData.countryCode === 'ID' && (
                                     <div className="space-y-4">
                                         <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Details</h4>
@@ -671,6 +740,12 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                                     </SelectContent>
                                                 </Select>
                                             </div>
+                                            {formData.ownership === 'Leasehold' && (
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-[#0e2e50] ml-1 uppercase">Lease Years</label>
+                                                    <Input name="lease_years" type="number" value={formData.lease_years} onChange={handleInputChange} placeholder="0" className="h-14 rounded-2xl bg-secondary/5 font-bold border-border" />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}
