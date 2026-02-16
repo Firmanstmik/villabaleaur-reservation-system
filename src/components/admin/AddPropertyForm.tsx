@@ -423,33 +423,48 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
 
     return (
         <div className="bg-white rounded-[3rem] p-8 md:p-12 shadow-2xl border border-border max-w-5xl mx-auto overflow-hidden">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
-                <div>
-                    <h2 className="text-4xl font-black text-[#0e2e50] tracking-tight">Create Listing</h2>
-                    <p className="text-muted-foreground font-medium mt-2">Elevate your property to a premium standard.</p>
+            {/* Header with Smart Progress Bar */}
+            <div className="space-y-6 mb-12">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 className="text-4xl font-black text-[#0e2e50] tracking-tight">Create Listing</h2>
+                        <p className="text-muted-foreground font-medium mt-2">Elevate your property to a premium standard.</p>
+                    </div>
+
+                    {/* Quality Score Chip */}
+                    <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#0e2e50]/5 to-ukon-red/5 rounded-full border border-border/50 w-fit">
+                        <div className="flex items-center gap-2">
+                            <TrendingUp size={18} className="text-ukon-red" />
+                            <span className="text-sm font-black text-[#0e2e50]">Quality: {completionScore.percent}%</span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Steps Progress */}
-                <div className="flex items-center gap-3">
-                    {steps.map((step, index) => (
-                        <div key={step.id} className="flex items-center">
-                            <button
-                                onClick={() => setCurrentStep(step.id)}
-                                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${currentStep === step.id
-                                    ? 'bg-[#0e2e50] text-white shadow-xl shadow-[#0e2e50]/20 scale-110'
-                                    : steps.findIndex(s => s.id === currentStep) > index
-                                        ? 'bg-ukon-green/20 text-ukon-green'
-                                        : 'bg-secondary/20 text-muted-foreground hover:bg-secondary/40'
-                                    }`}
-                            >
-                                <step.icon size={20} />
-                            </button>
-                            {index < steps.length - 1 && (
-                                <div className="w-6 h-[2px] bg-border mx-1" />
-                            )}
+                {/* Smart Progress Bar */}
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs font-bold text-muted-foreground mb-2">
+                        <div className="flex items-center gap-2">
+                            {steps.map((step, index) => (
+                                <span key={step.id} className={`${currentStep === step.id ? 'text-[#0e2e50]' : ''}`}>
+                                    {step.label}
+                                    {index < steps.length - 1 && <span className="mx-2">•</span>}
+                                </span>
+                            ))}
                         </div>
-                    ))}
+                        <span className="text-[#0e2e50] font-black">{Math.round((steps.findIndex(s => s.id === currentStep) / steps.length) * 100)}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                        <motion.div
+                            className="h-full bg-gradient-to-r from-[#0e2e50] to-ukon-red"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${((steps.findIndex(s => s.id === currentStep) + 1) / steps.length) * 100}%` }}
+                            transition={{ duration: 0.3 }}
+                        />
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <div>{savedAgo && `✓ ${savedAgo}`}</div>
+                        <div>~{Math.max(3, (steps.length - steps.findIndex(s => s.id === currentStep)) * 3)} min remaining</div>
+                    </div>
                 </div>
             </div>
 
