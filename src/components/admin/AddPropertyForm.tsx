@@ -141,7 +141,6 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
         community_amenities: [] as string[],
         lifestyle_tags: [] as string[],
         energy_rating: '',
-        neighborhood_description: '',
         available_date: '',
         virtual_tour_url: '',
         video_url: '',
@@ -534,16 +533,6 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                             className={`min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed ${errors.description ? 'border-ukon-red ring-1 ring-ukon-red' : ''}`}
                                         />
                                         {errors.description && <p className="text-xs text-ukon-red font-bold ml-2">{errors.description}</p>}
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Neighborhood Context</label>
-                                        <Textarea
-                                            name="neighborhood_description"
-                                            placeholder="Describe the area, local vibes, security, and schools..."
-                                            value={formData.neighborhood_description}
-                                            onChange={handleInputChange}
-                                            className="min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed"
-                                        />
                                     </div>
                                 </div>
 
