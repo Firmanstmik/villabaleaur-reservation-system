@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect, useDeferredValue } from 'react';
-import { Loader2, AlertCircle, X, ChevronDown } from 'lucide-react';
-import { geocodeAddress, GeocodingResult, reverseGeocode } from '@/lib/mapbox';
-import { getCountryFlag, getSupportedCountries } from '@/lib/country-flags';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Loader2, AlertCircle, MapPin } from 'lucide-react';
+import { geocodeAddress, GeocodingResult } from '@/lib/mapbox';
 import { cn } from '@/lib/utils';
 
 interface AddressAutocompleteProps {
@@ -11,6 +10,26 @@ interface AddressAutocompleteProps {
   placeholder?: string;
   error?: string;
   disabled?: boolean;
+}
+
+function highlightMatch(text: string, query: string) {
+  if (!query || query.length < 3) return <span>{text}</span>;
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return <span>{text}</span>;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <span className="font-semibold">{text.slice(idx, idx + query.length)}</span>
+      {text.slice(idx + query.length)}
+    </>
+  );
+}
+
+function getSecondaryLine(suggestion: GeocodingResult): string {
+  const parts: string[] = [];
+  if (suggestion.city) parts.push(suggestion.city);
+  if (suggestion.country) parts.push(suggestion.country);
+  return parts.join(', ');
 }
 
 export function AddressAutocomplete({
@@ -24,126 +43,95 @@ export function AddressAutocomplete({
   const [suggestions, setSuggestions] = useState<GeocodingResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [selectedCountryFilter, setSelectedCountryFilter] = useState<string | null>(null);
-  const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [isVerified, setIsVerified] = useState(false);
+  const [showUnconfirmed, setShowUnconfirmed] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const countryDropdownRef = useRef<HTMLDivElement>(null);
-  const deferredValue = useDeferredValue(value);
-  const [geolocating, setGeolocating] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestIdRef = useRef(0);
 
-  // Auto-detect user's country based on browser geolocation
-  useEffect(() => {
-    const detectUserLocation = async () => {
-      if (!selectedCountryFilter && navigator.geolocation) {
-        setGeolocating(true);
-        try {
-          const position = await new Promise<GeolocationCoordinates>((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(
-              (pos) => resolve(pos.coords),
-              (err) => reject(err),
-              { timeout: 5000, maximumAge: 3600000 } // Cache for 1 hour
-            );
-          });
+  // Debounced fetch with stale-request cancellation
+  const fetchSuggestions = useCallback(async (query: string) => {
+    const requestId = ++requestIdRef.current;
 
-          // Reverse geocode to get country
-          const location = await reverseGeocode(position.latitude, position.longitude);
-          if (location?.countryCode) {
-            setSelectedCountryFilter(location.countryCode);
-          }
-        } catch (err) {
-          // Silently fail - user can manually select country if needed
-          console.debug('Geolocation failed:', err);
-        } finally {
-          setGeolocating(false);
-        }
-      }
-    };
+    try {
+      const results = await geocodeAddress(query);
 
-    detectUserLocation();
-  }, []); // Run once on mount
-
-  // Fetch suggestions when input changes
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      if (!deferredValue || deferredValue.length < 3) {
-        setSuggestions([]);
-        setShowDropdown(false);
+      // Ignore stale responses
+      if (requestId !== requestIdRef.current) {
         return;
       }
 
-      setIsLoading(true);
-      setErrorMessage(null);
+      setSuggestions(results);
+      setShowDropdown(results.length > 0);
+      setHighlightedIndex(-1);
 
-      try {
-        let results = await geocodeAddress(deferredValue, {
-          country: selectedCountryFilter || undefined,
-        });
-
-        // If no results with country filter, try without it (helps with edge cases)
-        if (results.length === 0 && selectedCountryFilter) {
-          results = await geocodeAddress(deferredValue, {
-            country: undefined,
-          });
-        }
-
-        // Update selected country code from first result if available
-        if (results.length > 0 && results[0].countryCode) {
-          setSelectedCountryCode(results[0].countryCode);
-        }
-
-        setSuggestions(results);
-        setShowDropdown(results.length > 0);
-        setHighlightedIndex(-1);
-
-        if (results.length === 0) {
-          // Provide helpful error message based on search context
-          const suggestions = selectedCountryFilter
-            ? 'Try checking spelling, using just the street name, or searching without a country filter.'
-            : 'Try checking spelling, using a shorter street name, or adding "Indonesia" to your search.';
-          setErrorMessage(`Address not found. ${suggestions}`);
-        }
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to search addresses';
-        setErrorMessage(message);
-        setSuggestions([]);
-      } finally {
-        setIsLoading(false);
+      if (results.length === 0) {
+        setApiError('No matches found. You may enter the address manually.');
+      } else {
+        setApiError(null);
       }
-    };
+      setIsLoading(false);
+    } catch (error) {
+      if (requestId !== requestIdRef.current) return;
+      setApiError('Address lookup temporarily unavailable.');
+      setSuggestions([]);
+      setIsLoading(false);
+    }
+  }, []);
 
-    fetchSuggestions();
-  }, [deferredValue, selectedCountryFilter]);
+  const handleChange = (val: string) => {
+    onChange(val);
+    setIsVerified(false);
+    setShowUnconfirmed(false);
 
-  // Close dropdown when clicking outside
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    if (val.length < 3) {
+      setSuggestions([]);
+      setShowDropdown(false);
+      setApiError(null);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    debounceRef.current = setTimeout(() => {
+      fetchSuggestions(val);
+    }, 300);
+  };
+
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setShowDropdown(false);
-      }
-      if (
-        countryDropdownRef.current &&
-        !countryDropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowCountryDropdown(false);
+        // Mark as unconfirmed if user has typed enough but didn't select
+        if (value && value.length >= 3 && !isVerified) {
+          setShowUnconfirmed(true);
+        }
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [value, isVerified]);
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, []);
 
-  // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showDropdown || suggestions.length === 0) {
-      if (e.key === 'Enter' && value && value.length >= 3) {
+      if (e.key === 'Enter' && value && value.length >= 3 && suggestions.length > 0) {
         setShowDropdown(true);
       }
       return;
@@ -173,92 +161,44 @@ export function AddressAutocomplete({
   };
 
   const handleSelectSuggestion = (suggestion: GeocodingResult) => {
-    onChange(suggestion.formattedAddress); // Use full formatted address
+    onChange(suggestion.formattedAddress);
     onSelect(suggestion);
-    setSelectedCountryCode(suggestion.countryCode || null);
+    setIsVerified(true);
+    setShowUnconfirmed(false);
     setShowDropdown(false);
     setSuggestions([]);
     setHighlightedIndex(-1);
-    setErrorMessage(null);
+    setApiError(null);
   };
 
-  const handleClear = () => {
-    onChange('');
-    setSuggestions([]);
-    setShowDropdown(false);
-    setErrorMessage(null);
-    setSelectedCountryCode(null);
-    // Don't clear selectedCountryFilter - keep user's country selection
-    inputRef.current?.focus();
+  const handleBlur = () => {
+    // Small delay to allow click on suggestion to fire first
+    setTimeout(() => {
+      if (value && value.length >= 3 && !isVerified) {
+        setShowUnconfirmed(true);
+      }
+    }, 150);
   };
-
-  const handleCountrySelect = (countryCode: string) => {
-    setSelectedCountryFilter(countryCode);
-    setShowCountryDropdown(false);
-  };
-
-  // Use selected filter as primary, fall back to detected country code, then to location pin
-  const currentCountryFlag = getCountryFlag(selectedCountryFilter || selectedCountryCode);
-  const supportedCountries = getSupportedCountries();
 
   return (
     <div ref={containerRef} className="relative w-full">
       <div className="relative flex items-center">
-        {/* Country Flag Button */}
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
-          <div ref={countryDropdownRef} className="relative">
-            <button
-              onClick={() => setShowCountryDropdown(!showCountryDropdown)}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white border border-border/50 hover:border-border hover:bg-secondary/10 transition-all"
-              title="Filter by country"
-            >
-              <span className="text-xl">{currentCountryFlag}</span>
-              <ChevronDown size={14} className="text-muted-foreground" />
-            </button>
+        {/* Location pin icon */}
+        <MapPin
+          size={15}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 z-10 pointer-events-none"
+        />
 
-            {/* Country Dropdown */}
-            {showCountryDropdown && (
-              <div className="absolute top-full left-0 mt-2 bg-white border border-border rounded-2xl shadow-lg z-50 w-64 max-h-96 overflow-y-auto">
-                {/* Clear filter option */}
-                <button
-                  onClick={() => {
-                    setSelectedCountryFilter(null);
-                    setShowCountryDropdown(false);
-                  }}
-                  className="w-full text-left px-4 py-3 hover:bg-secondary/30 border-b border-border/50 font-medium text-sm"
-                >
-                  🌍 All Countries
-                </button>
-
-                {/* Country list */}
-                {supportedCountries.map((country) => (
-                  <button
-                    key={country.code}
-                    onClick={() => handleCountrySelect(country.code)}
-                    className={cn(
-                      'w-full text-left px-4 py-3 transition-colors border-b border-border/30 last:border-b-0',
-                      selectedCountryFilter === country.code
-                        ? 'bg-[#0e2e50]/10 font-semibold'
-                        : 'hover:bg-secondary/30'
-                    )}
-                  >
-                    <span className="text-xl mr-2">{getCountryFlag(country.code)}</span>
-                    {country.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Input field */}
+        {/* Input */}
         <input
           ref={inputRef}
           type="text"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => handleChange(e.target.value)}
           onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
           onFocus={() => {
+            setShowUnconfirmed(false);
             if (value && value.length >= 3 && suggestions.length > 0) {
               setShowDropdown(true);
             }
@@ -269,85 +209,86 @@ export function AddressAutocomplete({
           aria-controls="address-suggestions"
           aria-expanded={showDropdown}
           aria-activedescendant={
-            highlightedIndex >= 0
-              ? `suggestion-${highlightedIndex}`
-              : undefined
+            highlightedIndex >= 0 ? `suggestion-${highlightedIndex}` : undefined
           }
           className={cn(
-            'w-full pl-24 pr-16 h-16 rounded-[1.5rem] bg-secondary/5 font-medium',
-            'border focus:outline-none focus:ring-2 focus:ring-[#0e2e50]/20',
-            'transition-all duration-200 disabled:opacity-50',
-            error || errorMessage
+            'w-full pl-10 pr-10 h-14 rounded-2xl bg-secondary/5 font-medium text-sm',
+            'border focus:outline-none focus:ring-2 focus:ring-[#0e2e50]/15',
+            'transition-colors duration-150 disabled:opacity-50 placeholder:text-muted-foreground/50',
+            error
               ? 'border-ukon-red ring-1 ring-ukon-red'
-              : 'border-border'
+              : 'border-border hover:border-border/80'
           )}
         />
 
-        {/* Clear button */}
-        {value && !disabled && (
-          <button
-            onClick={handleClear}
-            className="absolute right-6 top-1/2 -translate-y-1/2 p-1 hover:bg-white/50 rounded-lg transition-colors"
-            aria-label="Clear address"
-          >
-            <X size={18} className="text-muted-foreground" />
-          </button>
-        )}
-
         {/* Loading spinner */}
         {isLoading && (
-          <div className="absolute right-6 top-1/2 -translate-y-1/2">
-            <Loader2 size={20} className="text-[#0e2e50] animate-spin" />
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+            <Loader2 size={15} className="text-muted-foreground/40 animate-spin" />
           </div>
         )}
       </div>
 
-      {/* Error message */}
-      {(error || errorMessage) && (
-        <div className="flex items-center gap-2 mt-2 ml-2 text-xs text-ukon-red font-bold">
-          <AlertCircle size={14} />
-          <span>{error || errorMessage}</span>
+      {/* Status line */}
+      {!error && (
+        <div className="mt-1 ml-1 h-4">
+          {isVerified && (
+            <p className="text-xs text-foreground/50">Location confirmed</p>
+          )}
+          {showUnconfirmed && !isVerified && (
+            <p className="text-xs text-foreground/40">Select from suggestions to confirm</p>
+          )}
+          {apiError && !showDropdown && value.length >= 3 && !isVerified && (
+            <p className="text-xs text-muted-foreground/70">{apiError}</p>
+          )}
         </div>
       )}
 
-      {/* Dropdown suggestions */}
+      {/* Form validation error */}
+      {error && (
+        <div className="flex items-center gap-1.5 mt-1.5 ml-1">
+          <AlertCircle size={12} className="text-ukon-red flex-shrink-0" />
+          <p className="text-xs text-ukon-red">{error}</p>
+        </div>
+      )}
+
+      {/* Suggestions dropdown */}
       {showDropdown && suggestions.length > 0 && (
         <ul
           id="address-suggestions"
           role="listbox"
-          className="absolute top-full left-0 right-0 mt-2 bg-white border border-border rounded-2xl shadow-lg z-50 overflow-hidden"
+          className="absolute top-full left-0 right-0 mt-1.5 bg-white border border-border/40 rounded-2xl shadow-sm z-50 overflow-hidden animate-fade-in"
         >
-          {suggestions.map((suggestion, index) => (
-            <li
-              key={`${suggestion.latitude}-${suggestion.longitude}-${index}`}
-              id={`suggestion-${index}`}
-              role="option"
-              aria-selected={index === highlightedIndex}
-              onClick={() => handleSelectSuggestion(suggestion)}
-              className={cn(
-                'px-6 py-4 cursor-pointer transition-colors border-b last:border-b-0',
-                index === highlightedIndex
-                  ? 'bg-[#0e2e50]/10 text-[#0e2e50]'
-                  : 'bg-white text-foreground hover:bg-secondary/30'
-              )}
-            >
-              <div className="flex items-start gap-3">
-                <span className="text-lg mt-0.5 flex-shrink-0">
-                  {getCountryFlag(suggestion.countryCode)}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm">
-                    {suggestion.formattedAddress}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {suggestion.city && suggestion.country
-                      ? `${suggestion.city}, ${suggestion.country}`
-                      : suggestion.placeType}
-                  </p>
-                </div>
-              </div>
-            </li>
-          ))}
+          {suggestions.map((suggestion, index) => {
+            const secondary = getSecondaryLine(suggestion);
+            return (
+              <li
+                key={`${suggestion.latitude}-${suggestion.longitude}-${index}`}
+                id={`suggestion-${index}`}
+                role="option"
+                aria-selected={index === highlightedIndex}
+                onMouseDown={(e) => {
+                  // Prevent blur from firing before click
+                  e.preventDefault();
+                  handleSelectSuggestion(suggestion);
+                }}
+                className={cn(
+                  'px-4 py-3.5 cursor-pointer transition-colors duration-100',
+                  'border-b border-border/15 last:border-b-0',
+                  index === highlightedIndex
+                    ? 'bg-secondary/15'
+                    : 'hover:bg-secondary/8'
+                )}
+              >
+                <p className="text-sm text-foreground leading-snug">
+                  {highlightMatch(suggestion.formattedAddress, value)}
+                </p>
+                {secondary && (
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{secondary}</p>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
