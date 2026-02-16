@@ -455,7 +455,7 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                     </div>
                     <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                         <motion.div
-                            className="h-full bg-gradient-to-r from-[#0e2e50] to-ukon-red"
+                            className="h-full bg-gradient-to-r from-[#0e2e50] to-ukon-green"
                             initial={{ width: 0 }}
                             animate={{ width: `${((steps.findIndex(s => s.id === currentStep) + 1) / steps.length) * 100}%` }}
                             transition={{ duration: 0.3 }}
@@ -703,40 +703,6 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                             </SelectContent>
                                         </Select>
                                     </div>
-                                </div>
-
-                                {/* Investment Property Toggle */}
-                                <div className="space-y-4 p-8 bg-secondary/5 rounded-[2.5rem] border border-border/50">
-                                    <button
-                                        type="button"
-                                        onClick={() => setFormData(prev => ({ ...prev, is_investment: !prev.is_investment }))}
-                                        className="flex items-center gap-4 w-full"
-                                    >
-                                        <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-colors ${formData.is_investment ? 'bg-ukon-red border-ukon-red' : 'border-border'}`}>
-                                            {formData.is_investment && <Check size={16} className="text-white" />}
-                                        </div>
-                                        <span className="text-sm font-bold text-[#0e2e50]">Mark as Investment Property</span>
-                                    </button>
-
-                                    <AnimatePresence>
-                                        {formData.is_investment && (
-                                            <motion.div
-                                                initial={{ opacity: 0, height: 0 }}
-                                                animate={{ opacity: 1, height: 'auto' }}
-                                                exit={{ opacity: 0, height: 0 }}
-                                                className="grid grid-cols-2 gap-6 pt-4 border-t border-border/25"
-                                            >
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">Est. Monthly Rental Income</label>
-                                                    <Input name="rental_income_estimate" type="number" value={formData.rental_income_estimate} onChange={handleInputChange} placeholder="0" className="h-14 rounded-2xl bg-white font-bold border-border" />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-[#0e2e50]/60 uppercase ml-1">ROI Estimate (%)</label>
-                                                    <Input name="roi_percent" type="number" value={formData.roi_percent} onChange={handleInputChange} placeholder="0" className="h-14 rounded-2xl bg-white font-bold border-border" />
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
                                 </div>
 
                                 {formData.countryCode === 'ID' && (
@@ -1061,7 +1027,7 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                             <div className="col-span-1">
                                 <div className="space-y-6">
                                     {/* Completion Score Card */}
-                                    <div className="p-6 bg-gradient-to-br from-[#0e2e50]/5 to-ukon-red/5 rounded-[2rem] border border-border/50">
+                                    <div className="p-6 bg-gradient-to-br from-[#0e2e50]/5 to-ukon-green/5 rounded-[2rem] border border-border/50">
                                         <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 mb-4">Quality Score</h4>
                                         <div className="mb-4">
                                             <div className="text-3xl font-black text-[#0e2e50]">{completionScore.percent}%</div>
@@ -1071,7 +1037,7 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                         </div>
                                         <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                                             <div
-                                                className="h-full bg-gradient-to-r from-ukon-red to-[#0e2e50] transition-all"
+                                                className="h-full bg-gradient-to-r from-ukon-green to-[#0e2e50] transition-all"
                                                 style={{ width: `${completionScore.percent}%` }}
                                             />
                                         </div>
