@@ -522,20 +522,6 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Property Description</label>
-                                        <Textarea
-                                            name="description"
-                                            placeholder="Describe the property's unique features, floors, and vibe..."
-                                            value={formData.description}
-                                            onChange={handleInputChange}
-                                            className={`min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed ${errors.description ? 'border-ukon-red ring-1 ring-ukon-red' : ''}`}
-                                        />
-                                        {errors.description && <p className="text-xs text-ukon-red font-bold ml-2">{errors.description}</p>}
-                                    </div>
-                                </div>
-
                                 <div className="space-y-2">
                                     <label className="text-sm font-bold text-[#0e2e50] ml-1">Price</label>
                                     <div className="relative">
@@ -786,6 +772,19 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                             exit={{ opacity: 0, x: -20 }}
                             className="space-y-10"
                         >
+                            {/* Property Description */}
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-[#0e2e50] ml-1">Property Description</label>
+                                <Textarea
+                                    name="description"
+                                    placeholder="Describe the property's unique features, floors, and vibe..."
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                    className={`min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed ${errors.description ? 'border-ukon-red ring-1 ring-ukon-red' : ''}`}
+                                />
+                                {errors.description && <p className="text-xs text-ukon-red font-bold ml-2">{errors.description}</p>}
+                            </div>
+
                             {/* Nearby Points of Interest */}
                             <div className="p-8 bg-secondary/5 rounded-[2.5rem] border border-border/50">
                                 <POIEditor
