@@ -1,5 +1,6 @@
 export interface FilterState {
   transactionType: 'all' | 'sale' | 'rent';
+  country: string;
   location: string;
   minPrice: string;
   maxPrice: string;
@@ -13,6 +14,7 @@ export interface FilterState {
 
 export const DEFAULT_FILTERS: FilterState = {
   transactionType: 'all',
+  country: '',
   location: '',
   minPrice: '',
   maxPrice: '',
@@ -45,3 +47,4 @@ export const PROPERTY_TYPES = [
 
 export const BEDROOM_OPTIONS = ['any', '1', '2', '3', '4'] as const;
 export const BATHROOM_OPTIONS = ['any', '1', '2', '3', '4'] as const;
+export const COUNTRY_OPTIONS = ['', 'Indonesia', 'Netherlands', 'Spain', 'Italy', 'Portugal'] as const;

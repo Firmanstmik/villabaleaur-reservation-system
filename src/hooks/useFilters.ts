@@ -45,6 +45,9 @@ export function useFilters(allProperties: Property[]): UseFiltersReturn {
       fromURL.transactionType = tt as FilterState['transactionType'];
     }
 
+    const country = searchParams.get('country');
+    if (country) fromURL.country = country;
+
     const loc = searchParams.get('loc');
     if (loc) fromURL.location = loc;
 
@@ -88,6 +91,7 @@ export function useFilters(allProperties: Property[]): UseFiltersReturn {
     const params = new URLSearchParams();
 
     if (filters.transactionType !== 'all') params.set('tt', filters.transactionType);
+    if (filters.country) params.set('country', filters.country);
     if (filters.location) params.set('loc', filters.location);
     if (filters.minPrice) params.set('minP', filters.minPrice);
     if (filters.maxPrice) params.set('maxP', filters.maxPrice);
@@ -133,38 +137,60 @@ export function useFilters(allProperties: Property[]): UseFiltersReturn {
         if (!matchesSale) return false;
       }
 
-      // 2. Location (substring match, case-insensitive)
-      if (debouncedLocation.trim()) {
-        const locationMatch = `${p.address || ''}`.toLowerCase().includes(debouncedLocation.toLowerCase());
-        if (!locationMatch) return false;
+      // 2. Country filter
+      if (filters.country) {
+        const propertyCountry = (p as any).country || (p as any).countryCode || '';
+        if (propertyCountry.toLowerCase() !== filters.country.toLowerCase()) {
+          return false;
+        }
       }
 
-      // 3. Price range (EUR-converted)
+      // 3. Location (substring match, case-insensitive)
+      if (debouncedLocation.trim()) {
+        const searchStr = debouncedLocation.toLowerCase();
+
+        // Search in multiple fields for a better "Location/Search" experience
+        const searchableFields = [
+          p.address,
+          p.title,
+          p.listingCode,
+          (p as any).city,
+          (p as any).country,
+        ].filter(Boolean) as string[];
+
+        const matchesSearch = searchableFields.some(field =>
+          field.toLowerCase().includes(searchStr)
+        );
+
+        if (!matchesSearch) return false;
+      }
+
+      // 4. Price range (EUR-converted)
       if (minPriceEUR !== null && p.price < minPriceEUR) return false;
       if (maxPriceEUR !== null && p.price > maxPriceEUR) return false;
 
-      // 4. Bedrooms (>= comparison)
+      // 5. Bedrooms (>= comparison)
       if (filters.bedrooms !== 'any') {
         if (p.bedrooms < Number(filters.bedrooms)) return false;
       }
 
-      // 5. Property type (case-insensitive)
+      // 6. Property type (case-insensitive)
       if (filters.propertyType !== 'all') {
         if (`${p.type || ''}`.toLowerCase() !== filters.propertyType.toLowerCase()) {
           return false;
         }
       }
 
-      // 6. Bathrooms (>= comparison)
+      // 7. Bathrooms (>= comparison)
       if (filters.bathrooms !== 'any') {
         if (p.bathrooms < Number(filters.bathrooms)) return false;
       }
 
-      // 7. Size range (sqft is in m²)
+      // 8. Size range (sqft is in m²)
       if (minSizeNum !== null && p.sqft < minSizeNum) return false;
       if (maxSizeNum !== null && p.sqft > maxSizeNum) return false;
 
-      // 8. Lifestyle tags
+      // 9. Lifestyle tags
       if (filters.lifestyle.length > 0) {
         const featureKeys = Object.keys(p.features || {}).map((k) => k.toLowerCase());
         const amenityNames = (p.nearbyAmenities || []).map((a) => a.name.toLowerCase());
@@ -180,6 +206,7 @@ export function useFilters(allProperties: Property[]): UseFiltersReturn {
   }, [
     allProperties,
     filters.transactionType,
+    filters.country,
     filters.bedrooms,
     filters.propertyType,
     filters.bathrooms,
@@ -196,6 +223,7 @@ export function useFilters(allProperties: Property[]): UseFiltersReturn {
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (filters.transactionType !== 'all') count++;
+    if (filters.country !== '') count++;
     if (filters.location !== '') count++;
     if (filters.minPrice !== '' || filters.maxPrice !== '') count++;
     if (filters.bedrooms !== 'any') count++;

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 import {
     Bed,
     Bath,
@@ -57,6 +58,9 @@ const PropertyDetail = () => {
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [isSaved, setIsSaved] = useState(false);
+    const [savedId, setSavedId] = useState<string | null>(null);
+    const [user, setUser] = useState<any>(null);
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -84,6 +88,13 @@ const PropertyDetail = () => {
                         images: data.images || [data.image_url || data.image]
                     };
                     setProperty(normalized);
+
+                    // Track view on page load
+                    try {
+                        await supabase.rpc('increment_property_views', { p_property_id: data.id });
+                    } catch (viewError) {
+                        console.error('Error tracking view:', viewError);
+                    }
                 } else {
                     // Fallback to mock data
                     const mock = mockProperties.find(p => p.id === id);
@@ -108,6 +119,34 @@ const PropertyDetail = () => {
         fetchProperty();
     }, [id]);
 
+    // Check if property is saved and get user
+    useEffect(() => {
+        const checkSavedStatus = async () => {
+            try {
+                const { data: { user: authUser } } = await supabase.auth.getUser();
+                setUser(authUser);
+
+                if (authUser && id) {
+                    const { data: savedData } = await supabase
+                        .from('saved_listings')
+                        .select('id')
+                        .eq('property_id', id)
+                        .eq('user_id', authUser.id)
+                        .maybeSingle();
+
+                    if (savedData) {
+                        setIsSaved(true);
+                        setSavedId(savedData.id);
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking saved status:', error);
+            }
+        };
+
+        checkSavedStatus();
+    }, [id]);
+
     const handleShare = async () => {
         if (navigator.share) {
             try {
@@ -122,6 +161,52 @@ const PropertyDetail = () => {
         } else {
             navigator.clipboard.writeText(window.location.href);
             alert('Link copied to clipboard!');
+        }
+    };
+
+    const handleSave = async () => {
+        if (!user) {
+            toast.error('Sign in to save properties');
+            return;
+        }
+
+        setSaving(true);
+        try {
+            if (isSaved && savedId) {
+                // Delete saved listing
+                await supabase
+                    .from('saved_listings')
+                    .delete()
+                    .eq('id', savedId);
+                setIsSaved(false);
+                setSavedId(null);
+                toast.success('Property removed from saved');
+            } else {
+                // Insert new saved listing
+                const { data, error } = await supabase
+                    .from('saved_listings')
+                    .insert({ property_id: id, user_id: user.id })
+                    .select('id')
+                    .single();
+
+                if (error) throw error;
+                setIsSaved(true);
+                setSavedId(data?.id ?? null);
+                toast.success('Property saved');
+            }
+        } catch (error) {
+            console.error('Error saving property:', error);
+            toast.error('Failed to save property');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleInquiry = async () => {
+        try {
+            await supabase.rpc('increment_property_inquiries', { p_property_id: property.id });
+        } catch (error) {
+            console.error('Error tracking inquiry:', error);
         }
     };
 
@@ -240,10 +325,11 @@ const PropertyDetail = () => {
                                     variant="outline"
                                     className={`rounded-full gap-2 border-border hover:bg-secondary px-6 h-11 bg-white shadow-sm transition-all duration-300 ${isSaved ? 'text-ukon-red border-ukon-red bg-ukon-red/5' : ''
                                         }`}
-                                    onClick={() => setIsSaved(!isSaved)}
+                                    onClick={handleSave}
+                                    disabled={saving}
                                 >
                                     <Heart size={18} className={isSaved ? 'fill-current' : ''} />
-                                    <span>{isSaved ? 'Saved' : 'Save'}</span>
+                                    <span>{saving ? 'Saving...' : (isSaved ? 'Saved' : 'Save')}</span>
                                 </Button>
                             </div>
                         </div>
@@ -524,6 +610,7 @@ const PropertyDetail = () => {
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="w-full"
+                                                    onClick={handleInquiry}
                                                 >
                                                     <Button className="w-full bg-[#075e54] hover:bg-[#128c7e] text-white rounded-xl h-14 gap-2 text-lg font-bold shadow-lg shadow-green-900/10">
                                                         <MessageCircle size={24} />

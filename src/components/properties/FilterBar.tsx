@@ -1,16 +1,16 @@
 import { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Search, ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { Search, ChevronDown, SlidersHorizontal, Globe } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { RefinePanel } from './RefinePanel';
 import { PriceRangeInput } from './PriceRangeInput';
 import type { FilterState } from '@/types/filters';
 import type { UseFiltersReturn } from '@/hooks/useFilters';
-import { PROPERTY_TYPES, BEDROOM_OPTIONS } from '@/types/filters';
+import { PROPERTY_TYPES, BEDROOM_OPTIONS, COUNTRY_OPTIONS } from '@/types/filters';
 import { cn } from '@/lib/utils';
 
-type OpenPanel = 'location' | 'price' | 'bedrooms' | 'propertyType' | 'refine' | null;
+type OpenPanel = 'country' | 'location' | 'price' | 'bedrooms' | 'propertyType' | 'refine' | null;
 
 interface FilterBarProps {
   filters: FilterState;
@@ -110,41 +110,37 @@ export function FilterBar({
         {/* Divider */}
         <div className="w-px h-8 bg-border/25 self-center flex-shrink-0" />
 
-        {/* Section 2: Location (most prominent) */}
-        <div className="relative flex-shrink-0 min-w-[140px]" ref={locationAnchorRef}>
+        {/* Section 2: Country */}
+        <div className="relative flex-shrink-0">
           <button
-            onClick={() => toggle('location')}
+            onClick={() => toggle('country')}
             className={cn(
-              'h-full flex items-center gap-2 px-6 text-sm transition-colors whitespace-nowrap',
-              openPanel === 'location' || filters.location
+              'h-full flex items-center gap-2 px-4 text-sm transition-colors whitespace-nowrap',
+              openPanel === 'country' || filters.country
                 ? 'bg-ukon-red/8 text-ukon-red font-medium'
                 : 'text-muted-foreground hover:text-foreground'
             )}
           >
-            <Search size={15} />
-            {filters.location
-              ? filters.location.length > 14
-                ? filters.location.slice(0, 14) + '…'
-                : filters.location
-              : t('filters.location')}
+            <Globe size={15} />
+            {filters.country || t('filters.country') || 'Country'}
             <ChevronDown
               size={14}
               className={cn(
                 'transition-transform duration-200',
-                openPanel === 'location' ? 'rotate-180' : ''
+                openPanel === 'country' ? 'rotate-180' : ''
               )}
             />
           </button>
 
           <AnimatePresence>
-            {openPanel === 'location' && (
+            {openPanel === 'country' && (
               <motion.div
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="absolute left-0 top-[calc(100%+8px)] z-50 w-64
-                           rounded-xl shadow-xl border border-border/25 p-4 backdrop-blur-lg"
+                className="absolute left-0 top-[calc(100%+8px)] z-50 w-56
+                           rounded-xl shadow-xl border border-border/25 py-2 backdrop-blur-lg"
                 style={{
                   background: `
                     linear-gradient(135deg, rgba(250, 249, 246, 0.95) 0%, rgba(253, 252, 251, 0.95) 100%),
@@ -152,18 +148,38 @@ export function FilterBar({
                   `,
                 }}
               >
-                <div className="relative">
-                  <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    autoFocus
-                    type="text"
-                    value={filters.location}
-                    onChange={(e) => setFilter('location', e.target.value)}
-                    placeholder={t('filters.locationPlaceholder')}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-border/60
-                               bg-background text-sm focus:outline-none focus:border-ukon-red/60
-                               transition-colors"
-                  />
+                <div className="flex flex-col">
+                  <button
+                    onClick={() => {
+                      setFilter('country', '');
+                      setOpenPanel(null);
+                    }}
+                    className={cn(
+                      'px-4 py-2.5 text-sm text-left transition-colors',
+                      filters.country === ''
+                        ? 'bg-ukon-red/8 text-ukon-red font-medium'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                    )}
+                  >
+                    All Countries
+                  </button>
+                  {['Indonesia', 'Netherlands', 'Spain', 'Italy', 'Portugal'].map((country) => (
+                    <button
+                      key={country}
+                      onClick={() => {
+                        setFilter('country', country);
+                        setOpenPanel(null);
+                      }}
+                      className={cn(
+                        'px-4 py-2.5 text-sm text-left transition-colors',
+                        filters.country === country
+                          ? 'bg-ukon-red/8 text-ukon-red font-medium'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                      )}
+                    >
+                      {country}
+                    </button>
+                  ))}
                 </div>
               </motion.div>
             )}
@@ -173,7 +189,31 @@ export function FilterBar({
         {/* Divider */}
         <div className="w-px h-8 bg-border/25 self-center flex-shrink-0" />
 
-        {/* Section 3: Price Range */}
+        {/* Section 3: Location (direct search input) */}
+        <div className="relative flex-shrink-0 flex-1 min-w-[200px]" ref={locationAnchorRef}>
+          <div
+            className={cn(
+              'h-full flex items-center gap-2 px-6 text-sm transition-colors whitespace-nowrap bg-background rounded-lg border',
+              filters.location
+                ? 'border-ukon-red/60 bg-ukon-red/8'
+                : 'border-border/30 hover:border-border/50'
+            )}
+          >
+            <Search size={15} className="text-muted-foreground flex-shrink-0" />
+            <input
+              type="text"
+              value={filters.location}
+              onChange={(e) => setFilter('location', e.target.value)}
+              placeholder={t('filters.locationPlaceholder') || 'Location...'}
+              className="flex-1 bg-transparent text-sm focus:outline-none placeholder-muted-foreground"
+            />
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="w-px h-8 bg-border/25 self-center flex-shrink-0" />
+
+        {/* Section 4: Price Range */}
         <div className="relative flex-shrink-0">
           <button
             onClick={() => toggle('price')}
@@ -231,7 +271,7 @@ export function FilterBar({
         {/* Divider */}
         <div className="w-px h-8 bg-border/25 self-center flex-shrink-0" />
 
-        {/* Section 4: Bedrooms */}
+        {/* Section 5: Bedrooms */}
         <div className="relative flex-shrink-0">
           <button
             onClick={() => toggle('bedrooms')}
@@ -297,7 +337,7 @@ export function FilterBar({
         {/* Divider */}
         <div className="w-px h-8 bg-border/25 self-center flex-shrink-0" />
 
-        {/* Section 5: Property Type */}
+        {/* Section 6: Property Type */}
         <div className="relative flex-shrink-0">
           <button
             onClick={() => toggle('propertyType')}
@@ -365,7 +405,7 @@ export function FilterBar({
         {/* Divider */}
         <div className="w-px h-8 bg-border/25 self-center flex-shrink-0" />
 
-        {/* Section 6: Refine */}
+        {/* Section 7: Refine */}
         <div className="relative flex-shrink-0">
           <button
             ref={refineButtonRef}

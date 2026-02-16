@@ -86,6 +86,7 @@ const POIEditor = ({ pois, onChange, loading = false }: POIEditorProps) => {
       config: POI_CATEGORIES[cat as POICategory],
       pois: items,
     }))
+    .filter(item => item.config) // Filter out categories that don't exist in POI_CATEGORIES
     .sort((a, b) => a.config.priority - b.config.priority);
 
   return (

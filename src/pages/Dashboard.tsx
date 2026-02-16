@@ -23,7 +23,7 @@ import { toast } from 'sonner';
 import AddPropertyForm from '@/components/admin/AddPropertyForm';
 import { PropertyListingMenu } from '@/components/admin/PropertyListingMenu';
 
-type Tab = 'overview' | 'listings' | 'add-new' | 'settings';
+type Tab = 'overview' | 'listings' | 'add-new' | 'edit' | 'settings';
 
 const Dashboard = () => {
     const [user, setUser] = useState<any>(null);
@@ -35,6 +35,8 @@ const Dashboard = () => {
 
     const [properties, setProperties] = useState<any[]>([]);
     const [statsLoading, setStatsLoading] = useState(true);
+    const [editingPropertyId, setEditingPropertyId] = useState<string | null>(null);
+    const [initialEditTab, setInitialEditTab] = useState<'basic' | 'performance'>('basic');
 
     const fetchDashboardData = async (userId: string) => {
         try {
@@ -86,6 +88,18 @@ const Dashboard = () => {
         await supabase.auth.signOut();
         toast.success('Logged out successfully');
         navigate(`/${language}/`);
+    };
+
+    const handleEditProperty = (propertyId: string) => {
+        setEditingPropertyId(propertyId);
+        setActiveTab('edit');
+        setInitialEditTab('basic');
+    };
+
+    const handleOpenPerformance = (propertyId: string) => {
+        setEditingPropertyId(propertyId);
+        setActiveTab('edit');
+        setInitialEditTab('performance');
     };
 
     if (loading) {
@@ -215,7 +229,7 @@ const Dashboard = () => {
                                             <tbody className="divide-y divide-border">
                                                 {recentListings.length > 0 ? (
                                                     recentListings.map((p) => (
-                                                        <tr key={p.id} className="hover:bg-secondary/5 transition-colors group">
+                                                        <tr key={p.id} className="hover:bg-secondary/5 transition-colors group cursor-pointer" onClick={() => handleOpenPerformance(p.id)}>
                                                             <td className="px-8 py-6">
                                                                 <div className="flex items-center gap-4">
                                                                     <div className="w-16 h-16 bg-muted rounded-2xl bg-cover bg-center shadow-inner group-hover:scale-105 transition-transform" style={{ backgroundImage: `url(${p.image_url || p.image})` }} />
@@ -239,7 +253,7 @@ const Dashboard = () => {
                                                                 )}
                                                             </td>
                                                             <td className="px-8 py-6 text-right">
-                                                                <PropertyListingMenu property={p} onRefresh={() => fetchDashboardData(user.id)} />
+                                                                <PropertyListingMenu property={p} onRefresh={() => fetchDashboardData(user.id)} onEdit={handleEditProperty} />
                                                             </td>
                                                         </tr>
                                                     ))
@@ -280,6 +294,26 @@ const Dashboard = () => {
                             </motion.div>
                         )}
 
+                        {activeTab === 'edit' && editingPropertyId && (
+                            <motion.div
+                                key="edit"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                            >
+                                <AddPropertyForm
+                                    propertyId={editingPropertyId}
+                                    initialTab={initialEditTab}
+                                    onComplete={() => {
+                                        setEditingPropertyId(null);
+                                        setActiveTab('listings');
+                                        setInitialEditTab('basic');
+                                        fetchDashboardData(user.id);
+                                    }}
+                                />
+                            </motion.div>
+                        )}
+
                         {activeTab === 'listings' && (
                             <motion.div
                                 key="listings"
@@ -316,7 +350,7 @@ const Dashboard = () => {
                                             <tbody className="divide-y divide-border">
                                                 {properties.length > 0 ? (
                                                     properties.map((p) => (
-                                                        <tr key={p.id} className="hover:bg-secondary/5 transition-colors group">
+                                                        <tr key={p.id} className="hover:bg-secondary/5 transition-colors group cursor-pointer" onClick={() => handleOpenPerformance(p.id)}>
                                                             <td className="px-8 py-6">
                                                                 <div className="flex items-center gap-4">
                                                                     <div className="w-14 h-14 bg-muted rounded-2xl bg-cover bg-center shadow-inner group-hover:scale-105 transition-transform" style={{ backgroundImage: `url(${p.image_url || p.image})` }} />
@@ -341,7 +375,7 @@ const Dashboard = () => {
                                                                 )}
                                                             </td>
                                                             <td className="px-8 py-6 text-right">
-                                                                <PropertyListingMenu property={p} onRefresh={() => fetchDashboardData(user.id)} />
+                                                                <PropertyListingMenu property={p} onRefresh={() => fetchDashboardData(user.id)} onEdit={handleEditProperty} />
                                                             </td>
                                                         </tr>
                                                     ))

@@ -11,9 +11,10 @@ import ukonLogo from '@/assets/Ukon Estate-02.png';
 interface ListingPreviewProps {
     data: any;
     onClose: () => void;
+    embedded?: boolean;
 }
 
-const ListingPreview = ({ data, onClose }: ListingPreviewProps) => {
+const ListingPreview = ({ data, onClose, embedded = false }: ListingPreviewProps) => {
     const formatPrice = (price: string | number) => {
         return `$ ${parseFloat(price.toString() || '0').toLocaleString()}`;
     };
@@ -23,9 +24,9 @@ const ListingPreview = ({ data, onClose }: ListingPreviewProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-white overflow-y-auto"
+            className={embedded ? "bg-white overflow-y-auto" : "fixed inset-0 z-[100] bg-white overflow-y-auto"}
         >
-            <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border px-8 py-4 flex items-center justify-between">
+            <div className={embedded ? "bg-white border-b border-border px-8 py-4 flex items-center justify-between" : "sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border px-8 py-4 flex items-center justify-between"}>
                 <div>
                     <h2 className="text-xl font-black text-[#0e2e50]">Live Preview Mode</h2>
                     <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Listing: {data.listing_code}</p>

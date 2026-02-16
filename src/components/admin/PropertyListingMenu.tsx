@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Star, Zap, Trash2, MoreVertical } from 'lucide-react';
+import { Star, Zap, Trash2, MoreVertical, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -35,9 +35,10 @@ interface PropertyListingMenuProps {
     featured_until?: string;
   };
   onRefresh?: () => void;
+  onEdit?: (propertyId: string) => void;
 }
 
-export function PropertyListingMenu({ property, onRefresh }: PropertyListingMenuProps) {
+export function PropertyListingMenu({ property, onRefresh, onEdit }: PropertyListingMenuProps) {
   const { t } = useLanguage();
   const [showFeaturedDialog, setShowFeaturedDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -124,6 +125,14 @@ export function PropertyListingMenu({ property, onRefresh }: PropertyListingMenu
             <span className="text-sm">
               {isFeatured ? 'Manage Featured' : 'Make Featured'}
             </span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={() => onEdit?.(property.id)}
+            className="cursor-pointer flex items-center gap-2"
+          >
+            <Edit size={16} />
+            <span className="text-sm">Edit Listing</span>
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />

@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Heart } from 'lucide-react';
 import { Property } from '@/data/mockData';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 
 interface PropertyCardProps {
   property: Property;
@@ -25,13 +27,79 @@ const statusLabelKeys = {
 
 export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
   const [isSaved, setIsSaved] = useState(false);
+  const [savedId, setSavedId] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
   const { language, t } = useLanguage();
   const { currency, formatPrice } = useCurrency();
 
-  const handleSave = (e: React.MouseEvent) => {
+  // Get current user and check if property is saved
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        setUser(authUser);
+
+        if (authUser && property.id) {
+          const { data: savedData } = await supabase
+            .from('saved_listings')
+            .select('id')
+            .eq('property_id', property.id)
+            .eq('user_id', authUser.id)
+            .maybeSingle();
+
+          if (savedData) {
+            setIsSaved(true);
+            setSavedId(savedData.id);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking user:', error);
+      }
+    };
+
+    checkUser();
+  }, [property.id]);
+
+  const handleSave = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsSaved(!isSaved);
+
+    if (!user) {
+      toast.error('Sign in to save properties');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      if (isSaved && savedId) {
+        // Delete saved listing
+        await supabase
+          .from('saved_listings')
+          .delete()
+          .eq('id', savedId);
+        setIsSaved(false);
+        setSavedId(null);
+        toast.success('Property removed from saved');
+      } else {
+        // Insert new saved listing
+        const { data, error } = await supabase
+          .from('saved_listings')
+          .insert({ property_id: property.id, user_id: user.id })
+          .select('id')
+          .single();
+
+        if (error) throw error;
+        setIsSaved(true);
+        setSavedId(data?.id ?? null);
+        toast.success('Property saved');
+      }
+    } catch (error) {
+      console.error('Error saving property:', error);
+      toast.error('Failed to save property');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const propertyStatus = (property.status || (property as any).price_type || 'sale') as keyof typeof statusLabelKeys;

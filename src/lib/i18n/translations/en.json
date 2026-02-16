@@ -46,6 +46,7 @@
       "sale": "For Sale",
       "rent": "For Rent"
     },
+    "country": "Country",
     "location": "Location",
     "locationPlaceholder": "City, district, address...",
     "priceRange": "Price Range",
