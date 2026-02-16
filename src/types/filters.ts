@@ -4,7 +4,7 @@ export interface FilterState {
   minPrice: string;
   maxPrice: string;
   bedrooms: 'any' | '1' | '2' | '3' | '4';
-  propertyType: 'all' | 'Villa' | 'Apartment' | 'Penthouse' | 'Commercial' | 'Land';
+  propertyType: 'all' | 'Villa' | 'House' | 'Apartment' | 'Penthouse' | 'Commercial' | 'Land';
   bathrooms: 'any' | '1' | '2' | '3' | '4';
   minSize: string;
   maxSize: string;
@@ -36,6 +36,7 @@ export const LIFESTYLE_TAGS = [
 export const PROPERTY_TYPES = [
   'all',
   'Villa',
+  'House',
   'Apartment',
   'Penthouse',
   'Commercial',

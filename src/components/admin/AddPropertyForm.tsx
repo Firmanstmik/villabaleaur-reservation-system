@@ -140,6 +140,7 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
         hvac_type: '',
         outdoor_features: [] as string[],
         community_amenities: [] as string[],
+        lifestyle_tags: [] as string[],
         energy_rating: '',
         neighborhood_description: '',
         available_date: '',
@@ -464,7 +465,6 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                             <SelectContent className="rounded-2xl">
                                                 <SelectItem value="sale">For Sale</SelectItem>
                                                 <SelectItem value="rent">For Rent</SelectItem>
-                                                <SelectItem value="investment">Investment</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -609,7 +609,7 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent className="rounded-xl">
-                                                    {['Villa', 'House', 'Apartment', 'Penthouse', 'Land'].map(t => (
+                                                    {['Villa', 'House', 'Apartment', 'Penthouse', 'Commercial', 'Land'].map(t => (
                                                         <SelectItem key={t} value={t}>{t}</SelectItem>
                                                     ))}
                                                 </SelectContent>
@@ -880,6 +880,42 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                                                 {formData.outdoor_features.includes(feat.id) && (
                                                     <div className="ml-auto w-6 h-6 bg-ukon-green rounded-full flex items-center justify-center text-white">
                                                         <Check size={14} />
+                                                    </div>
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <h4 className="text-sm font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Lifestyle Tags</h4>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {[
+                                            { id: 'Waterfront', label: 'Waterfront', icon: Waves },
+                                            { id: 'Beachfront', label: 'Beachfront', icon: Waves },
+                                            { id: 'City Center', label: 'City Center', icon: Building2 },
+                                            { id: 'Gated', label: 'Gated', icon: ShieldCheck },
+                                            { id: 'Pool', label: 'Pool', icon: Waves },
+                                            { id: 'Garden', label: 'Garden', icon: Trees },
+                                        ].map(tag => (
+                                            <button
+                                                key={tag.id}
+                                                onClick={() => {
+                                                    const updated = formData.lifestyle_tags.includes(tag.id)
+                                                        ? formData.lifestyle_tags.filter(t => t !== tag.id)
+                                                        : [...formData.lifestyle_tags, tag.id];
+                                                    setFormData(prev => ({ ...prev, lifestyle_tags: updated }));
+                                                }}
+                                                className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-300 ${formData.lifestyle_tags.includes(tag.id)
+                                                    ? 'border-ukon-navy bg-ukon-navy/5 shadow-lg shadow-ukon-navy/5'
+                                                    : 'border-border/50 bg-white hover:border-ukon-navy/20'
+                                                    }`}
+                                            >
+                                                <tag.icon size={18} className={formData.lifestyle_tags.includes(tag.id) ? 'text-[#0e2e50]' : 'text-[#0e2e50]'} />
+                                                <span className="text-sm font-bold text-[#0e2e50]">{tag.label}</span>
+                                                {formData.lifestyle_tags.includes(tag.id) && (
+                                                    <div className="ml-auto w-5 h-5 bg-ukon-navy rounded-full flex items-center justify-center text-white">
+                                                        <Check size={12} />
                                                     </div>
                                                 )}
                                             </button>
