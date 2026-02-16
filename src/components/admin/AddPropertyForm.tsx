@@ -121,7 +121,6 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
         m2: '',
         status: 'sale',
         property_type: 'Villa',
-        property_category: 'residential',
         ownership: 'Freehold',
         year_built: new Date().getFullYear().toString(),
         surface_area: '',
@@ -443,16 +442,15 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Category</label>
-                                        <Select value={formData.property_category} onValueChange={(v) => handleSelectChange('property_category', v)}>
-                                            <SelectTrigger className="h-16 rounded-[1.5rem] bg-secondary/5 border-border font-bold">
+                                        <label className="text-[10px] font-black text-[#0e2e50] ml-1 uppercase">Type</label>
+                                        <Select value={formData.property_type} onValueChange={(v) => handleSelectChange('property_type', v)}>
+                                            <SelectTrigger className="h-14 rounded-2xl bg-secondary/5 font-bold border-border">
                                                 <SelectValue />
                                             </SelectTrigger>
-                                            <SelectContent className="rounded-2xl">
-                                                <SelectItem value="residential">Residential</SelectItem>
-                                                <SelectItem value="commercial">Commercial</SelectItem>
-                                                <SelectItem value="industrial">Industrial</SelectItem>
-                                                <SelectItem value="land">Land</SelectItem>
+                                            <SelectContent className="rounded-xl">
+                                                {['Villa', 'House', 'Apartment', 'Penthouse', 'Commercial', 'Land'].map(t => (
+                                                    <SelectItem key={t} value={t}>{t}</SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -600,21 +598,8 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-4">
-                                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Type & Status</h4>
+                                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 ml-1">Details</h4>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-[#0e2e50] ml-1 uppercase">Type</label>
-                                            <Select value={formData.property_type} onValueChange={(v) => handleSelectChange('property_type', v)}>
-                                                <SelectTrigger className="h-14 rounded-2xl bg-secondary/5 font-bold border-border">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent className="rounded-xl">
-                                                    {['Villa', 'House', 'Apartment', 'Penthouse', 'Commercial', 'Land'].map(t => (
-                                                        <SelectItem key={t} value={t}>{t}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-[#0e2e50] ml-1 uppercase">Ownership</label>
                                             <Select value={formData.ownership} onValueChange={(v) => handleSelectChange('ownership', v)}>
