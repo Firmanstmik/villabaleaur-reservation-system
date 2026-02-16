@@ -48,7 +48,11 @@ import {
     Wind,
     Sun,
     Wifi,
-    Tv
+    Tv,
+    ClipboardCheck,
+    Sparkles,
+    TrendingUp,
+    Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -67,6 +71,8 @@ import ListingPreview from './ListingPreview';
 import { AddressAutocomplete } from '@/components/map/AddressAutocomplete';
 import { fetchNearbyPOIs } from '@/lib/poi';
 import POIEditor from './POIEditor';
+import { useListingDraft } from '@/hooks/useListingDraft';
+import { useCompletionScore } from '@/hooks/useCompletionScore';
 
 const propertySchema = z.object({
     title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -95,7 +101,7 @@ const propertySchema = z.object({
     }
 );
 
-type Step = 'basic' | 'details' | 'media' | 'amenities';
+type Step = 'basic' | 'details' | 'media' | 'amenities' | 'review';
 
 const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
     const [currentStep, setCurrentStep] = useState<Step>('basic');
@@ -110,6 +116,10 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
+        description_summary: '',
+        description_interior: '',
+        description_outdoor: '',
+        description_investment: '',
         address: '',
         latitude: null as number | null,
         longitude: null as number | null,
@@ -133,8 +143,15 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
         hoa_fees: '',
         property_tax: '',
         lot_size: '',
+        land_size: '',
+        zoning: 'Residential',
+        furnishing: 'unfurnished',
+        is_investment: false,
+        rental_income_estimate: '',
+        roi_percent: '',
         stories: '',
         last_renovated: '',
+        lease_years: '',
         interior_features: [] as string[],
         appliances: [] as string[],
         hvac_type: '',
@@ -152,11 +169,15 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
         poi_source: 'osm' as 'osm' | 'mapbox' | 'manual',
     });
 
+    const { saveDraft, loadDraft, clearDraft, savedAgo } = useListingDraft();
+    const completionScore = useCompletionScore(formData);
+
     const steps: { id: Step; label: string; icon: any }[] = [
         { id: 'basic', label: 'Basic Info', icon: Building2 },
         { id: 'details', label: 'Specifications', icon: Layers },
         { id: 'media', label: 'Media', icon: ImageIcon },
         { id: 'amenities', label: 'Amenities', icon: ShieldCheck },
+        { id: 'review', label: 'Review', icon: ClipboardCheck },
     ];
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -336,9 +357,17 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                 hoa_fees: parseFloat(formData.hoa_fees) || 0,
                 property_tax: parseFloat(formData.property_tax) || 0,
                 lot_size: parseFloat(formData.lot_size) || 0,
+                land_size: parseFloat(formData.land_size) || 0,
                 stories: parseInt(formData.stories) || 0,
+                lease_years: parseInt(formData.lease_years) || 0,
+                rental_income_estimate: parseFloat(formData.rental_income_estimate) || 0,
+                roi_percent: parseFloat(formData.roi_percent) || 0,
                 last_renovated: formData.last_renovated ? parseInt(formData.last_renovated) : null,
                 available_date: formData.available_date || null,
+                description: formData.description_summary,
+                description_interior: formData.description_interior,
+                description_outdoor: formData.description_outdoor,
+                description_investment: formData.description_investment,
                 latitude: formData.latitude,
                 longitude: formData.longitude,
                 formatted_address: formData.formatted_address,
@@ -369,13 +398,28 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
         if (currentStep === 'basic') setCurrentStep('details');
         else if (currentStep === 'details') setCurrentStep('media');
         else if (currentStep === 'media') setCurrentStep('amenities');
+        else if (currentStep === 'amenities') setCurrentStep('review');
     };
 
     const prevStep = () => {
         if (currentStep === 'details') setCurrentStep('basic');
         else if (currentStep === 'media') setCurrentStep('details');
         else if (currentStep === 'amenities') setCurrentStep('media');
+        else if (currentStep === 'review') setCurrentStep('amenities');
     };
+
+    // Auto-save to localStorage
+    useEffect(() => {
+        saveDraft(formData);
+    }, [formData, saveDraft]);
+
+    // Load draft on mount
+    useEffect(() => {
+        const draft = loadDraft();
+        if (draft) {
+            setFormData(prev => ({ ...prev, ...draft }));
+        }
+    }, []);
 
     return (
         <div className="bg-white rounded-[3rem] p-8 md:p-12 shadow-2xl border border-border max-w-5xl mx-auto overflow-hidden">
@@ -901,11 +945,83 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                             </div>
                         </motion.div>
                     )}
+
+                    {currentStep === 'review' && (
+                        <motion.div
+                            key="review"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="grid grid-cols-3 gap-8"
+                        >
+                            {/* Left: Preview (2/3) */}
+                            <div className="col-span-2">
+                                <div className="p-6 bg-secondary/5 rounded-[2.5rem] border border-border/50">
+                                    <h3 className="text-sm font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 mb-4 ml-1">Live Preview</h3>
+                                    <div className="bg-white rounded-2xl overflow-hidden border border-border/30 max-h-[600px] overflow-y-auto">
+                                        <ListingPreview
+                                            data={formData}
+                                            onClose={() => {}}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right: Score & Actions (1/3) */}
+                            <div className="col-span-1">
+                                <div className="space-y-6">
+                                    {/* Completion Score Card */}
+                                    <div className="p-6 bg-gradient-to-br from-[#0e2e50]/5 to-ukon-red/5 rounded-[2rem] border border-border/50">
+                                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 mb-4">Quality Score</h4>
+                                        <div className="mb-4">
+                                            <div className="text-3xl font-black text-[#0e2e50]">{completionScore.percent}%</div>
+                                            <p className="text-xs text-muted-foreground mt-1">
+                                                {completionScore.score} / {completionScore.maxScore} points
+                                            </p>
+                                        </div>
+                                        <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-ukon-red to-[#0e2e50] transition-all"
+                                                style={{ width: `${completionScore.percent}%` }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Missing Items */}
+                                    {completionScore.missing.length > 0 && (
+                                        <div className="p-6 bg-amber-50 rounded-[2rem] border border-amber-200">
+                                            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-amber-900 mb-3">Suggestions to Improve</h4>
+                                            <ul className="space-y-2">
+                                                {completionScore.missing.slice(0, 5).map((item, i) => (
+                                                    <li key={i} className="text-sm text-amber-900 flex items-start gap-2">
+                                                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-600 mt-1 flex-shrink-0" />
+                                                        <span>{item}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Save Draft Button */}
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            saveDraft(formData);
+                                            toast.success('Draft saved to your device');
+                                        }}
+                                        className="w-full h-12 rounded-xl border-[#0e2e50] text-[#0e2e50] font-bold hover:bg-[#0e2e50]/5"
+                                    >
+                                        💾 Save Draft
+                                    </Button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
                 </AnimatePresence>
             </div>
 
             <AnimatePresence>
-                {showPreview && (
+                {showPreview && currentStep !== 'review' && (
                     <ListingPreview
                         data={formData}
                         onClose={() => setShowPreview(false)}
@@ -934,24 +1050,24 @@ const AddPropertyForm = ({ onComplete }: { onComplete: () => void }) => {
                     </Button>
                 </div>
 
-                {currentStep === 'amenities' ? (
-                    <div className="flex items-center gap-4">
-                        <Button
-                            variant="outline"
-                            onClick={() => setShowPreview(true)}
-                            className="h-16 px-12 rounded-2xl gap-3 border-[#0e2e50] text-[#0e2e50] font-black text-lg hover:bg-[#0e2e50]/5"
-                        >
-                            Preview
-                        </Button>
-                        <Button
-                            onClick={handleSubmit}
-                            disabled={loading || uploading}
-                            className="h-16 px-12 rounded-2xl gap-3 bg-[#0e2e50] hover:bg-[#0e2e50]/90 text-white font-black text-lg shadow-2xl shadow-[#0e2e50]/20"
-                        >
-                            {loading ? <Loader2 className="animate-spin" /> : <Plus size={24} />}
-                            Publish Listing
-                        </Button>
-                    </div>
+                {currentStep === 'review' ? (
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={loading || uploading}
+                        className="h-16 px-12 rounded-2xl gap-3 bg-ukon-green hover:bg-ukon-green/90 text-white font-black text-lg shadow-2xl shadow-ukon-green/20"
+                    >
+                        {loading ? <Loader2 className="animate-spin" /> : <Check size={24} />}
+                        Publish Listing
+                    </Button>
+                ) : currentStep === 'amenities' ? (
+                    <Button
+                        onClick={nextStep}
+                        disabled={loading || uploading}
+                        className="h-16 px-12 rounded-2xl gap-3 bg-[#0e2e50] hover:bg-[#0e2e50]/90 text-white font-black text-lg shadow-2xl shadow-[#0e2e50]/20"
+                    >
+                        Review & Publish
+                        <ChevronRight size={20} />
+                    </Button>
                 ) : (
                     <Button
                         onClick={nextStep}
