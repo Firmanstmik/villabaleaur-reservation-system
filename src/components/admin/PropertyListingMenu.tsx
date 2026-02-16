@@ -40,6 +40,7 @@ interface PropertyListingMenuProps {
 export function PropertyListingMenu({ property, onRefresh }: PropertyListingMenuProps) {
   const { t } = useLanguage();
   const [showFeaturedDialog, setShowFeaturedDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const isFeatured = property.featured || false;
@@ -80,6 +81,27 @@ export function PropertyListingMenu({ property, onRefresh }: PropertyListingMenu
     }
   };
 
+  const handleDeleteListing = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('properties')
+        .delete()
+        .eq('id', property.id);
+
+      if (error) throw error;
+
+      toast.success('Listing deleted successfully');
+      setShowDeleteDialog(false);
+      onRefresh?.();
+    } catch (err) {
+      console.error('Error deleting listing:', err);
+      toast.error('Failed to delete listing');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -106,7 +128,10 @@ export function PropertyListingMenu({ property, onRefresh }: PropertyListingMenu
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem className="cursor-pointer flex items-center gap-2 text-red-600 hover:text-red-700">
+          <DropdownMenuItem
+            onClick={() => setShowDeleteDialog(true)}
+            className="cursor-pointer flex items-center gap-2 text-red-600 hover:text-red-700"
+          >
             <Trash2 size={16} />
             <span className="text-sm">Delete Listing</span>
           </DropdownMenuItem>
@@ -204,6 +229,48 @@ export function PropertyListingMenu({ property, onRefresh }: PropertyListingMenu
                 Remove Featured
               </Button>
             )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <Trash2 size={24} />
+              Delete Listing
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{property.title}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="p-4 bg-red-50 border border-red-200 rounded-2xl">
+            <p className="text-sm font-semibold text-red-900">
+              ⚠️ This will permanently delete the listing
+            </p>
+            <p className="text-xs text-red-700 mt-1">
+              All images, details, and history will be removed from the system.
+            </p>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={loading}
+              className="rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteListing}
+              disabled={loading}
+              className="rounded-xl"
+            >
+              {loading ? 'Deleting...' : 'Delete Listing'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
