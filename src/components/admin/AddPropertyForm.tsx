@@ -907,7 +907,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                             placeholder={getPricePlaceholder(currency)}
                                             value={formatPriceNumber(formData.price, currency)}
                                             onChange={handlePriceChange}
-                                            className="pl-16 h-16 rounded-[1.5rem] bg-secondary/5 border-border text-xl font-black text-[#0e2e50] placeholder:opacity-50"
+                                            className="pl-16 h-16 rounded-[1.5rem] bg-secondary/5 border-border text-2xl font-black text-[#0e2e50] placeholder:opacity-50 flex items-center"
                                             inputMode="numeric"
                                         />
                                         {/* Currency Selector Dropdown */}
@@ -1658,7 +1658,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                             placeholder={getPricePlaceholder(currency)}
                                             value={formatPriceNumber(formData.price, currency)}
                                             onChange={handlePriceChange}
-                                            className="pl-16 h-16 rounded-[1.5rem] bg-secondary/5 border-border text-xl font-black text-[#0e2e50] placeholder:opacity-50"
+                                            className="pl-16 h-16 rounded-[1.5rem] bg-secondary/5 border-border text-2xl font-black text-[#0e2e50] placeholder:opacity-50 flex items-center"
                                             inputMode="numeric"
                                         />
                                         {/* Currency Selector Dropdown */}
