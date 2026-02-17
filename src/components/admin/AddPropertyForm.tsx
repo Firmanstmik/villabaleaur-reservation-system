@@ -1560,7 +1560,10 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                         <PhaseIndicator
                             phases={steps}
                             currentPhaseId={currentStep}
-                            onPhaseChange={(phaseId) => setCurrentStep(phaseId as Step)}
+                            onPhaseChange={(phaseId) => {
+                                console.log('PhaseIndicator click:', phaseId);
+                                setCurrentStep(phaseId as Step);
+                            }}
                             showLabel={true}
                         />
                     </div>
@@ -1573,6 +1576,9 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
             </div>
 
             <div className="min-h-[500px]">
+                <div className="bg-yellow-200 border-2 border-yellow-600 p-3 rounded mb-4 font-bold">
+                  DEBUG: currentStep = "{currentStep}" | Trying to show content for step
+                </div>
                 <AnimatePresence mode="wait">
                     {currentStep === 'basic' && (
                         <motion.div key="basic" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
