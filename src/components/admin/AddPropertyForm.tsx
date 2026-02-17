@@ -67,6 +67,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { supabase } from '@/lib/supabase';
+import { generateListingCode } from '@/lib/listingCodeGenerator';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import ListingPreview from './ListingPreview';
@@ -377,14 +378,19 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
         }
     }, [showCurrencyDropdown]);
 
-    // Auto-generate listing code from country code (first 2 chars of ISO code)
+    // Auto-generate structured listing code when all required fields are set
     useEffect(() => {
-        if (!listingCodeManuallyEdited && formData.countryCode) {
-            // Generate code: CC-XXXXX where CC is country code and XXXXX is random
-            const newCode = `${formData.countryCode}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-            setFormData(prev => ({ ...prev, listing_code: newCode }));
+        if (!listingCodeManuallyEdited && formData.countryCode && formData.price_type && formData.property_type) {
+            const newCode = generateListingCode(
+                formData.countryCode,
+                formData.price_type,
+                formData.property_type
+            );
+            if (newCode) {
+                setFormData(prev => ({ ...prev, listing_code: newCode }));
+            }
         }
-    }, [formData.countryCode, listingCodeManuallyEdited]);
+    }, [formData.countryCode, formData.price_type, formData.property_type, listingCodeManuallyEdited]);
 
     const steps: { id: Step; label: string; icon: any }[] = [
         { id: 'basic', label: 'Basic Info', icon: Building2 },
