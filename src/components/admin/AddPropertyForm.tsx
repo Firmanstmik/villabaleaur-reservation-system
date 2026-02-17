@@ -82,6 +82,7 @@ import { PerformanceSnapshot } from './PerformanceSnapshot';
 import { OptimizationSuggestions, type OptimizationSuggestion } from './OptimizationSuggestions';
 import { MarketIntelligence } from './MarketIntelligence';
 import { LuxuryTabNavigation, type Tab as TabType } from './LuxuryTabNavigation';
+import { PhaseIndicator } from './PhaseIndicator';
 
 const propertySchema = z.object({
     title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -1495,47 +1496,35 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
     // CREATE MODE: Original Onboarding Wizard
     return (
         <div className="bg-white rounded-[3rem] p-8 md:p-12 shadow-2xl border border-border max-w-5xl mx-auto overflow-hidden">
-            {/* Header with Smart Progress Bar */}
-            <div className="space-y-6 mb-12">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Header with Phase Indicator */}
+            <div className="space-y-8 mb-12">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
                         <h2 className="text-4xl font-black text-[#0e2e50] tracking-tight">Create Listing</h2>
                         <p className="text-muted-foreground font-medium mt-2">Elevate your property to a premium standard.</p>
                     </div>
 
-                    {/* Listing Strength Score */}
-                    <div className="flex items-center gap-2 px-4 py-2 bg-secondary/30 rounded-lg border border-border/40">
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Listing Strength</span>
-                        <span className="text-sm font-black text-[#0e2e50]">{animatedStrengthScore} / 100</span>
+                    <div className="flex flex-col items-end gap-6">
+                        {/* Listing Strength Score */}
+                        <div className="flex items-center gap-2 px-4 py-2 bg-secondary/30 rounded-lg border border-border/40">
+                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Listing Strength</span>
+                            <span className="text-sm font-black text-[#0e2e50]">{animatedStrengthScore} / 100</span>
+                        </div>
+
+                        {/* Phase Indicator */}
+                        <PhaseIndicator
+                            phases={steps}
+                            currentPhaseId={currentStep}
+                            onPhaseChange={setCurrentStep}
+                            showLabel={true}
+                        />
                     </div>
                 </div>
 
-                {/* Smart Progress Bar */}
-                <div className="space-y-3">
-                    <div className="flex items-center justify-between text-xs font-bold text-muted-foreground mb-2">
-                        <div className="flex items-center gap-2">
-                            {steps.map((step, index) => (
-                                <span key={step.id} className={`${currentStep === step.id ? 'text-[#0e2e50]' : ''}`}>
-                                    {step.label}
-                                    {index < steps.length - 1 && <span className="mx-2">•</span>}
-                                </span>
-                            ))}
-                        </div>
-                        <span className="text-[#0e2e50] font-black">{Math.round((steps.findIndex(s => s.id === currentStep) / steps.length) * 100)}%</span>
-                    </div>
-                    <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                        <motion.div
-                            className="h-full bg-gradient-to-r from-[#0e2e50] to-ukon-green"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${((steps.findIndex(s => s.id === currentStep) + 1) / steps.length) * 100}%` }}
-                            transition={{ duration: 0.3 }}
-                        />
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <div>{savedAgo && `✓ ${savedAgo}`}</div>
-                        <div>~{Math.max(3, (steps.length - steps.findIndex(s => s.id === currentStep)) * 3)} min remaining</div>
-                    </div>
-                </div>
+                {/* Auto-save indicator */}
+                {savedAgo && (
+                    <div className="text-xs text-muted-foreground/70">✓ {savedAgo}</div>
+                )}
             </div>
 
             <div className="min-h-[500px]">
