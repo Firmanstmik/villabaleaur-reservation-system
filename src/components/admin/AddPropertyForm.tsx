@@ -793,7 +793,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                     </div>
                                     <div className="space-y-2 w-48">
                                         <label className="text-xs font-bold text-muted-foreground/70 ml-1 uppercase tracking-wide">Listing ID</label>
-                                        <div className="h-16 rounded-[1.5rem] bg-secondary/20 flex items-center justify-center font-mono font-bold text-[#0e2e50]/70">
+                                        <div className="h-16 rounded-[1.5rem] bg-secondary/35 flex items-center justify-center font-mono font-bold text-[#0e2e50]/75">
                                             {formData.listing_code}
                                         </div>
                                     </div>
@@ -1546,7 +1546,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                     </div>
                                     <div className="space-y-2 w-48">
                                         <label className="text-xs font-bold text-muted-foreground/70 ml-1 uppercase tracking-wide">Listing ID</label>
-                                        <div className="h-16 rounded-[1.5rem] bg-secondary/20 flex items-center justify-center font-mono font-bold text-[#0e2e50]/70">
+                                        <div className="h-16 rounded-[1.5rem] bg-secondary/35 flex items-center justify-center font-mono font-bold text-[#0e2e50]/75">
                                             {formData.listing_code}
                                         </div>
                                     </div>
