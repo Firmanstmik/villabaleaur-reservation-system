@@ -792,8 +792,8 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                         {errors.title && <p className="text-xs text-ukon-red font-bold ml-2">{errors.title}</p>}
                                     </div>
                                     <div className="space-y-2 w-48">
-                                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Listing Code</label>
-                                        <div className="h-16 rounded-[1.5rem] bg-muted flex items-center justify-center font-mono font-bold text-[#0e2e50]">
+                                        <label className="text-xs font-bold text-muted-foreground/70 ml-1 uppercase tracking-wide">Listing ID</label>
+                                        <div className="h-16 rounded-[1.5rem] bg-secondary/20 flex items-center justify-center font-mono font-bold text-[#0e2e50]/70">
                                             {formData.listing_code}
                                         </div>
                                     </div>
@@ -1545,8 +1545,8 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                         {errors.title && <p className="text-xs text-ukon-red font-bold ml-2">{errors.title}</p>}
                                     </div>
                                     <div className="space-y-2 w-48">
-                                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Listing Code</label>
-                                        <div className="h-16 rounded-[1.5rem] bg-muted flex items-center justify-center font-mono font-bold text-[#0e2e50]">
+                                        <label className="text-xs font-bold text-muted-foreground/70 ml-1 uppercase tracking-wide">Listing ID</label>
+                                        <div className="h-16 rounded-[1.5rem] bg-secondary/20 flex items-center justify-center font-mono font-bold text-[#0e2e50]/70">
                                             {formData.listing_code}
                                         </div>
                                     </div>

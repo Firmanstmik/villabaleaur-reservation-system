@@ -23,7 +23,7 @@ export function PhaseIndicator({
   const currentIndex = phases.findIndex((p) => p.id === currentPhaseId);
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-2">
       {/* Phase Icons Container */}
       <div className="flex items-center gap-3">
         {phases.map((phase, index) => {
@@ -36,17 +36,15 @@ export function PhaseIndicator({
               {/* Phase Circle */}
               <motion.button
                 onClick={() => {
-                  // Allow navigation to current and previous phases only
-                  if (index <= currentIndex) {
+                  // Allow navigation to current, previous, and next phases
+                  if (index <= currentIndex + 1) {
                     onPhaseChange(phase.id);
                   }
                 }}
-                disabled={index > currentIndex}
+                disabled={index > currentIndex + 1}
                 className={`relative flex items-center justify-center transition-all ${
-                  index > currentIndex ? 'cursor-not-allowed' : 'cursor-pointer'
+                  index > currentIndex + 1 ? 'cursor-not-allowed' : 'cursor-pointer'
                 }`}
-                whileHover={index <= currentIndex ? { scale: 1.05 } : {}}
-                whileTap={index <= currentIndex ? { scale: 0.98 } : {}}
               >
                 <div
                   className={`
@@ -54,7 +52,7 @@ export function PhaseIndicator({
                     transition-all duration-200
                     ${
                       isActive
-                        ? 'bg-[#0e2e50]/15 shadow-sm ring-1 ring-[#0e2e50]/30'
+                        ? 'bg-[#0e2e50]/12 shadow-[0_1px_2px_rgba(14,46,80,0.08)]'
                         : isCompleted
                           ? 'bg-[#0e2e50]/8'
                           : 'bg-muted'
@@ -65,10 +63,10 @@ export function PhaseIndicator({
                     size={18}
                     className={`transition-colors duration-200 ${
                       isActive
-                        ? 'text-[#0e2e50]/80'
+                        ? 'text-[#0e2e50]/85'
                         : isCompleted
                           ? 'text-[#0e2e50]/50'
-                          : 'text-muted-foreground/40'
+                          : 'text-muted-foreground/35'
                     }`}
                   />
                 </div>
