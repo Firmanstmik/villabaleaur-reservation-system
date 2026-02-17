@@ -1579,7 +1579,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                 <div className="bg-yellow-200 border-2 border-yellow-600 p-3 rounded mb-4 font-bold">
                   DEBUG: currentStep = "{currentStep}" | Trying to show content for step
                 </div>
-                <AnimatePresence mode="wait">
+                <>
                     {currentStep === 'basic' && (
                         <motion.div key="basic" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
                             <div className="grid grid-cols-1 gap-8">
@@ -2014,7 +2014,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                             </div>
                         </motion.div>
                     )}
-                </AnimatePresence>
+                </>
             </div>
 
             <div className="mt-16 pt-10 border-t border-border flex items-center justify-between">
