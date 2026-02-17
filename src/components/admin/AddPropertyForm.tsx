@@ -941,7 +941,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                     )}
 
                     {currentStep === 'details' && (
-                        <div className="space-y-8">
+                        <motion.div key="details" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
                             <div className="bg-red-500 text-white p-4 rounded font-bold text-lg">DEBUG: Step 2 is rendering. currentStep={currentStep}</div>
                             {/* PANEL 1 — STRUCTURE */}
                             <div className="bg-muted/5 rounded-2xl p-8 space-y-6">
@@ -1145,7 +1145,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                     </div>
                                 </div>
                             )}
-                        </div>
+                        </motion.div>
                     )}
 
                     {currentStep === 'media' && (
