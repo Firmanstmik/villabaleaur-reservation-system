@@ -138,6 +138,31 @@ const formatPriceNumber = (value: string | number, currency: string): string => 
     }
 };
 
+// Generate locale-specific placeholder examples for price input
+const getPricePlaceholder = (currency: string): string => {
+    // Realistic market range examples per currency
+    const placeholders: Record<string, number> = {
+        USD: 1250000,    // High-end property market
+        EUR: 250000,     // European luxury market
+        GBP: 750000,     // UK property market
+        IDR: 2500000000, // Indonesian market (large numbers)
+    };
+
+    const amount = placeholders[currency] || placeholders.USD;
+    const locales: Record<string, string> = {
+        USD: 'en-US',
+        EUR: 'de-DE',
+        GBP: 'en-GB',
+        IDR: 'id-ID',
+    };
+
+    try {
+        return new Intl.NumberFormat(locales[currency] || 'en-US').format(amount);
+    } catch {
+        return amount.toString();
+    }
+};
+
 const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyFormProps) => {
     const [currentStep, setCurrentStep] = useState<Step>(
         propertyId && initialTab ? initialTab : 'basic'
@@ -149,6 +174,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
     const [showPreview, setShowPreview] = useState(false);
     const [isEditMode] = useState(!!propertyId);
     const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
+    const [listingCodeManuallyEdited, setListingCodeManuallyEdited] = useState(false);
     const { currency, setCurrency, availableCurrencies } = useCurrency();
 
     const initialListingCode = useMemo(() => `UK-${Math.random().toString(36).substring(2, 7).toUpperCase()}`, []);
@@ -348,6 +374,15 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
         }
     }, [showCurrencyDropdown]);
 
+    // Auto-generate listing code from country code (first 2 chars of ISO code)
+    useEffect(() => {
+        if (!listingCodeManuallyEdited && formData.countryCode) {
+            // Generate code: CC-XXXXX where CC is country code and XXXXX is random
+            const newCode = `${formData.countryCode}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+            setFormData(prev => ({ ...prev, listing_code: newCode }));
+        }
+    }, [formData.countryCode, listingCodeManuallyEdited]);
+
     const steps: { id: Step; label: string; icon: any }[] = [
         { id: 'basic', label: 'Basic Info', icon: Building2 },
         { id: 'details', label: 'Specifications', icon: Layers },
@@ -429,6 +464,10 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
         setHasChanges(true);
+        // Track if listing code was manually edited
+        if (name === 'listing_code') {
+            setListingCodeManuallyEdited(true);
+        }
     };
 
     // Special handler for price input with auto-formatting
@@ -856,10 +895,10 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                         <Input
                                             name="price"
                                             type="text"
-                                            placeholder="1,250,000"
+                                            placeholder={getPricePlaceholder(currency)}
                                             value={formatPriceNumber(formData.price, currency)}
                                             onChange={handlePriceChange}
-                                            className="pl-16 h-16 rounded-[1.5rem] bg-secondary/5 border-border text-xl font-black text-[#0e2e50]"
+                                            className="pl-16 h-16 rounded-[1.5rem] bg-secondary/5 border-border text-xl font-black text-[#0e2e50] placeholder:opacity-50"
                                             inputMode="numeric"
                                         />
                                         {/* Currency Selector Dropdown */}
@@ -1462,10 +1501,10 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                         <p className="text-muted-foreground font-medium mt-2">Elevate your property to a premium standard.</p>
                     </div>
 
-                    {/* Listing Quality Score */}
+                    {/* Listing Strength Score */}
                     <div className="flex items-center gap-2 px-4 py-2 bg-secondary/30 rounded-lg border border-border/40">
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Listing Quality</span>
-                        <span className="text-sm font-black text-[#0e2e50]">{completionScore.percent} / 100</span>
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Listing Strength</span>
+                        <span className="text-sm font-black text-[#0e2e50] transition-all duration-500 ease-out">{completionScore.percent} / 100</span>
                     </div>
                 </div>
 
@@ -1619,10 +1658,10 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                         <Input
                                             name="price"
                                             type="text"
-                                            placeholder="1,250,000"
+                                            placeholder={getPricePlaceholder(currency)}
                                             value={formatPriceNumber(formData.price, currency)}
                                             onChange={handlePriceChange}
-                                            className="pl-16 h-16 rounded-[1.5rem] bg-secondary/5 border-border text-xl font-black text-[#0e2e50]"
+                                            className="pl-16 h-16 rounded-[1.5rem] bg-secondary/5 border-border text-xl font-black text-[#0e2e50] placeholder:opacity-50"
                                             inputMode="numeric"
                                         />
                                         {/* Currency Selector Dropdown */}
