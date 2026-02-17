@@ -940,12 +940,11 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                         </motion.div>
                     )}
 
-                    <div style={{background: currentStep === 'details' ? 'red' : 'transparent', color: 'white', padding: '40px', textAlign: 'center', fontSize: '20px', fontWeight: 'bold', display: currentStep === 'details' ? 'block' : 'none'}}>
-                        🎉 IF YOU SEE THIS RED BOX, THEN STEP 2 SECTION IS BEING RENDERED! currentStep = {currentStep}
-                    </div>
-
-                    {currentStep === 'details' && (
+                    {currentStep === 'details' ? (
                         <motion.div key="details" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                            <div style={{background: 'red', color: 'white', padding: '40px', textAlign: 'center', fontSize: '20px', fontWeight: 'bold'}}>
+                                🎉 STEP 2 CONTENT IS RENDERING! currentStep = {currentStep}
+                            </div>
                             <div className="bg-red-500 text-white p-4 rounded font-bold text-lg">DEBUG: Step 2 is rendering. currentStep={currentStep}</div>
                             {/* PANEL 1 — STRUCTURE */}
                             <div className="bg-muted/5 rounded-2xl p-8 space-y-6">
