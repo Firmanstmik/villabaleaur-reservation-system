@@ -49,6 +49,7 @@ import {
     Wifi,
     Tv,
     ClipboardCheck,
+    RefreshCw,
     Sparkles,
     TrendingUp,
     Eye,
@@ -655,34 +656,54 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
             if (!user) throw new Error('Not authenticated');
 
             const payload = {
-                ...formData,
+                title: formData.title,
+                description: formData.description_summary,
+                address: formData.address,
+                latitude: formData.latitude,
+                longitude: formData.longitude,
+                formatted_address: formData.formatted_address,
                 price: parseFloat(formData.price) || 0,
+                price_type: formData.price_type,
                 bedrooms: parseInt(formData.bedrooms) || 0,
                 bathrooms: parseInt(formData.bathrooms) || 0,
                 m2: parseInt(formData.m2) || 0,
+                status: formData.status,
+                property_type: formData.property_type,
+                ownership: formData.ownership,
+                year_built: formData.year_built,
+                listing_code: formData.listing_code,
+                featured: formData.featured,
                 parking_spaces: parseInt(formData.parking_spaces) || 0,
+                parking_type: formData.parking_type,
                 hoa_fees: parseFloat(formData.hoa_fees) || 0,
                 property_tax: parseFloat(formData.property_tax) || 0,
                 lot_size: parseFloat(formData.lot_size) || 0,
                 land_size: parseFloat(formData.land_size) || 0,
-                stories: parseInt(formData.stories) || 0,
-                lease_years: parseInt(formData.lease_years) || 0,
+                zoning: formData.zoning,
+                furnishing: formData.furnishing,
+                is_investment: formData.is_investment,
                 rental_income_estimate: parseFloat(formData.rental_income_estimate) || 0,
                 roi_percent: parseFloat(formData.roi_percent) || 0,
+                stories: parseInt(formData.stories) || 0,
                 last_renovated: formData.last_renovated ? parseInt(formData.last_renovated) : null,
+                lease_years: parseInt(formData.lease_years) || 0,
                 available_date: formData.available_date || null,
-                description: formData.description_summary,
-                description_interior: formData.description_interior,
-                description_outdoor: formData.description_outdoor,
-                description_investment: formData.description_investment,
-                latitude: formData.latitude,
-                longitude: formData.longitude,
-                formatted_address: formData.formatted_address,
+                interior_features: formData.interior_features,
+                appliances: formData.appliances,
+                hvac_type: formData.hvac_type,
+                outdoor_features: formData.outdoor_features,
+                community_amenities: formData.community_amenities,
+                lifestyle_tags: formData.lifestyle_tags,
+                energy_rating: formData.energy_rating,
+                virtual_tour_url: formData.virtual_tour_url,
+                video_url: formData.video_url,
+                images: formData.images,
+                image_url: formData.image_url,
                 nearby_amenities: formData.nearby_amenities || [],
                 poi_fetched_at: formData.poi_fetched_at,
                 poi_source: formData.poi_source,
                 user_id: user.id,
-                published_at: new Date().toISOString(), // Default to published for now
+                published_at: new Date().toISOString(),
                 last_modified_at: new Date().toISOString()
             };
 
@@ -715,6 +736,79 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
             onComplete();
         } catch (error: any) {
             toast.error(error.message || 'Error publishing property');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSaveDraft = async () => {
+        setLoading(true);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error('Not authenticated');
+
+            const payload = {
+                title: formData.title,
+                description: formData.description_summary,
+                address: formData.address,
+                latitude: formData.latitude,
+                longitude: formData.longitude,
+                formatted_address: formData.formatted_address,
+                price: parseFloat(formData.price) || 0,
+                price_type: formData.price_type,
+                bedrooms: parseInt(formData.bedrooms) || 0,
+                bathrooms: parseInt(formData.bathrooms) || 0,
+                m2: parseInt(formData.m2) || 0,
+                status: 'draft' as const,
+                property_type: formData.property_type,
+                ownership: formData.ownership,
+                year_built: formData.year_built,
+                listing_code: formData.listing_code,
+                featured: formData.featured,
+                parking_spaces: parseInt(formData.parking_spaces) || 0,
+                parking_type: formData.parking_type,
+                hoa_fees: parseFloat(formData.hoa_fees) || 0,
+                property_tax: parseFloat(formData.property_tax) || 0,
+                lot_size: parseFloat(formData.lot_size) || 0,
+                land_size: parseFloat(formData.land_size) || 0,
+                zoning: formData.zoning,
+                furnishing: formData.furnishing,
+                is_investment: formData.is_investment,
+                rental_income_estimate: parseFloat(formData.rental_income_estimate) || 0,
+                roi_percent: parseFloat(formData.roi_percent) || 0,
+                stories: parseInt(formData.stories) || 0,
+                last_renovated: formData.last_renovated ? parseInt(formData.last_renovated) : null,
+                lease_years: parseInt(formData.lease_years) || 0,
+                available_date: formData.available_date || null,
+                interior_features: formData.interior_features,
+                appliances: formData.appliances,
+                hvac_type: formData.hvac_type,
+                outdoor_features: formData.outdoor_features,
+                community_amenities: formData.community_amenities,
+                lifestyle_tags: formData.lifestyle_tags,
+                energy_rating: formData.energy_rating,
+                virtual_tour_url: formData.virtual_tour_url,
+                video_url: formData.video_url,
+                images: formData.images,
+                image_url: formData.image_url,
+                nearby_amenities: formData.nearby_amenities || [],
+                poi_fetched_at: formData.poi_fetched_at,
+                poi_source: formData.poi_source,
+                user_id: user.id,
+                last_modified_at: new Date().toISOString()
+            };
+
+            const { error } = await supabase
+                .from('properties')
+                .insert([payload]);
+
+            if (error) throw error;
+
+            setHasChanges(false);
+            toast.success('Draft saved successfully.');
+            onComplete();
+        } catch (error: any) {
+            toast.error(error.message || 'Error saving draft');
         } finally {
             setLoading(false);
         }
@@ -1362,7 +1456,6 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                             phases={steps}
                             currentPhaseId={currentStep}
                             onPhaseChange={(phaseId) => {
-                                console.log('PhaseIndicator click:', phaseId);
                                 setCurrentStep(phaseId as Step);
                             }}
                             showLabel={true}
@@ -1393,11 +1486,23 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                         />
                                         {errors.title && <p className="text-xs text-ukon-red font-bold ml-2">{errors.title}</p>}
                                     </div>
-                                    <div className="space-y-2 w-48">
-                                        <label className="text-xs font-bold text-muted-foreground/70 ml-1 uppercase tracking-wide">Listing ID</label>
-                                        <div className="h-16 rounded-[1.5rem] bg-secondary/35 flex items-center justify-center font-mono font-bold text-[#0e2e50]/75">
-                                            {formData.listing_code}
+                                    <div className="space-y-1.5 w-52">
+                                        <label className="text-[10px] font-black text-muted-foreground/60 ml-1 uppercase tracking-[0.15em]">System ID</label>
+                                        <div className="h-16 rounded-[1.5rem] bg-[#0e2e50]/[0.04] border border-[#0e2e50]/[0.08] flex items-center justify-center gap-2 relative">
+                                            <span className="font-mono text-sm font-bold text-[#0e2e50]/80 tracking-wider">{formData.listing_code}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const newCode = generateListingCode(formData.countryCode, formData.price_type, formData.property_type);
+                                                    if (newCode) setFormData(prev => ({ ...prev, listing_code: newCode }));
+                                                }}
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 rounded hover:bg-[#0e2e50]/[0.06] transition-colors"
+                                                title="Regenerate listing code"
+                                            >
+                                                <RefreshCw size={12} className="text-muted-foreground/40" />
+                                            </button>
                                         </div>
+                                        <p className="text-[9px] text-muted-foreground/40 ml-1 tracking-wide">Country + Type + Unique ID</p>
                                     </div>
                                 </div>
 
@@ -1533,6 +1638,13 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                         </motion.div>
                     )}
 
+                    {currentStep === 'details' && (
+                        <SpecificationsStep
+                            formData={formData}
+                            handleInputChange={handleInputChange}
+                            handleSelectChange={handleSelectChange}
+                        />
+                    )}
 
                     {currentStep === 'media' && (
                         <motion.div key="media" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
@@ -1815,7 +1927,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                 </>
             </div>
 
-            <div className="mt-16 pt-10 border-t border-border flex items-center justify-between">
+            <div className="mt-12 pt-8 border-t border-border/60 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Button
                         variant="ghost"
@@ -1828,11 +1940,12 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                     </Button>
                     <Button
                         variant="ghost"
-                        onClick={onComplete}
+                        onClick={handleSaveDraft}
                         disabled={loading}
-                        className="h-16 px-8 rounded-2xl gap-3 font-bold text-ukon-red hover:bg-ukon-red/10"
+                        className="h-16 px-8 rounded-2xl gap-3 font-bold text-[#0e2e50]/70 hover:bg-secondary/15"
                     >
-                        Cancel
+                        <FileText size={18} />
+                        Save Draft
                     </Button>
                 </div>
 

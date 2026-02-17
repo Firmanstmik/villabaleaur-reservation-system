@@ -290,7 +290,7 @@ const Dashboard = () => {
                                     <h2 className="text-3xl font-bold text-[#0e2e50]">{t('dashboard.publishNewProperty')}</h2>
                                     <p className="text-muted-foreground mt-2 font-medium">{t('dashboard.fillDetails')}</p>
                                 </div>
-                                <AddPropertyForm onComplete={() => setActiveTab('overview')} />
+                                <AddPropertyForm onComplete={() => { fetchDashboardData(user.id); setActiveTab('listings'); }} />
                             </motion.div>
                         )}
 

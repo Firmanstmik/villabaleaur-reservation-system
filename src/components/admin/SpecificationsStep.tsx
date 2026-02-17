@@ -1,4 +1,5 @@
 import { NumericStepper } from './NumericStepper';
+import { DatePickerField } from './DatePickerField';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -20,13 +21,13 @@ export function SpecificationsStep({
     handleSelectChange,
 }: SpecificationsStepProps) {
     return (
-        <div className="space-y-8">
+        <div className="space-y-[30px]">
             {/* PANEL 1 — STRUCTURE */}
-            <div className="bg-muted/5 rounded-2xl p-8 space-y-6">
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50">Structure</h3>
+            <div className="bg-muted/[0.04] rounded-2xl p-7 space-y-[18px]">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/80 mb-0">Structure</h3>
 
                 {/* 2x2 Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[18px]">
                     <NumericStepper
                         label="Bedrooms"
                         value={formData.bedrooms}
@@ -37,8 +38,8 @@ export function SpecificationsStep({
                         value={formData.bathrooms}
                         onChange={(v) => handleInputChange({ target: { name: 'bathrooms', value: v } } as any)}
                     />
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-[#0e2e50]">Building Area</label>
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Building Area</label>
                         <div className="relative">
                             <Input
                                 name="m2"
@@ -46,13 +47,13 @@ export function SpecificationsStep({
                                 value={formData.m2}
                                 onChange={handleInputChange}
                                 placeholder="0"
-                                className="pr-12 h-14 rounded-2xl bg-white border-border font-bold text-right"
+                                className="pr-14 h-14 rounded-2xl bg-white border-border font-bold text-right"
                             />
-                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground/60">m²</span>
+                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground/70 leading-none">m²</span>
                         </div>
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-[#0e2e50]">Land Size</label>
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Land Size</label>
                         <div className="relative">
                             <Input
                                 name="land_size"
@@ -60,18 +61,18 @@ export function SpecificationsStep({
                                 value={formData.land_size}
                                 onChange={handleInputChange}
                                 placeholder="0"
-                                className="pr-12 h-14 rounded-2xl bg-white border-border font-bold text-right"
+                                className="pr-14 h-14 rounded-2xl bg-white border-border font-bold text-right"
                             />
-                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground/60">m²</span>
+                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground/70 leading-none">m²</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Stories (Apartment only) */}
                 {formData.property_type === 'Apartment' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-[#0e2e50]">Stories</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-[18px]">
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-bold text-[#0e2e50] ml-1">Stories</label>
                             <Input
                                 name="stories"
                                 type="number"
@@ -84,9 +85,9 @@ export function SpecificationsStep({
                     </div>
                 )}
 
-                {/* Parking Type - Full width, no separate header */}
-                <div className="space-y-2 pt-2 border-t border-muted/10">
-                    <label className="text-sm font-bold text-[#0e2e50] pt-4 block">Parking Type</label>
+                {/* Parking Type */}
+                <div className="space-y-1.5 pt-1.5 border-t border-muted/10">
+                    <label className="text-sm font-bold text-[#0e2e50] pt-3 block ml-1">Parking Type</label>
                     <Select value={formData.parking_type} onValueChange={(v) => handleSelectChange('parking_type', v)}>
                         <SelectTrigger className="h-14 rounded-2xl bg-white font-bold border-border">
                             <SelectValue />
@@ -102,12 +103,12 @@ export function SpecificationsStep({
             </div>
 
             {/* PANEL 2 — CLASSIFICATION & LEGAL */}
-            <div className="bg-muted/5 rounded-2xl p-8 space-y-6">
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50">Classification & Legal</h3>
+            <div className="bg-muted/[0.04] rounded-2xl p-7 space-y-[18px]">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/80 mb-0">Classification & Legal</h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-[#0e2e50]">Zoning</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[18px]">
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Zoning</label>
                         <Select value={formData.zoning} onValueChange={(v) => handleSelectChange('zoning', v)}>
                             <SelectTrigger className="h-14 rounded-2xl bg-white font-bold border-border">
                                 <SelectValue />
@@ -121,8 +122,8 @@ export function SpecificationsStep({
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-[#0e2e50]">Furnishing</label>
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Furnishing</label>
                         <Select value={formData.furnishing} onValueChange={(v) => handleSelectChange('furnishing', v)}>
                             <SelectTrigger className="h-14 rounded-2xl bg-white font-bold border-border">
                                 <SelectValue />
@@ -134,8 +135,8 @@ export function SpecificationsStep({
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-[#0e2e50]">Ownership</label>
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Ownership</label>
                         <Select value={formData.ownership} onValueChange={(v) => handleSelectChange('ownership', v)}>
                             <SelectTrigger className="h-14 rounded-2xl bg-white font-bold border-border">
                                 <SelectValue />
@@ -146,9 +147,9 @@ export function SpecificationsStep({
                             </SelectContent>
                         </Select>
                     </div>
-                    {formData.ownership === 'Leasehold' && (
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-[#0e2e50]">Lease Years</label>
+                    {formData.ownership === 'Leasehold' ? (
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-bold text-[#0e2e50] ml-1">Lease Years</label>
                             <Input
                                 name="lease_years"
                                 type="number"
@@ -158,57 +159,54 @@ export function SpecificationsStep({
                                 className="h-14 rounded-2xl bg-white border-border font-bold"
                             />
                         </div>
+                    ) : (
+                        <div aria-hidden className="hidden md:block" />
                     )}
                 </div>
             </div>
 
             {/* PANEL 3 — CONDITION & AVAILABILITY */}
-            <div className="bg-muted/5 rounded-2xl p-8 space-y-6">
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50">Condition & Availability</h3>
+            <div className="bg-muted/[0.04] rounded-2xl p-7 space-y-[18px]">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/80 mb-0">Condition & Availability</h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-[#0e2e50]">Year Built</label>
+                <div className="grid grid-cols-3 gap-[18px]">
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Year Built</label>
                         <Input
                             name="year_built"
                             type="number"
                             value={formData.year_built}
                             onChange={handleInputChange}
                             placeholder="YYYY"
-                            className="h-14 rounded-2xl bg-white border-border font-bold"
+                            className="h-14 rounded-2xl bg-white border-border font-bold w-full"
                         />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-[#0e2e50]">Last Renovated</label>
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-bold text-[#0e2e50] ml-1">Last Renovated</label>
                         <Input
                             name="last_renovated"
                             type="number"
                             value={formData.last_renovated}
                             onChange={handleInputChange}
                             placeholder="YYYY"
-                            className="h-14 rounded-2xl bg-white border-border font-bold"
+                            className="h-14 rounded-2xl bg-white border-border font-bold w-full"
                         />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-[#0e2e50]">Available From</label>
-                        <Input
-                            name="available_date"
-                            type="date"
-                            value={formData.available_date}
-                            onChange={handleInputChange}
-                            className="h-14 rounded-2xl bg-white border-border font-bold"
-                        />
-                    </div>
+                    <DatePickerField
+                        label="Available From"
+                        value={formData.available_date}
+                        onChange={(isoDate) => handleInputChange({ target: { name: 'available_date', value: isoDate } } as any)}
+                    />
                 </div>
             </div>
 
             {/* Country-Specific: Energy Rating (Netherlands) */}
             {formData.countryCode === 'NL' && (
-                <div className="bg-muted/5 rounded-2xl p-8 space-y-6">
-                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50">Energy Rating</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-[#0e2e50]">Rating</label>
+                <div className="bg-muted/[0.04] rounded-2xl p-7 space-y-[18px]">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/80 mb-0">Energy Rating</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-[18px]">
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-bold text-[#0e2e50] ml-1">Rating</label>
                             <Select value={formData.energy_rating} onValueChange={(v) => handleSelectChange('energy_rating', v)}>
                                 <SelectTrigger className="h-14 rounded-2xl bg-white font-bold border-border">
                                     <SelectValue placeholder="A-G" />

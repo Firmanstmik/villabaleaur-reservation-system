@@ -30,19 +30,19 @@ export function NumericStepper({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <label className="text-sm font-bold text-[#0e2e50] ml-1">{label}</label>
-      <div className="flex items-center justify-between h-14 px-4 rounded-2xl bg-secondary/5 border border-border">
+      <div className="flex items-center justify-between h-14 px-4 rounded-2xl bg-white border border-border">
         <button
           type="button"
           onClick={handleDecrement}
           disabled={numValue <= min}
-          className="flex items-center justify-center w-8 h-8 rounded transition-colors disabled:opacity-30 hover:bg-secondary/20"
+          className="flex items-center justify-center w-7 h-7 rounded transition-colors disabled:opacity-25 hover:bg-secondary/15"
         >
-          <Minus size={16} className="text-[#0e2e50]" />
+          <Minus size={14} className="text-[#0e2e50]/75" />
         </button>
 
-        <span className="text-lg font-bold text-[#0e2e50] min-w-8 text-center">
+        <span className="text-base font-bold text-[#0e2e50] min-w-6 text-center leading-none">
           {numValue}
         </span>
 
@@ -50,9 +50,9 @@ export function NumericStepper({
           type="button"
           onClick={handleIncrement}
           disabled={numValue >= max}
-          className="flex items-center justify-center w-8 h-8 rounded transition-colors disabled:opacity-30 hover:bg-secondary/20"
+          className="flex items-center justify-center w-7 h-7 rounded transition-colors disabled:opacity-25 hover:bg-secondary/15"
         >
-          <Plus size={16} className="text-[#0e2e50]" />
+          <Plus size={14} className="text-[#0e2e50]/75" />
         </button>
       </div>
     </div>
