@@ -85,7 +85,7 @@ import { LuxuryTabNavigation, type Tab as TabType } from './LuxuryTabNavigation'
 
 const propertySchema = z.object({
     title: z.string().min(5, 'Title must be at least 5 characters'),
-    description: z.string().min(20, 'Description must be at least 20 characters'),
+    description_summary: z.string().min(20, 'Description must be at least 20 characters'),
     address: z.string().min(10, 'Full address is required'),
     latitude: z.number().nullable().optional(),
     longitude: z.number().nullable().optional(),
@@ -630,7 +630,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
             setErrors(newErrors);
 
             // Jump to first step with error
-            if (newErrors.title || newErrors.description || newErrors.address || newErrors.price) {
+            if (newErrors.title || newErrors.description_summary || newErrors.address || newErrors.price) {
                 setCurrentStep('basic');
             } else if (newErrors.images) {
                 setCurrentStep('media');
@@ -1210,13 +1210,13 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                             <div className="space-y-2">
                                 <label className="text-sm font-bold text-[#0e2e50] ml-1">Property Description</label>
                                 <Textarea
-                                    name="description"
+                                    name="description_summary"
                                     placeholder="Describe the property's unique features, floors, and vibe..."
-                                    value={formData.description}
+                                    value={formData.description_summary}
                                     onChange={handleInputChange}
-                                    className={`min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed ${errors.description ? 'border-ukon-red ring-1 ring-ukon-red' : ''}`}
+                                    className={`min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed ${errors.description_summary ? 'border-ukon-red ring-1 ring-ukon-red' : ''}`}
                                 />
-                                {errors.description && <p className="text-xs text-ukon-red font-bold ml-2">{errors.description}</p>}
+                                {errors.description_summary && <p className="text-xs text-ukon-red font-bold ml-2">{errors.description_summary}</p>}
                             </div>
 
                             {/* Nearby Points of Interest */}
@@ -1954,13 +1954,13 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                             <div className="space-y-2">
                                 <label className="text-sm font-bold text-[#0e2e50] ml-1">Property Description</label>
                                 <Textarea
-                                    name="description"
+                                    name="description_summary"
                                     placeholder="Describe the property's unique features, floors, and vibe..."
-                                    value={formData.description}
+                                    value={formData.description_summary}
                                     onChange={handleInputChange}
-                                    className={`min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed ${errors.description ? 'border-ukon-red ring-1 ring-ukon-red' : ''}`}
+                                    className={`min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed ${errors.description_summary ? 'border-ukon-red ring-1 ring-ukon-red' : ''}`}
                                 />
-                                {errors.description && <p className="text-xs text-ukon-red font-bold ml-2">{errors.description}</p>}
+                                {errors.description_summary && <p className="text-xs text-ukon-red font-bold ml-2">{errors.description_summary}</p>}
                             </div>
 
                             <div className="p-8 bg-secondary/5 rounded-[2.5rem] border border-border/50">
