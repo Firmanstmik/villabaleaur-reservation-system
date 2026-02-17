@@ -75,6 +75,7 @@ import { fetchNearbyPOIs } from '@/lib/poi';
 import POIEditor from './POIEditor';
 import { useListingDraft } from '@/hooks/useListingDraft';
 import { useCompletionScore } from '@/hooks/useCompletionScore';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { ListingControlHeader } from './ListingControlHeader';
 import { PerformanceSnapshot } from './PerformanceSnapshot';
@@ -245,6 +246,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
 
     const { saveDraft, loadDraft, clearDraft, savedAgo } = useListingDraft();
     const completionScore = useCompletionScore(formData);
+    const animatedStrengthScore = useAnimatedValue(completionScore.percent);
 
     // Load property data in edit mode
     useEffect(() => {
@@ -1504,7 +1506,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                     {/* Listing Strength Score */}
                     <div className="flex items-center gap-2 px-4 py-2 bg-secondary/30 rounded-lg border border-border/40">
                         <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Listing Strength</span>
-                        <span className="text-sm font-black text-[#0e2e50] transition-all duration-500 ease-out">{completionScore.percent} / 100</span>
+                        <span className="text-sm font-black text-[#0e2e50]">{animatedStrengthScore} / 100</span>
                     </div>
                 </div>
 
