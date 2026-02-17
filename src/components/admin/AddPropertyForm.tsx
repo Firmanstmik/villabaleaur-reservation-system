@@ -942,6 +942,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
 
                     {currentStep === 'details' && (
                         <div className="space-y-8">
+                            <div className="bg-red-500 text-white p-4 rounded font-bold text-lg">DEBUG: Step 2 is rendering. currentStep={currentStep}</div>
                             {/* PANEL 1 — STRUCTURE */}
                             <div className="bg-muted/5 rounded-2xl p-8 space-y-6">
                                 <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50">Structure</h3>
