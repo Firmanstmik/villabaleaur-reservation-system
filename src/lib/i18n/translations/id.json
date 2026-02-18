@@ -127,6 +127,8 @@
     "missionLongStatement": "Memberikan layanan real estat luar biasa melalui bimbingan jujur, solusi inovatif, dan perhatian personal. Kami berkomitmen untuk melampaui harapan klien sambil membangun hubungan jangka panjang berdasarkan kepercayaan dan hasil."
   },
   "agents": {
+    "ourTeam": "Tim Kami",
+    "meetOurExperts": "Temui Para Ahli Kami",
     "ourNetwork": "Jaringan Global Kami",
     "headline": "Real Estat Tanpa Batas.",
     "subheadline": "Jaringan terkoordinasi dari profesional lokal terpercaya yang beroperasi di bawah standar internasional terpadu.",
@@ -154,7 +156,8 @@
     "explorePartnership": "Jelajahi Kemitraan",
     "filterAll": "Semua",
     "filterEurope": "Eropa",
-    "filterSoutheastAsia": "Asia Tenggara"
+    "filterSoutheastAsia": "Asia Tenggara",
+    "mapReinforcement": "Koordinasi pusat. Eksekusi lokal."
   },
   "testimonials": {
     "testimonials": "Testimonial",

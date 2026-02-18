@@ -169,6 +169,8 @@
     "missionLongStatement": "To provide exceptional real estate services through honest guidance, innovative solutions, and personalized attention. We are committed to exceeding client expectations while building lasting relationships based on trust and results."
   },
   "agents": {
+    "ourTeam": "Our Team",
+    "meetOurExperts": "Meet Our Experts",
     "ourNetwork": "Our Global Network",
     "headline": "Real Estate Without Borders.",
     "subheadline": "A coordinated network of trusted local professionals operating under a unified international standard.",
@@ -196,7 +198,8 @@
     "explorePartnership": "Explore Partnership",
     "filterAll": "All",
     "filterEurope": "Europe",
-    "filterSoutheastAsia": "Southeast Asia"
+    "filterSoutheastAsia": "Southeast Asia",
+    "mapReinforcement": "Central coordination. Local execution."
   },
   "testimonials": {
     "testimonials": "Testimonials",

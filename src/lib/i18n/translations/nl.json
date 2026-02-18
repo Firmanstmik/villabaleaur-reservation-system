@@ -127,6 +127,8 @@
     "missionLongStatement": "Uitzonderlijke vastgoeddiensten bieden door eerlijke begeleiding, innovatieve oplossingen en persoonlijke aandacht. We zijn ervan overtuigd dat we klantenverwachtingen overtreffen en duurzame relaties opbouwen op basis van vertrouwen en resultaten."
   },
   "agents": {
+    "ourTeam": "Ons Team",
+    "meetOurExperts": "Ontmoet Onze Experts",
     "ourNetwork": "Ons Wereldwijde Netwerk",
     "headline": "Vastgoed Zonder Grenzen.",
     "subheadline": "Een gecoördineerd netwerk van betrouwbare lokale professionals die werken volgens een uniforme internationale standaard.",
@@ -154,7 +156,8 @@
     "explorePartnership": "Ontdek Partnerschap",
     "filterAll": "Alles",
     "filterEurope": "Europa",
-    "filterSoutheastAsia": "Zuidoost-Azië"
+    "filterSoutheastAsia": "Zuidoost-Azië",
+    "mapReinforcement": "Centrale coördinatie. Lokale uitvoering."
   },
   "testimonials": {
     "testimonials": "Testimonials",

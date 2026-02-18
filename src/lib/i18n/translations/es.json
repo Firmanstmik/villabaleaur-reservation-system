@@ -127,6 +127,8 @@
     "missionLongStatement": "Proporcionar servicios inmobiliarios excepcionales a través de orientación honesta, soluciones innovadoras y atención personalizada. Nos comprometemos a superar las expectativas de los clientes mientras construimos relaciones duraderas basadas en la confianza y los resultados."
   },
   "agents": {
+    "ourTeam": "Nuestro Equipo",
+    "meetOurExperts": "Conoce a Nuestros Expertos",
     "ourNetwork": "Nuestra Red Global",
     "headline": "Bienes Raíces Sin Fronteras.",
     "subheadline": "Una red coordinada de profesionales locales de confianza que operan bajo un estándar internacional unificado.",
@@ -154,7 +156,8 @@
     "explorePartnership": "Explorar Asociación",
     "filterAll": "Todos",
     "filterEurope": "Europa",
-    "filterSoutheastAsia": "Sudeste Asiático"
+    "filterSoutheastAsia": "Sudeste Asiático",
+    "mapReinforcement": "Coordinación central. Ejecución local."
   },
   "testimonials": {
     "testimonials": "Testimonios",

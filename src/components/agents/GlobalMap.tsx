@@ -17,8 +17,13 @@ const activeCountries: CountryData[] = [
   { name: 'Netherlands', agents: 3, cx: 419, cy: 386 },
   { name: 'Portugal', agents: 1, cx: 389, cy: 428 },
   { name: 'Indonesia', agents: 4, cx: 690, cy: 535 },
-  { name: 'Malaysia', agents: 1, cx: 665, cy: 520 },
+  { name: 'Malaysia', agents: 1, cx: 658, cy: 518 },
 ];
+
+const TOOLTIP_W = 140;
+const TOOLTIP_H = 38;
+const TOOLTIP_OFFSET_Y = 22;
+const TOOLTIP_RX = 1.5;
 
 export const GlobalMap = () => {
   const { t } = useLanguage();
@@ -75,9 +80,10 @@ export const GlobalMap = () => {
                 <path
                   key={`${p.id}-${i}`}
                   d={p.d}
-                  fill="#f3f4f6"
-                  stroke="rgba(0,0,0,0.08)"
+                  fill="#E7EBF0"
+                  stroke="#D6DBE3"
                   strokeWidth="0.5"
+                  strokeOpacity="0.4"
                 />
               ))}
             </g>
@@ -88,10 +94,11 @@ export const GlobalMap = () => {
                 <path
                   key={`${p.id}-active-${i}`}
                   d={p.d}
-                  fill={hoveredPath === p.id ? 'rgba(14,46,80,0.28)' : 'rgba(14,46,80,0.18)'}
+                  fill={hoveredPath === p.id ? 'rgba(14,46,80,0.38)' : 'rgba(14,46,80,0.18)'}
                   stroke="rgba(14,46,80,0.3)"
                   strokeWidth="0.5"
-                  className="transition-[fill] duration-200 cursor-pointer"
+                  style={{ transition: 'fill 150ms ease, opacity 150ms ease' }}
+                  className="cursor-pointer"
                   onMouseEnter={() => setHoveredPath(p.id)}
                   onMouseLeave={() => setHoveredPath(null)}
                 />
@@ -106,77 +113,90 @@ export const GlobalMap = () => {
                 onMouseLeave={() => setHoveredCountry(null)}
                 className="cursor-pointer"
               >
-                {/* Subtle pulse ring */}
-                <circle
-                  cx={country.cx}
-                  cy={country.cy}
-                  r="5"
-                  fill="none"
-                  stroke="rgba(14,46,80,0.3)"
-                  strokeWidth="0.4"
-                >
-                  <animate
-                    attributeName="r"
-                    values="4;7;4"
-                    dur="3s"
-                    repeatCount="indefinite"
-                  />
-                  <animate
-                    attributeName="opacity"
-                    values="0.4;0.1;0.4"
-                    dur="3s"
-                    repeatCount="indefinite"
-                  />
-                </circle>
                 {/* Solid dot */}
                 <circle
                   cx={country.cx}
                   cy={country.cy}
                   r={hoveredCountry?.name === country.name ? 3.5 : 2.5}
                   fill="rgba(14,46,80,0.7)"
-                  className="transition-all duration-200"
+                  style={{ transition: 'r 200ms ease' }}
                 />
               </g>
             ))}
 
             {/* Tooltip */}
-            {hoveredCountry && (
-              <g style={{ pointerEvents: 'none' }}>
-                <rect
-                  x={hoveredCountry.cx - 48}
-                  y={hoveredCountry.cy - 28}
-                  width="96"
-                  height="22"
-                  rx="3"
-                  fill="#0e2e50"
-                />
-                <polygon
-                  points={`${hoveredCountry.cx - 3},${hoveredCountry.cy - 6} ${hoveredCountry.cx + 3},${hoveredCountry.cy - 6} ${hoveredCountry.cx},${hoveredCountry.cy - 2}`}
-                  fill="#0e2e50"
-                />
-                <text
-                  x={hoveredCountry.cx}
-                  y={hoveredCountry.cy - 18}
-                  textAnchor="middle"
-                  fill="white"
-                  fontSize="7"
-                  fontWeight="500"
-                >
-                  {hoveredCountry.name}
-                </text>
-                <text
-                  x={hoveredCountry.cx}
-                  y={hoveredCountry.cy - 10}
-                  textAnchor="middle"
-                  fill="rgba(255,255,255,0.6)"
-                  fontSize="5.5"
-                >
-                  {hoveredCountry.agents} {hoveredCountry.agents === 1 ? 'Agent' : 'Agents'}
-                </text>
-              </g>
-            )}
+            {hoveredCountry && (() => {
+              const tx = hoveredCountry.cx - TOOLTIP_W / 2;
+              const ty = hoveredCountry.cy - TOOLTIP_H - TOOLTIP_OFFSET_Y;
+              return (
+                <g style={{ pointerEvents: 'none' }}>
+                  {/* Shadow rect */}
+                  <rect
+                    x={tx + 0.5}
+                    y={ty + 0.5}
+                    width={TOOLTIP_W}
+                    height={TOOLTIP_H}
+                    rx={TOOLTIP_RX}
+                    fill="rgba(0,0,0,0.08)"
+                  />
+                  {/* Background */}
+                  <rect
+                    x={tx}
+                    y={ty}
+                    width={TOOLTIP_W}
+                    height={TOOLTIP_H}
+                    rx={TOOLTIP_RX}
+                    fill="#0e2e50"
+                    stroke="rgba(255,255,255,0.08)"
+                    strokeWidth="0.5"
+                  />
+                  {/* Country name */}
+                  <text
+                    x={hoveredCountry.cx}
+                    y={ty + 14}
+                    textAnchor="middle"
+                    fill="white"
+                    fontSize="10"
+                    fontWeight="600"
+                    letterSpacing="-0.02em"
+                  >
+                    {hoveredCountry.name}
+                  </text>
+                  {/* Divider */}
+                  <line
+                    x1={hoveredCountry.cx - TOOLTIP_W * 0.32}
+                    y1={ty + 19.5}
+                    x2={hoveredCountry.cx + TOOLTIP_W * 0.32}
+                    y2={ty + 19.5}
+                    stroke="rgba(255,255,255,0.12)"
+                    strokeWidth="0.5"
+                  />
+                  {/* Agent count */}
+                  <text
+                    x={hoveredCountry.cx}
+                    y={ty + 30}
+                    textAnchor="middle"
+                    fill="rgba(255,255,255,0.78)"
+                    fontSize="8"
+                  >
+                    {hoveredCountry.agents} {hoveredCountry.agents === 1 ? 'agent active' : 'agents active'}
+                  </text>
+                </g>
+              );
+            })()}
           </svg>
         </motion.div>
+
+        {/* Reinforcement line */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="text-center mt-10 text-[11px] tracking-[0.2em] uppercase text-muted-foreground/50 font-medium"
+        >
+          {t('agents.mapReinforcement')}
+        </motion.p>
       </div>
     </section>
   );
