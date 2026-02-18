@@ -1,117 +1,159 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Instagram, Facebook } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { whatsappUrl } from '@/data/mockData';
 import logoImage from '@/assets/Ukon-Estate.png';
 
-const footerLinksKeys = {
-  company: [
-    { key: 'footer.aboutUs', path: '/about' },
-    { key: 'footer.ourTeam', path: '/network' },
-    { key: 'footer.careers', path: '#' },
-    { key: 'footer.contact', path: '#' },
-  ],
-  services: [
-    { key: 'footer.propertySales', path: '/services' },
-    { key: 'footer.rentalManagement', path: '/services' },
-    { key: 'footer.investmentConsulting', path: '/services' },
-    { key: 'footer.propertyValuation', path: '/services' },
-  ],
-  resources: [
-    { key: 'footer.blog', path: '/intelligence' },
-    { key: 'footer.marketReports', path: '/intelligence?category=Market+Report' },
-    { key: 'footer.buyingGuide', path: '/intelligence' },
-    { key: 'footer.sellingGuide', path: '/intelligence' },
-  ],
-};
+interface FooterLink {
+  key: string;
+  path: string;
+  external?: boolean;
+  hash?: boolean;
+}
+
+const advisoryLinks: FooterLink[] = [
+  { key: 'footer.propertySales', path: '/properties' },
+  { key: 'footer.investmentAdvisory', path: '/#services', hash: true },
+  { key: 'footer.rentalAssetManagement', path: '/#services', hash: true },
+  { key: 'footer.propertyValuation', path: 'whatsapp', external: true },
+];
+
+const networkLinks: FooterLink[] = [
+  { key: 'footer.ourNetwork', path: '/network' },
+  { key: 'footer.europeRepresentation', path: '/network#region-europe', hash: true },
+  { key: 'footer.southeastAsiaRepresentation', path: '/network#region-southeast-asia', hash: true },
+  { key: 'footer.strategicPartnerships', path: '/network' },
+  { key: 'footer.joinOurNetwork', path: '/network' },
+];
+
+const intelligenceLinks: FooterLink[] = [
+  { key: 'footer.marketIntelligence', path: '/intelligence' },
+  { key: 'footer.marketReports', path: '/intelligence?category=Market+Report' },
+  { key: 'footer.buyingGuides', path: '/intelligence' },
+  { key: 'footer.sellingGuides', path: '/intelligence' },
+];
+
+const legalLinks: FooterLink[] = [
+  { key: 'footer.privacyPolicy', path: '#' },
+  { key: 'footer.termsOfUse', path: '#' },
+  { key: 'footer.disclaimer', path: '#' },
+];
 
 export function Footer() {
   const { language, t } = useLanguage();
 
-  // Helper to add language prefix to paths
   const getLocalizedPath = (path: string) => {
     if (path === '#') return path;
     const [pathname, query] = path.split('?');
     return `/${language}${pathname}${query ? `?${query}` : ''}`;
   };
 
+  const renderLink = (link: FooterLink) => {
+    const className = "text-sm text-white/55 hover:text-white/90 transition-colors duration-150";
+
+    if (link.external) {
+      return (
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={className}
+        >
+          {t(link.key)}
+        </a>
+      );
+    }
+
+    if (link.hash) {
+      const [pathPart, hashPart] = link.path.split('#');
+      const localizedPath = pathPart === '/' ? `/${language}` : `/${language}${pathPart}`;
+      return (
+        <Link
+          to={`${localizedPath}#${hashPart}`}
+          className={className}
+        >
+          {t(link.key)}
+        </Link>
+      );
+    }
+
+    return (
+      <Link
+        to={getLocalizedPath(link.path)}
+        className={className}
+      >
+        {t(link.key)}
+      </Link>
+    );
+  };
+
   return (
     <footer className="bg-ukon-navy text-white">
-      {/* Main Footer */}
-      <div className="py-16">
+      {/* Primary Footer */}
+      <div className="py-20 md:py-24">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
-            {/* Brand Column */}
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-10">
+            {/* Column 1 — Brand */}
+            <div>
               <Link to={getLocalizedPath('/')} className="inline-block mb-6">
-                <img src={logoImage} alt="Ukon Estate Logo" className="h-16 w-auto object-contain brightness-0 invert" />
+                <img
+                  src={logoImage}
+                  alt="Ukon Estate"
+                  className="h-14 w-auto object-contain brightness-0 invert"
+                />
               </Link>
-              <p className="text-white/70 mb-6 max-w-sm">
-                {t('footer.trustedPartner')}
+              <p className="text-white/50 text-sm leading-relaxed mb-8 max-w-xs">
+                {t('footer.positioning')}
               </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-white/70">
-                  <MapPin size={18} className="text-ukon-red" />
-                  <span>{t('footer.address')}</span>
-                </div>
-                <div className="flex items-center gap-3 text-white/70">
-                  <Phone size={18} className="text-ukon-red" />
-                  <span>{t('footer.phone')}</span>
-                </div>
-                <div className="flex items-center gap-3 text-white/70">
-                  <Mail size={18} className="text-ukon-red" />
-                  <span>{t('footer.email')}</span>
-                </div>
+              <div className="space-y-2.5 text-sm text-white/40">
+                <p>{t('footer.address')}</p>
+                <a
+                  href={`mailto:${t('footer.email')}`}
+                  className="block hover:text-white/70 transition-colors duration-150"
+                >
+                  {t('footer.email')}
+                </a>
+                <a
+                  href={`tel:${t('footer.phone').replace(/\s/g, '')}`}
+                  className="block hover:text-white/70 transition-colors duration-150"
+                >
+                  {t('footer.phone')}
+                </a>
               </div>
             </div>
 
-            {/* Company Links */}
+            {/* Column 2 — Advisory */}
             <div>
-              <h4 className="font-semibold text-lg mb-4">{t('footer.company')}</h4>
+              <h4 className="text-xs font-medium tracking-[0.2em] uppercase text-white/30 mb-6">
+                {t('footer.advisory')}
+              </h4>
               <ul className="space-y-3">
-                {footerLinksKeys.company.map((link) => (
-                  <li key={link.key}>
-                    <Link
-                      to={getLocalizedPath(link.path)}
-                      className="text-white/70 hover:text-ukon-red transition-colors"
-                    >
-                      {t(link.key)}
-                    </Link>
-                  </li>
+                {advisoryLinks.map((link) => (
+                  <li key={link.key}>{renderLink(link)}</li>
                 ))}
               </ul>
             </div>
 
-            {/* Services Links */}
+            {/* Column 3 — Global Network */}
             <div>
-              <h4 className="font-semibold text-lg mb-4">{t('footer.services')}</h4>
+              <h4 className="text-xs font-medium tracking-[0.2em] uppercase text-white/30 mb-6">
+                {t('footer.globalNetwork')}
+              </h4>
               <ul className="space-y-3">
-                {footerLinksKeys.services.map((link) => (
-                  <li key={link.key}>
-                    <Link
-                      to={getLocalizedPath(link.path)}
-                      className="text-white/70 hover:text-ukon-red transition-colors"
-                    >
-                      {t(link.key)}
-                    </Link>
-                  </li>
+                {networkLinks.map((link) => (
+                  <li key={link.key}>{renderLink(link)}</li>
                 ))}
               </ul>
             </div>
 
-            {/* Resources Links */}
+            {/* Column 4 — Intelligence */}
             <div>
-              <h4 className="font-semibold text-lg mb-4">{t('footer.resources')}</h4>
+              <h4 className="text-xs font-medium tracking-[0.2em] uppercase text-white/30 mb-6">
+                {t('footer.intelligence')}
+              </h4>
               <ul className="space-y-3">
-                {footerLinksKeys.resources.map((link) => (
-                  <li key={link.key}>
-                    <Link
-                      to={getLocalizedPath(link.path)}
-                      className="text-white/70 hover:text-ukon-red transition-colors"
-                    >
-                      {t(link.key)}
-                    </Link>
-                  </li>
+                {intelligenceLinks.map((link) => (
+                  <li key={link.key}>{renderLink(link)}</li>
                 ))}
               </ul>
             </div>
@@ -119,42 +161,47 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="py-6 border-t border-white/10">
+      {/* Divider */}
+      <div className="container mx-auto px-4">
+        <div className="h-px bg-white/8" />
+      </div>
+
+      {/* Secondary Footer */}
+      <div className="py-6">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-white/50 text-sm">
-              {t('footer.copyright')}
-            </p>
+            {/* Left — Legal */}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/30">
+              <span>{t('footer.copyright')}</span>
+              {legalLinks.map((link) => (
+                <Link
+                  key={link.key}
+                  to={getLocalizedPath(link.path)}
+                  className="hover:text-white/60 transition-colors duration-150"
+                >
+                  {t(link.key)}
+                </Link>
+              ))}
+            </div>
+
+            {/* Right — Social */}
             <div className="flex items-center gap-4">
-              <motion.a
-                whileHover={{ scale: 1.2, color: 'hsl(var(--ukon-red))' }}
-                href="#"
-                className="text-white/50 transition-colors"
+              <a
+                href="https://www.instagram.com/ukonestate/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/40 hover:text-white/70 transition-colors duration-150"
               >
-                <Facebook size={20} />
-              </motion.a>
-              <motion.a
-                whileHover={{ scale: 1.2, color: 'hsl(var(--ukon-red))' }}
-                href="#"
-                className="text-white/50 transition-colors"
+                <Instagram size={18} />
+              </a>
+              <a
+                href="https://web.facebook.com/Ukonnect"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/40 hover:text-white/70 transition-colors duration-150"
               >
-                <Twitter size={20} />
-              </motion.a>
-              <motion.a
-                whileHover={{ scale: 1.2, color: 'hsl(var(--ukon-red))' }}
-                href="#"
-                className="text-white/50 transition-colors"
-              >
-                <Instagram size={20} />
-              </motion.a>
-              <motion.a
-                whileHover={{ scale: 1.2, color: 'hsl(var(--ukon-red))' }}
-                href="#"
-                className="text-white/50 transition-colors"
-              >
-                <Linkedin size={20} />
-              </motion.a>
+                <Facebook size={18} />
+              </a>
             </div>
           </div>
         </div>
