@@ -170,7 +170,7 @@ export function Navbar() {
             {/* Logo Image */}
             <img
               src={logoImage}
-              alt="UKON ESTATE Logo"
+              alt="Ukon Estate Logo"
               className="h-[3.5vw] w-auto object-contain"
             />
           </Link>
@@ -252,7 +252,7 @@ export function Navbar() {
       {/* Spacer to push content down - only on non-property pages */}
       {!location.pathname.includes('/property/') && (
         <>
-          <div style={{ height: '5vw' }} className="hidden lg:block" />
+          <div style={{ height: 'calc(3.5vw + 1.6vw)' }} className="hidden lg:block" />
           <div className="h-20 lg:hidden" />
         </>
       )}

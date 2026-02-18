@@ -1,60 +1,17 @@
 import { useRef, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Target, Eye, CheckCircle, Users, Award, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
-import { useInView } from '@/hooks/useInView';
-import { useCountUp } from '@/hooks/useCountUp';
-import { whatsappUrl } from '@/data/mockData';
 import { useLanguage } from '@/contexts/LanguageContext';
 import heroBg from '@/assets/Ukon_Estate_Hero.webp';
 import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 
-function StatItem({ value, label, suffix = '', delay = 0 }: { value: number; label: string; suffix?: string; delay?: number }) {
-  const { ref, isInView } = useInView({ threshold: 0.5 });
-  const { formattedValue, start } = useCountUp({ end: value, suffix, delay });
-
-  useEffect(() => {
-    if (isInView) {
-      start();
-    }
-  }, [isInView, start]);
-
-  return (
-    <div ref={ref} className="text-center">
-      <div className="text-4xl md:text-5xl font-bold text-ukon-red mb-2 counter-animate">
-        {formattedValue}
-      </div>
-      <div className="text-muted-foreground">{label}</div>
-    </div>
-  );
-}
-
 const About = () => {
-  const { ref, isInView } = useInView();
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const videoRef = useRef<HTMLVideoElement>(null);
   const cloneRef = useRef<HTMLVideoElement>(null);
   const [showClone, setShowClone] = useState(false);
-
-  const values = [
-    {
-      icon: Heart,
-      title: t('about.clientCentric'),
-      description: t('about.clientCentricDescription'),
-    },
-    {
-      icon: Award,
-      title: t('about.excellence'),
-      description: t('about.excellenceDescription'),
-    },
-    {
-      icon: Users,
-      title: t('about.integrity'),
-      description: t('about.integrityDescription'),
-    },
-  ];
 
   useEffect(() => {
     const video = videoRef.current;
@@ -72,7 +29,7 @@ const About = () => {
 
       if (timeLeft <= FADE_DURATION && !showClone) {
         cloneRef.current.currentTime = 0;
-        cloneRef.current.play().catch(() => { });
+        cloneRef.current.play().catch(() => {});
         setShowClone(true);
       }
     };
@@ -92,18 +49,13 @@ const About = () => {
     };
   }, [showClone]);
 
-  const handleWhatsAppClick = () => {
-    window.open(whatsappUrl, '_blank');
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="pt-20">
-        {/* Hero Section */}
-        <section className="relative py-24 overflow-hidden">
-          {/* Background Video */}
+      <main>
+        {/* ── 1. Hero Section ── */}
+        <section className="relative py-36 md:py-44 overflow-hidden">
           <video
             ref={videoRef}
             autoPlay
@@ -117,7 +69,6 @@ const About = () => {
             <source src={heroVideo} type="video/mp4" />
           </video>
 
-          {/* Clone video for crossfade at loop boundary */}
           <video
             ref={cloneRef}
             muted
@@ -133,216 +84,210 @@ const About = () => {
             <source src={heroVideo} type="video/mp4" />
           </video>
 
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/[0.10]" />
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-black/60" />
 
           <div className="container mx-auto px-4 relative z-10">
-            <div ref={ref} className="max-w-3xl">
-              <motion.span
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5 }}
-                className="inline-block px-4 py-2 bg-white/10 text-white rounded-full text-sm font-medium mb-6"
-              >
-                {t('navigation.about')}
-              </motion.span>
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
-              >
-                {t('about.buildingDreams')}
-                <br />
-                <span className="text-ukon-red">{t('about.creatingHomes')}</span>
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-white/70 text-lg"
-              >
-                {t('about.longDescription')}
-              </motion.p>
+            <div className="max-w-2xl">
+              <h1 className="text-[2.5rem] md:text-[3.25rem] lg:text-[4rem] font-bold text-white mb-6 tracking-tight leading-[1.1]">
+                Real Estate Without Borders.
+              </h1>
+              <p className="text-xl md:text-2xl text-white/75 font-light mb-5">
+                Global reach. Local expertise. Strategic representation worldwide.
+              </p>
+              <p className="text-white/50 text-lg max-w-xl leading-relaxed">
+                We connect discerning clients with exceptional properties across
+                international markets — delivering advisory-led service at every stage.
+              </p>
             </div>
           </div>
         </section>
 
-        {/* Stats Section */}
-        <section className="py-16 bg-secondary/30">
+        {/* ── 2. Prestige Metrics Grid ── */}
+        <section className="py-24 border-b border-border">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <StatItem value={15} label={t('about.yearsExperience')} suffix="+" delay={0} />
-              <StatItem value={500} label={t('about.propertiesSold')} suffix="+" delay={100} />
-              <StatItem value={200} label={t('hero.stats.happyClients')} suffix="+" delay={200} />
-              <StatItem value={98} label={t('about.clientSatisfaction')} suffix="%" delay={300} />
-            </div>
-          </div>
-        </section>
-
-        {/* Story Section */}
-        <section className="py-24">
-          <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <motion.div
-                initial={{ opacity: 0, x: -40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <span className="inline-block px-4 py-2 bg-ukon-red/10 text-ukon-red rounded-full text-sm font-medium mb-4">
-                  {t('about.pageSubheadline')}
-                </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  {t('about.pageTitle')}
-                </h2>
-                <p className="text-muted-foreground text-lg mb-6">
-                  {t('about.foundedDescription')}
-                </p>
-                <p className="text-muted-foreground text-lg">
-                  {t('about.todayDescription')}
-                </p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className="relative"
-              >
-                <div className="rounded-3xl overflow-hidden shadow-2xl">
-                  <img
-                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80"
-                    alt="UKON Estate Office"
-                    className="w-full h-auto"
-                  />
-                </div>
-                <motion.div
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute -bottom-8 -left-8 bg-white rounded-2xl p-6 shadow-xl"
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12">
+              {[
+                { value: '12', label: 'Years of Experience' },
+                { value: '628', label: 'Properties Transacted' },
+                { value: '274', label: 'Private Clients Represented' },
+                { value: '98%', label: 'Client Satisfaction' },
+              ].map((stat, i) => (
+                <div
+                  key={stat.label}
+                  className={`text-center ${
+                    i < 3 ? 'md:border-r md:border-border' : ''
+                  }`}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-ukon-red rounded-full flex items-center justify-center">
-                      <CheckCircle size={28} className="text-white" />
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-ukon-navy">15+</div>
-                      <div className="text-sm text-muted-foreground">{t('about.pageHeadline')}</div>
-                    </div>
+                  <div className="text-5xl md:text-6xl font-bold text-foreground mb-3">
+                    {stat.value}
                   </div>
-                </motion.div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* Vision & Mission */}
-        <section className="py-24 bg-secondary/30">
-          <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 gap-8">
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className="bg-card border border-border rounded-3xl p-8 md:p-10"
-              >
-                <div className="w-16 h-16 bg-ukon-red/10 rounded-2xl flex items-center justify-center text-ukon-red mb-6">
-                  <Eye size={32} />
-                </div>
-                <h3 className="text-2xl font-bold mb-4">{t('about.ourVision')}</h3>
-                <p className="text-muted-foreground text-lg leading-relaxed">
-                  {t('about.visionLongStatement')}
-                </p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="bg-card border border-border rounded-3xl p-8 md:p-10"
-              >
-                <div className="w-16 h-16 bg-ukon-red/10 rounded-2xl flex items-center justify-center text-ukon-red mb-6">
-                  <Target size={32} />
-                </div>
-                <h3 className="text-2xl font-bold mb-4">{t('about.ourMission')}</h3>
-                <p className="text-muted-foreground text-lg leading-relaxed">
-                  {t('about.missionLongStatement')}
-                </p>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* Values Section */}
-        <section className="py-24">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-16"
-            >
-              <span className="inline-block px-4 py-2 bg-ukon-red/10 text-ukon-red rounded-full text-sm font-medium mb-4">
-                {t('about.ourValues')}
-              </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                {t('about.whatDrivesUs')}
-              </h2>
-            </motion.div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {values.map((value, index) => (
-                <motion.div
-                  key={value.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -8 }}
-                  className="text-center"
-                >
-                  <div className="w-20 h-20 bg-ukon-red/10 rounded-full flex items-center justify-center text-ukon-red mx-auto mb-6">
-                    <value.icon size={36} />
+                  <div className="text-xs text-muted-foreground/70 tracking-[0.15em] uppercase">
+                    {stat.label}
                   </div>
-                  <h3 className="text-xl font-bold mb-3">{value.title}</h3>
-                  <p className="text-muted-foreground">{value.description}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-24 bg-ukon-navy">
+        {/* ── 3. Our Story — Editorial Two-Column ── */}
+        <section className="py-32">
           <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center"
-            >
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-                {t('about.readyToWorkWithUs')}
-              </h2>
-              <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
-                {t('about.letStartJourney')}
-              </p>
+            <div className="grid lg:grid-cols-2 gap-16 lg:gap-28 items-start">
+              <div>
+                <h2 className="text-[2rem] md:text-[2.75rem] font-bold text-foreground leading-[1.15]">
+                  A Global Brokerage Built
+                  <br />
+                  on Local Intelligence
+                </h2>
+              </div>
+              <div className="space-y-6 max-w-lg">
+                <p className="text-muted-foreground text-lg leading-[1.85]">
+                  Ukon Estate was founded on a simple conviction: that the world's most
+                  significant property decisions deserve more than transactional service.
+                  They demand strategic counsel, cultural fluency, and an unwavering
+                  commitment to client outcomes.
+                </p>
+                <p className="text-muted-foreground text-lg leading-[1.85]">
+                  From our origins advising private clients across Europe and the Middle
+                  East, we have grown into a trusted brokerage operating at the
+                  intersection of global markets and local expertise. Every engagement
+                  is shaped by deep market knowledge, discretion, and a long-term view
+                  of value.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 4. Three Pillars ── */}
+        <section className="py-32 bg-secondary/30">
+          <div className="container mx-auto px-4">
+            <div className="grid md:grid-cols-3 gap-20">
+              {[
+                {
+                  title: 'GLOBAL NETWORK',
+                  text: 'We operate across borders, connecting clients to opportunities in established and emerging markets worldwide.',
+                },
+                {
+                  title: 'LOCAL COLLABORATION',
+                  text: 'In every market we serve, we partner with trusted local professionals who share our standards and values.',
+                },
+                {
+                  title: 'STRATEGIC EXECUTION',
+                  text: 'Every transaction is guided by a disciplined process — from sourcing and due diligence to negotiation and closing.',
+                },
+              ].map((pillar) => (
+                <div key={pillar.title}>
+                  <h3 className="text-sm font-bold tracking-[0.2em] text-foreground mb-5">
+                    {pillar.title}
+                  </h3>
+                  <div className="w-8 h-px bg-foreground/25 mb-8" />
+                  <p className="text-muted-foreground leading-[1.8] max-w-xs">
+                    {pillar.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 5. Operating Model ── */}
+        <section className="py-32">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-12">
+              How We Work
+            </h2>
+            <p className="text-muted-foreground text-lg leading-[1.85] mb-10">
+              Our operating model is built around clarity, accountability, and
+              client-centricity. From the first consultation to final settlement, every
+              step is managed with precision.
+            </p>
+            <ul className="space-y-6 text-muted-foreground text-lg leading-[1.8]">
+              <li className="flex items-start gap-3">
+                <span className="mt-2.5 block w-1.5 h-1.5 rounded-full bg-foreground/30 shrink-0" />
+                <span>
+                  Initial consultation to define objectives, timelines, and market
+                  parameters.
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-2.5 block w-1.5 h-1.5 rounded-full bg-foreground/30 shrink-0" />
+                <span>
+                  Curated property sourcing aligned to client criteria and investment
+                  thesis.
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-2.5 block w-1.5 h-1.5 rounded-full bg-foreground/30 shrink-0" />
+                <span>
+                  Due diligence coordination across legal, financial, and structural
+                  dimensions.
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-2.5 block w-1.5 h-1.5 rounded-full bg-foreground/30 shrink-0" />
+                <span>
+                  Negotiation and transaction management through to completion.
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-2.5 block w-1.5 h-1.5 rounded-full bg-foreground/30 shrink-0" />
+                <span>
+                  Post-acquisition support including property management referrals and
+                  ongoing advisory.
+                </span>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        {/* ── 6. Values Section ── */}
+        <section className="py-32 bg-secondary/30">
+          <div className="container mx-auto px-4">
+            <div className="grid md:grid-cols-3 gap-20">
+              {[
+                {
+                  title: 'CLIENT-FIRST',
+                  text: 'Every decision is anchored in the best interest of the client.',
+                },
+                {
+                  title: 'EXCELLENCE',
+                  text: 'We hold ourselves to the highest standard in every interaction.',
+                },
+                {
+                  title: 'INTEGRITY',
+                  text: 'Transparency and honesty define every relationship we build.',
+                },
+              ].map((value) => (
+                <div key={value.title} className="text-center">
+                  <h3 className="text-base font-bold tracking-[0.2em] text-foreground mb-5">
+                    {value.title}
+                  </h3>
+                  <p className="text-muted-foreground/70 leading-relaxed">
+                    {value.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 7. Closing Section ── */}
+        <section className="py-32">
+          <div className="container mx-auto px-4 text-center">
+            <div className="w-12 h-px bg-foreground/20 mx-auto mb-12" />
+            <p className="text-3xl md:text-[2.5rem] font-light text-foreground max-w-2xl mx-auto mb-14 leading-snug">
+              Exceptional properties deserve strategic representation.
+            </p>
+            <Link to={`/${language}/properties`}>
               <Button
-                onClick={handleWhatsAppClick}
                 size="lg"
-                className="bg-ukon-red hover:bg-ukon-red/90 text-white glow-effect flex items-center gap-2 mx-auto"
+                className="bg-foreground text-background hover:bg-foreground/90 px-10 py-6 text-base"
               >
-                <span className="blink-dot" />
-                {t('navigation.contactUsNow')}
+                View Listings
               </Button>
-            </motion.div>
+            </Link>
           </div>
         </section>
       </main>

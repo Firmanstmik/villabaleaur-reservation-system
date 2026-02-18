@@ -70,8 +70,8 @@ export function AboutSection() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="grid grid-cols-3 gap-6 mb-10"
             >
-              <StatItem value={15} label={t('about.yearsExperience')} suffix="+" delay={0} />
-              <StatItem value={500} label={t('about.propertiesSold')} suffix="+" delay={200} />
+              <StatItem value={12} label={t('about.yearsExperience')} suffix="+" delay={0} />
+              <StatItem value={628} label={t('about.propertiesSold')} suffix="+" delay={200} />
               <StatItem value={98} label={t('about.clientSatisfaction')} suffix="%" delay={400} />
             </motion.div>
 

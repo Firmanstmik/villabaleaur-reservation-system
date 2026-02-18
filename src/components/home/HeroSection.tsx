@@ -25,10 +25,10 @@ const currencySymbols: Record<string, string> = {
 
 // Project value amounts by currency (in millions)
 const currencyAmounts: Record<string, number> = {
-  USD: 500,
-  EUR: 450,
-  GBP: 400,
-  IDR: 5000,
+  USD: 465,
+  EUR: 420,
+  GBP: 370,
+  IDR: 4650,
 };
 
 export function HeroSection() {
@@ -222,15 +222,15 @@ export function HeroSection() {
             style={{ gap: '4vw' }}
           >
             <div>
-              <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>{stats.projects}+</div>
-              <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>{t('hero.stats.projectsComplete')}</div>
+              <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>628</div>
+              <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>{t('hero.stats.propertiesTransacted')}</div>
             </div>
             <div>
-              <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>{stats.clients}+</div>
+              <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>274</div>
               <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>{t('hero.stats.happyClients')}</div>
             </div>
             <div>
-              <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>{currencySymbols[currency]}{currencyAmounts[currency]}M+</div>
+              <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>{currencySymbols[currency]}{currencyAmounts[currency]}M</div>
               <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>{t('hero.stats.projectValue')}</div>
             </div>
           </motion.div>

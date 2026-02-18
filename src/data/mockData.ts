@@ -31,8 +31,12 @@ export interface Agent {
   id: string;
   name: string;
   location: string;
+  country: string;
+  region: 'europe' | 'southeast-asia';
   photo: string;
   specialty: string;
+  languages?: string;
+  experience?: string;
 }
 
 export interface Testimonial {
@@ -230,15 +234,15 @@ export const properties: Property[] = [
 ];
 
 export const agents: Agent[] = [
-  { id: '1', name: 'Gino Beelt', location: 'Utrecht, NL', photo: '', specialty: 'Luxury Homes' },
-  { id: '2', name: 'Pak Kumis', location: 'Pangandaran, Indonesia', photo: '', specialty: 'Commercial Properties' },
-  { id: '3', name: 'Paul Wennink', location: 'Almere, NL', photo: '', specialty: 'Beachfront Properties' },
-  { id: '4', name: 'Raffy Ukon', location: 'Bali, Indonesia', photo: '', specialty: 'Investment Properties' },
-  { id: '5', name: 'Roselynn Chai', location: 'Johor Bahru, Malaysia', photo: '', specialty: 'Mountain Retreats' },
-  { id: '6', name: 'Marco Loureiro', location: 'Lisbon, Portugal', photo: '', specialty: 'Urban Living' },
-  { id: '7', name: 'Jeroen Egbers', location: 'Amsterdam, NL', photo: '', specialty: 'Tech Hub Living' },
-  { id: '8', name: 'Hendrik Ukon', location: 'Bandung, Indonesia', photo: '', specialty: 'Historic Villas' },
-  { id: '9', name: 'Afifah Ukon', location: 'Lombok, Indonesia', photo: '', specialty: 'Modern Apartments' },
+  { id: '9', name: 'Afifah Ukon', location: 'Lombok, Indonesia', country: 'Indonesia', region: 'southeast-asia', photo: '', specialty: 'Modern Apartments', languages: 'Indonesian, English, Dutch', experience: '5+ years' },
+  { id: '7', name: 'Jeroen Egbers', location: 'Amsterdam, NL', country: 'Netherlands', region: 'europe', photo: '', specialty: 'Tech Hub Living', languages: 'Dutch, English', experience: '7+ years' },
+  { id: '3', name: 'Paul Wennink', location: 'Almere, NL', country: 'Netherlands', region: 'europe', photo: '', specialty: 'Beachfront Properties', languages: 'Dutch, English, German', experience: '10+ years' },
+  { id: '6', name: 'Marco Loureiro', location: 'Lisbon, Portugal', country: 'Portugal', region: 'europe', photo: '', specialty: 'Urban Living', languages: 'Portuguese, English, Spanish', experience: '9+ years' },
+  { id: '5', name: 'Roselynn Chai', location: 'Johor Bahru, Malaysia', country: 'Malaysia', region: 'southeast-asia', photo: '', specialty: 'Mountain Retreats', languages: 'English, Malay, Mandarin', experience: '6+ years' },
+  { id: '1', name: 'Gino Beelt', location: 'Utrecht, NL', country: 'Netherlands', region: 'europe', photo: '', specialty: 'Luxury Homes', languages: 'Dutch, English', experience: '8+ years' },
+  { id: '8', name: 'Hendrik Ukon', location: 'Bandung, Indonesia', country: 'Indonesia', region: 'southeast-asia', photo: '', specialty: 'Historic Villas', languages: 'Dutch, Indonesian, English', experience: '15+ years' },
+  { id: '2', name: 'Pak Kumis', location: 'Pangandaran, Indonesia', country: 'Indonesia', region: 'southeast-asia', photo: '', specialty: 'Commercial Properties', languages: 'Indonesian, English', experience: '12+ years' },
+  { id: '4', name: 'Raffy Ukon', location: 'Bali, Indonesia', country: 'Indonesia', region: 'southeast-asia', photo: '', specialty: 'Investment Properties', languages: 'Dutch, English, Indonesian', experience: '12+ years' },
 ];
 
 export const testimonials: Testimonial[] = [
@@ -377,7 +381,7 @@ export const blogPosts: BlogPost[] = [
 ];
 
 export const stats = {
-  projects: 200,
+  projects: 274,
   clients: 70,
   value: 10,
 };

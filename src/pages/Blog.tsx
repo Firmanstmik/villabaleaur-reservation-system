@@ -88,7 +88,7 @@ const Blog = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="pt-20">
+      <main>
         {/* Hero Section */}
         <section className="relative py-24 overflow-hidden">
           {/* Background Video */}

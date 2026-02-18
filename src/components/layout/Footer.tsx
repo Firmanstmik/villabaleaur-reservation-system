@@ -43,7 +43,7 @@ export function Footer() {
             {/* Brand Column */}
             <div className="lg:col-span-2">
               <Link to={getLocalizedPath('/')} className="inline-block mb-6">
-                <img src={logoImage} alt="UKON ESTATE Logo" className="h-16 w-auto object-contain brightness-0 invert" />
+                <img src={logoImage} alt="Ukon Estate Logo" className="h-16 w-auto object-contain brightness-0 invert" />
               </Link>
               <p className="text-white/70 mb-6 max-w-sm">
                 {t('footer.trustedPartner')}

@@ -1,11 +1,13 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { Button } from '@/components/ui/button';
 import { agents, whatsappNumber } from '@/data/mockData';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useInView } from '@/hooks/useInView';
+import { GlobalMap } from '@/components/agents/GlobalMap';
+import { RegionSection } from '@/components/agents/RegionSection';
+import { NetworkModelSection } from '@/components/agents/NetworkModelSection';
 import heroBg from '@/assets/Ukon_Estate_Hero.webp';
 import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 
@@ -30,7 +32,13 @@ const agentPhotos: Record<string, string> = {
   '8': hendrikUkonPhoto,
   '9': afifahUkonPhoto,
 };
-import { useInView } from '@/hooks/useInView';
+
+type RegionKey = 'all' | 'europe' | 'southeast-asia';
+
+const regions: { key: RegionKey; filterKey: string; titleKey: string; subtextKey: string }[] = [
+  { key: 'europe', filterKey: 'agents.filterEurope', titleKey: 'agents.regionEurope', subtextKey: 'agents.regionEuropeSubtext' },
+  { key: 'southeast-asia', filterKey: 'agents.filterSoutheastAsia', titleKey: 'agents.regionSoutheastAsia', subtextKey: 'agents.regionSoutheastAsiaSubtext' },
+];
 
 const Agents = () => {
   const { t } = useLanguage();
@@ -38,6 +46,7 @@ const Agents = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const cloneRef = useRef<HTMLVideoElement>(null);
   const [showClone, setShowClone] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<RegionKey>('all');
 
   useEffect(() => {
     const video = videoRef.current;
@@ -75,19 +84,42 @@ const Agents = () => {
     };
   }, [showClone]);
 
-  const handleContactAgent = (agentName: string) => {
-    const message = encodeURIComponent(`Hi, I'd like to connect with ${agentName} from UKON Estate.`);
+  const handlePartnership = () => {
+    const message = encodeURIComponent(`Hello, I'm interested in exploring a partnership with Ukon Estate.`);
     window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${message}`, '_blank');
   };
+
+  const handleFilterClick = (key: RegionKey) => {
+    setActiveFilter(key);
+    if (key !== 'all') {
+      const el = document.getElementById(`region-${key}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const agentsByRegion = useMemo(() => {
+    const grouped: Record<string, typeof agents> = {};
+    for (const region of regions) {
+      grouped[region.key] = agents.filter((a) => a.region === region.key);
+    }
+    return grouped;
+  }, []);
+
+  const uniqueCountries = useMemo(() => {
+    return new Set(agents.map((a) => a.country)).size;
+  }, []);
+
+  const visibleRegions = activeFilter === 'all'
+    ? regions
+    : regions.filter((r) => r.key === activeFilter);
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="pt-20">
-        {/* Hero Section */}
-        <section className="relative py-24 overflow-hidden">
-          {/* Background Video */}
+      <main>
+        {/* ── 1. Hero Section — Institutional ── */}
+        <section className="relative py-36 md:py-44 overflow-hidden">
           <video
             ref={videoRef}
             autoPlay
@@ -101,7 +133,6 @@ const Agents = () => {
             <source src={heroVideo} type="video/mp4" />
           </video>
 
-          {/* Clone video for crossfade at loop boundary */}
           <video
             ref={cloneRef}
             muted
@@ -117,138 +148,128 @@ const Agents = () => {
             <source src={heroVideo} type="video/mp4" />
           </video>
 
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/[0.10]" />
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
 
           <div className="container mx-auto px-4 relative z-10">
-            <div ref={ref} className="text-center">
+            <div ref={ref} className="max-w-2xl">
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5 }}
-                className="inline-block px-4 py-2 bg-white/10 text-white rounded-full text-sm font-medium mb-6"
+                className="inline-block px-4 py-2 bg-white/10 text-white/80 rounded-full text-sm font-medium mb-6 tracking-wide"
               >
-                {t('agents.ourTeam')}
+                {t('agents.ourNetwork')}
               </motion.span>
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
+                className="text-[2.5rem] md:text-[3.25rem] lg:text-[4rem] font-bold text-white mb-6 tracking-tight leading-[1.1]"
               >
-                {t('agents.meetOurExperts')}
+                {t('agents.headline')}
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-white/70 text-lg max-w-2xl mx-auto"
+                className="text-xl md:text-2xl text-white/75 font-light mb-5 max-w-xl"
               >
-                {t('agents.dedicatedTeam')}
+                {t('agents.subheadline')}
               </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="text-white/50 text-lg mb-10"
+              >
+                {t('agents.supportingLine')}
+              </motion.p>
+
+              {/* Metric row */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={isInView ? { opacity: 1 } : {}}
+                transition={{ duration: 0.6, delay: 0.45 }}
+                className="flex items-center gap-6 text-white/40 text-sm"
+              >
+                <span>{uniqueCountries} {t('agents.metricCountries')}</span>
+                <span className="w-px h-3 bg-white/20" />
+                <span>2 {t('agents.metricContinents')}</span>
+                <span className="w-px h-3 bg-white/20" />
+                <span>628 {t('agents.metricTransactions')}</span>
+              </motion.div>
             </div>
           </div>
         </section>
 
-        {/* Agents Grid */}
-        <section className="py-24">
+        {/* ── 2. Global Presence Map ── */}
+        <GlobalMap />
+
+        {/* ── 3. Region Filter ── */}
+        <section className="pt-32 pb-10">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {agents.map((agent, index) => (
-                <motion.div
-                  key={agent.id}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -10 }}
-                  className="group"
+            <div className="flex items-center gap-2 flex-wrap">
+              {[
+                { key: 'all' as RegionKey, label: t('agents.filterAll') },
+                ...regions.map((r) => ({ key: r.key, label: t(r.filterKey) })),
+              ].map((filter) => (
+                <button
+                  key={filter.key}
+                  onClick={() => handleFilterClick(filter.key)}
+                  className={`px-4 py-2 text-sm rounded-lg transition-colors duration-150 ${
+                    activeFilter === filter.key
+                      ? 'bg-foreground text-background'
+                      : 'bg-secondary/60 text-muted-foreground hover:bg-secondary'
+                  }`}
                 >
-                  <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-2xl hover:border-ukon-red/30">
-                    {/* Image */}
-                    <div className="relative aspect-[4/5] image-zoom">
-                      <img
-                        src={agentPhotos[agent.id] || agent.photo}
-                        alt={agent.name}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                      {/* Overlay Content */}
-                      <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                        <div className="flex gap-3 mb-4">
-                          <motion.div
-                            whileHover={{ scale: 1.1 }}
-                            className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white cursor-pointer"
-                          >
-                            <Phone size={18} />
-                          </motion.div>
-                          <motion.div
-                            whileHover={{ scale: 1.1 }}
-                            className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white cursor-pointer"
-                          >
-                            <Mail size={18} />
-                          </motion.div>
-                        </div>
-                        <Button
-                          onClick={() => handleContactAgent(agent.name)}
-                          className="w-full bg-ukon-red hover:bg-ukon-red/90 text-white"
-                        >
-                          {t('agents.contactAgent')}
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-foreground group-hover:text-ukon-red transition-colors mb-2">
-                        {agent.name}
-                      </h3>
-                      <div className="flex items-center gap-1 text-muted-foreground mb-3">
-                        <MapPin size={16} className="text-ukon-red" />
-                        <span className="text-sm">{agent.location}</span>
-                      </div>
-                      <div className="inline-block px-3 py-1 bg-ukon-red/10 text-ukon-red text-sm font-medium rounded-full">
-                        {agent.specialty}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                  {filter.label}
+                </button>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Join Team CTA */}
-        <section className="py-24 bg-secondary/30">
+        {/* ── 4. Regional Agent Sections ── */}
+        <section className="pb-32">
+          <div className="container mx-auto px-4 space-y-32">
+            {visibleRegions.map((region) => (
+              <RegionSection
+                key={region.key}
+                id={`region-${region.key}`}
+                title={t(region.titleKey)}
+                subtext={t(region.subtextKey)}
+                agents={agentsByRegion[region.key] || []}
+                agentPhotos={agentPhotos}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* ── 5. Network Model ── */}
+        <NetworkModelSection />
+
+        {/* ── 6. Strategic Partnership CTA ── */}
+        <section className="py-32">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="bg-ukon-navy rounded-3xl p-12 md:p-16 text-center relative overflow-hidden"
+              className="bg-ukon-navy rounded-xl p-14 md:p-20 text-center"
             >
-              <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-ukon-red rounded-full blur-3xl" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl" />
-              </div>
-
-              <div className="relative z-10">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                  {t('agents.joinOurTeam')}
-                </h2>
-                <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
-                  {t('agents.passionate')}
-                </p>
-                <Button
-                  size="lg"
-                  className="bg-white text-ukon-navy hover:bg-white/90"
-                >
-                  {t('agents.viewCareerOpportunities')}
-                </Button>
-              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                {t('agents.partnerHeadline')}
+              </h2>
+              <p className="text-white/60 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+                {t('agents.partnerSubtext')}
+              </p>
+              <button
+                onClick={handlePartnership}
+                className="inline-flex items-center px-8 py-3.5 bg-white text-ukon-navy font-medium text-base rounded-lg hover:bg-white/90 transition-colors duration-150"
+              >
+                {t('agents.explorePartnership')} →
+              </button>
             </motion.div>
           </div>
         </section>
