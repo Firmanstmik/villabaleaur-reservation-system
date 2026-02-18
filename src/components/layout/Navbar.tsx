@@ -17,8 +17,8 @@ const navLinksConfig = [
   { key: 'services', path: '/', scrollTo: 'services' },
   { key: 'properties', path: '/properties' },
   { key: 'about', path: '/about' },
-  { key: 'agents', path: '/agents' },
-  { key: 'blog', path: '/blog' },
+  { key: 'agents', path: '/network' },
+  { key: 'blog', path: '/intelligence' },
 ];
 
 export function Navbar() {

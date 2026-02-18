@@ -119,7 +119,7 @@ const Agents = () => {
 
       <main>
         {/* ── 1. Hero Section — Institutional ── */}
-        <section className="relative py-36 md:py-44 overflow-hidden">
+        <section className="relative py-16 md:py-22 overflow-hidden">
           <video
             ref={videoRef}
             autoPlay

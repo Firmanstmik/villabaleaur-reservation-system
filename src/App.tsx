@@ -18,6 +18,7 @@ import PropertyDetail from "./pages/PropertyDetail";
 import About from "./pages/About";
 import Agents from "./pages/Agents";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Account from "./pages/Account";
@@ -58,8 +59,9 @@ function AppRoutes() {
       <Route path="/:lang/properties" element={<Properties />} />
       <Route path="/:lang/property/:id" element={<PropertyDetail />} />
       <Route path="/:lang/about" element={<About />} />
-      <Route path="/:lang/agents" element={<Agents />} />
-      <Route path="/:lang/blog" element={<Blog />} />
+      <Route path="/:lang/network" element={<Agents />} />
+      <Route path="/:lang/intelligence" element={<Blog />} />
+      <Route path="/:lang/intelligence/:slug" element={<BlogPost />} />
       <Route path="/:lang/login" element={<Login />} />
       <Route path="/:lang/dashboard" element={<Dashboard />} />
       <Route path="/:lang/account" element={<Account />} />

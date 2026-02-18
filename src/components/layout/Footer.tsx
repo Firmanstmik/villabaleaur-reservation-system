@@ -7,7 +7,7 @@ import logoImage from '@/assets/Ukon-Estate.png';
 const footerLinksKeys = {
   company: [
     { key: 'footer.aboutUs', path: '/about' },
-    { key: 'footer.ourTeam', path: '/agents' },
+    { key: 'footer.ourTeam', path: '/network' },
     { key: 'footer.careers', path: '#' },
     { key: 'footer.contact', path: '#' },
   ],
@@ -18,10 +18,10 @@ const footerLinksKeys = {
     { key: 'footer.propertyValuation', path: '/services' },
   ],
   resources: [
-    { key: 'footer.blog', path: '/blog' },
-    { key: 'footer.marketReports', path: '#' },
-    { key: 'footer.buyingGuide', path: '#' },
-    { key: 'footer.sellingGuide', path: '#' },
+    { key: 'footer.blog', path: '/intelligence' },
+    { key: 'footer.marketReports', path: '/intelligence?category=Market+Report' },
+    { key: 'footer.buyingGuide', path: '/intelligence' },
+    { key: 'footer.sellingGuide', path: '/intelligence' },
   ],
 };
 
@@ -31,7 +31,8 @@ export function Footer() {
   // Helper to add language prefix to paths
   const getLocalizedPath = (path: string) => {
     if (path === '#') return path;
-    return `/${language}${path}`;
+    const [pathname, query] = path.split('?');
+    return `/${language}${pathname}${query ? `?${query}` : ''}`;
   };
 
   return (

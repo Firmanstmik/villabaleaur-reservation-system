@@ -1,11 +1,11 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, Calendar, User, ArrowRight } from 'lucide-react';
+import { Search, Calendar, Clock, ArrowRight } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { blogPosts } from '@/data/mockData';
+import { blogArticles, getArticleContent } from '@/data/blogData';
 import { useInView } from '@/hooks/useInView';
 import { useLanguage } from '@/contexts/LanguageContext';
 import heroBg from '@/assets/Ukon_Estate_Hero.webp';
@@ -13,12 +13,16 @@ import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 
 const Blog = () => {
   const { ref, isInView } = useInView();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
   const cloneRef = useRef<HTMLVideoElement>(null);
   const [showClone, setShowClone] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get('category') || 'All'
+  );
 
   useEffect(() => {
     const video = videoRef.current;
@@ -36,7 +40,7 @@ const Blog = () => {
 
       if (timeLeft <= FADE_DURATION && !showClone) {
         cloneRef.current.currentTime = 0;
-        cloneRef.current.play().catch(() => { });
+        cloneRef.current.play().catch(() => {});
         setShowClone(true);
       }
     };
@@ -56,25 +60,24 @@ const Blog = () => {
     };
   }, [showClone]);
 
-  // Category translation mapping
   const categoryMap: Record<string, string> = {
     'All': 'blog.categoryAll',
-    'Buying': 'blog.categoryBuying',
-    'Selling': 'blog.categorySelling',
     'Investing': 'blog.categoryInvesting',
-    'Market': 'blog.categoryMarket',
+    'Market Report': 'blog.categoryMarketReport',
   };
 
-  const categories = ['All', 'Buying', 'Selling', 'Investing', 'Market'];
+  const categories = ['All', 'Investing', 'Market Report'];
 
   const filteredPosts = useMemo(() => {
-    return blogPosts.filter((post) => {
+    return blogArticles.filter((post) => {
       const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
-      const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+      const content = getArticleContent(post, language);
+      const matchesSearch =
+        content.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        content.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, language]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -90,8 +93,7 @@ const Blog = () => {
 
       <main>
         {/* Hero Section */}
-        <section className="relative py-24 overflow-hidden">
-          {/* Background Video */}
+        <section className="relative py-32 md:py-40 overflow-hidden">
           <video
             ref={videoRef}
             autoPlay
@@ -105,7 +107,6 @@ const Blog = () => {
             <source src={heroVideo} type="video/mp4" />
           </video>
 
-          {/* Clone video for crossfade at loop boundary */}
           <video
             ref={cloneRef}
             muted
@@ -121,17 +122,15 @@ const Blog = () => {
             <source src={heroVideo} type="video/mp4" />
           </video>
 
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/[0.10]" />
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-black/65" />
 
           <div className="container mx-auto px-4 relative z-10">
-            <div ref={ref} className="text-center">
+            <div ref={ref} className="max-w-2xl">
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5 }}
-                className="inline-block px-4 py-2 bg-white/10 text-white rounded-full text-sm font-medium mb-6"
+                className="inline-block px-4 py-2 bg-white/10 text-white/70 rounded-full text-sm font-medium mb-8 tracking-wide"
               >
                 {t('blog.ourBlog')}
               </motion.span>
@@ -139,7 +138,7 @@ const Blog = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
+                className="text-[2.75rem] md:text-[3.5rem] lg:text-[4.5rem] font-bold text-white mb-8 tracking-tight leading-[1.05]"
               >
                 {t('blog.headline')}
               </motion.h1>
@@ -147,7 +146,7 @@ const Blog = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-white/70 text-lg max-w-2xl mx-auto"
+                className="text-white/50 text-lg max-w-xl"
               >
                 {t('blog.subheadline')}
               </motion.p>
@@ -155,167 +154,145 @@ const Blog = () => {
           </div>
         </section>
 
-        {/* Filters Section */}
-        <section className="py-12 bg-secondary/30 border-b border-border sticky top-20 z-30 backdrop-blur-sm">
+        {/* Filter Bar */}
+        <section className="py-6 border-b border-border sticky top-20 z-30 bg-background/95 backdrop-blur-sm">
           <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              {/* Search */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                className="relative w-full md:w-96"
-              >
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+            <div className="flex flex-col md:flex-row items-center justify-between gap-5">
+              <div className="relative w-full md:w-72">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/30" size={15} />
                 <Input
                   type="text"
                   placeholder={t('blog.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-12 rounded-full border-2 focus:border-ukon-red"
+                  className="pl-10 h-9 rounded-md border-border/40 text-sm placeholder:text-muted-foreground/35 focus:border-foreground/20"
                 />
-              </motion.div>
+              </div>
 
-              {/* Categories */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                className="flex flex-wrap gap-2"
-              >
+              <div className="flex gap-0">
                 {categories.map((category) => (
                   <button
                     key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedCategory === category
-                      ? 'bg-ukon-red text-white'
-                      : 'bg-card border border-border hover:border-ukon-red/50'
-                      }`}
+                    onClick={() => {
+                      setSelectedCategory(category);
+                      if (category === 'All') {
+                        setSearchParams({});
+                      } else {
+                        setSearchParams({ category });
+                      }
+                    }}
+                    className={`px-4 py-1.5 text-[13px] transition-colors duration-150 ${
+                      selectedCategory === category
+                        ? 'text-foreground font-medium border-b border-foreground'
+                        : 'text-muted-foreground/40 hover:text-muted-foreground/70 border-b border-transparent'
+                    }`}
                   >
                     {t(categoryMap[category])}
                   </button>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Blog Grid */}
-        <section className="py-16">
+        {/* Article Grid */}
+        <section className="py-20">
           <div className="container mx-auto px-4">
             {filteredPosts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredPosts.map((post, index) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+                {filteredPosts.map((post, index) => {
+                  const content = getArticleContent(post, language);
+                  return (
                   <motion.article
                     key={post.id}
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    whileHover={{ y: -8 }}
-                    className="group cursor-pointer"
+                    transition={{ duration: 0.4, delay: index * 0.08 }}
+                    className="group cursor-pointer bg-card border border-border/60 rounded-xl overflow-hidden shadow-sm transition-shadow duration-200 hover:shadow-md"
+                    onClick={() => navigate(`/${language}/intelligence/${post.slug}`)}
                   >
-                    <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-2xl hover:border-ukon-red/30">
-                      {/* Image */}
-                      <div className="relative aspect-video image-zoom">
-                        <img
-                          src={post.image}
-                          alt={post.title}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    {/* Image */}
+                    <div className="relative aspect-[16/9] overflow-hidden">
+                      <img
+                        src={post.image}
+                        alt={content.title}
+                        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                      />
+                    </div>
 
-                        {/* Category Badge */}
-                        <Badge
-                          className="absolute top-4 left-4 bg-ukon-red text-white border-0"
-                        >
-                          {post.category}
-                        </Badge>
-                      </div>
+                    {/* Content */}
+                    <div className="p-6">
+                      {/* Category label */}
+                      <span className="text-[11px] tracking-[0.2em] uppercase text-muted-foreground/45 font-medium">
+                        {post.category}
+                      </span>
 
-                      {/* Content */}
-                      <div className="p-6">
-                        {/* Meta */}
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-                          <div className="flex items-center gap-1">
-                            <Calendar size={14} />
-                            <span>{formatDate(post.date)}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <User size={14} />
-                            <span>{post.author}</span>
-                          </div>
+                      {/* Title */}
+                      <h3 className="text-lg font-bold text-foreground mt-2.5 mb-3 leading-tight tracking-tight group-hover:text-foreground/75 transition-colors duration-150 line-clamp-2">
+                        {content.title}
+                      </h3>
+
+                      {/* Excerpt */}
+                      <p className="text-muted-foreground/50 text-[13px] leading-relaxed line-clamp-2 mb-5">
+                        {content.excerpt}
+                      </p>
+
+                      {/* Meta + CTA row */}
+                      <div className="flex items-center justify-between pt-4 border-t border-border/30">
+                        <div className="flex items-center gap-3 text-[11px] text-muted-foreground/35">
+                          <span className="flex items-center gap-1.5">
+                            <Calendar size={10} />
+                            {formatDate(post.date)}
+                          </span>
+                          <span className="w-px h-2.5 bg-border/50" />
+                          <span className="flex items-center gap-1.5">
+                            <Clock size={10} />
+                            {post.readingTime} min
+                          </span>
                         </div>
-
-                        <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-ukon-red transition-colors line-clamp-2">
-                          {post.title}
-                        </h3>
-                        <p className="text-muted-foreground line-clamp-2 mb-4">
-                          {post.excerpt}
-                        </p>
-
-                        {/* Read More */}
-                        <div className="flex items-center gap-2 text-ukon-red font-medium group-hover:gap-4 transition-all">
-                          {t('blog.readMore')}
-                          <ArrowRight size={18} />
-                        </div>
+                        <span className="flex items-center gap-1.5 text-[13px] text-foreground/45 font-medium group-hover:text-foreground group-hover:gap-2.5 transition-all duration-150">
+                          {t('blog.readArticle')}
+                          <ArrowRight size={13} />
+                        </span>
                       </div>
                     </div>
                   </motion.article>
-                ))}
+                  );
+                })}
               </div>
             ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-16"
-              >
-                <p className="text-muted-foreground text-lg">
+              <div className="text-center py-16">
+                <p className="text-muted-foreground/60 text-sm">
                   {t('blog.noArticlesFound')}
                 </p>
-              </motion.div>
+              </div>
             )}
           </div>
         </section>
 
         {/* Newsletter CTA */}
-        <section className="py-24 bg-secondary/30">
+        <section className="py-20">
           <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="bg-ukon-navy rounded-3xl p-12 md:p-16 text-center relative overflow-hidden"
-            >
-              <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-ukon-red rounded-full blur-3xl" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl" />
+            <div className="bg-ukon-navy rounded-xl p-10 md:p-14 text-center">
+              <h2 className="text-base font-bold tracking-[0.2em] text-white uppercase mb-4">
+                {t('blog.stayUpdated')}
+              </h2>
+              <div className="w-10 h-px bg-white/20 mx-auto mb-5" />
+              <p className="text-white/45 text-sm max-w-lg mx-auto mb-8 leading-relaxed">
+                {t('blog.subscriberDescription')}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto items-stretch">
+                <Input
+                  type="email"
+                  placeholder={t('blog.emailPlaceholder')}
+                  className="h-10 bg-white/5 border-white/10 text-white placeholder:text-white/25 rounded-md text-sm focus:border-white/20 flex-1"
+                />
+                <button className="h-10 px-8 bg-white text-ukon-navy font-medium text-sm rounded-md hover:bg-white/85 transition-colors duration-150 whitespace-nowrap">
+                  {t('blog.subscribe')}
+                </button>
               </div>
-
-              <div className="relative z-10">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                  {t('blog.stayUpdated')}
-                </h2>
-                <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
-                  {t('blog.subscriberDescription')}
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                  <Input
-                    type="email"
-                    placeholder={t('blog.emailPlaceholder')}
-                    className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50"
-                  />
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="h-12 px-8 bg-ukon-red hover:bg-ukon-red/90 text-white rounded-md font-medium transition-colors"
-                  >
-                    {t('blog.subscribe')}
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
+            </div>
           </div>
         </section>
       </main>

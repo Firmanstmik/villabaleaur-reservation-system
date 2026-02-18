@@ -4,8 +4,8 @@
     "services": "Services",
     "properties": "Properties",
     "about": "About",
-    "agents": "Agents",
-    "blog": "Blog",
+    "agents": "Global Network",
+    "blog": "Intelligence",
     "signIn": "Sign In",
     "contact": "Contact",
     "contactUsNow": "Contact Us Now",
@@ -207,21 +207,24 @@
     "realStories": "Real stories from real clients who found their dream properties with Ukon Estate."
   },
   "blog": {
-    "ourBlog": "Our Blog",
-    "headline": "Real Estate Insights",
-    "subheadline": "Stay informed with the latest trends, tips, and insights from the world of real estate.",
+    "ourBlog": "Intelligence",
+    "headline": "Real Estate Intelligence",
+    "subheadline": "Strategic insights across international property markets.",
     "searchPlaceholder": "Search articles...",
     "categoryAll": "All",
     "categoryBuying": "Buying",
     "categorySelling": "Selling",
     "categoryInvesting": "Investing",
-    "categoryMarket": "Market",
-    "readMore": "Read More",
+    "categoryMarketReport": "Market Report",
+    "readArticle": "Read Article",
     "noArticlesFound": "No articles found matching your criteria.",
-    "stayUpdated": "Stay Updated",
-    "subscriberDescription": "Subscribe to our newsletter for the latest real estate insights, market updates, and exclusive tips.",
+    "stayUpdated": "Strategic Market Updates",
+    "subscriberDescription": "Receive periodic insights on international property markets and cross-border investment trends.",
     "emailPlaceholder": "Enter your email",
-    "subscribe": "Subscribe"
+    "subscribe": "Subscribe",
+    "backToBlog": "Back to Intelligence",
+    "closingLabel": "Ukon Estate Research",
+    "closingText": "For advisory on international property investment, contact our global network."
   },
   "account": {
     "myAccount": "My Account",
@@ -381,7 +384,7 @@
     "rentalManagement": "Rental Management",
     "investmentConsulting": "Investment Consulting",
     "propertyValuation": "Property Valuation",
-    "blog": "Blog"
+    "blog": "Intelligence"
   },
   "common": {
     "loading": "Loading...",

@@ -4,8 +4,8 @@
     "services": "Layanan",
     "properties": "Properti",
     "about": "Tentang",
-    "agents": "Agen",
-    "blog": "Blog",
+    "agents": "Jaringan Global",
+    "blog": "Intelijen",
     "signIn": "Masuk",
     "contact": "Hubungi",
     "contactUsNow": "Hubungi Kami Sekarang",
@@ -165,21 +165,24 @@
     "realStories": "Kisah nyata dari klien nyata yang menemukan properti impian mereka dengan Ukon Estate."
   },
   "blog": {
-    "ourBlog": "Blog Kami",
-    "headline": "Wawasan Real Estat",
-    "subheadline": "Tetap terinformasi dengan tren terbaru, tips, dan wawasan dari dunia real estat.",
+    "ourBlog": "Intelijen",
+    "headline": "Intelijen Real Estat",
+    "subheadline": "Wawasan strategis di pasar properti internasional.",
     "searchPlaceholder": "Cari artikel...",
     "categoryAll": "Semua",
     "categoryBuying": "Membeli",
     "categorySelling": "Menjual",
     "categoryInvesting": "Investasi",
-    "categoryMarket": "Pasar",
-    "readMore": "Baca Selengkapnya",
+    "categoryMarketReport": "Laporan Pasar",
+    "readArticle": "Baca Artikel",
     "noArticlesFound": "Tidak ada artikel yang sesuai dengan kriteria Anda.",
-    "stayUpdated": "Tetap Terupdate",
-    "subscriberDescription": "Berlangganan buletin kami untuk wawasan real estat terbaru, pembaruan pasar, dan tips eksklusif.",
+    "stayUpdated": "Pembaruan Pasar Strategis",
+    "subscriberDescription": "Terima wawasan berkala tentang pasar properti internasional dan tren investasi lintas batas.",
     "emailPlaceholder": "Masukkan email Anda",
-    "subscribe": "Berlangganan"
+    "subscribe": "Berlangganan",
+    "backToBlog": "Kembali ke Intelijen",
+    "closingLabel": "Ukon Estate Research",
+    "closingText": "Untuk konsultasi strategis tentang investasi properti internasional, hubungi jaringan global kami."
   },
   "account": {
     "myAccount": "Akun Saya",
@@ -339,7 +342,7 @@
     "rentalManagement": "Manajemen Sewa",
     "investmentConsulting": "Konsultasi Investasi",
     "propertyValuation": "Penilaian Properti",
-    "blog": "Blog"
+    "blog": "Intelijen"
   },
   "common": {
     "loading": "Memuat...",

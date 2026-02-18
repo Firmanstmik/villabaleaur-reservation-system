@@ -102,7 +102,7 @@ const Properties = () => {
 
       <main>
         {/* Hero Section */}
-        <section className="relative py-24 overflow-hidden">
+        <section className="relative py-36 md:py-44 overflow-hidden">
           {/* Background Video */}
           <video
             ref={videoRef}

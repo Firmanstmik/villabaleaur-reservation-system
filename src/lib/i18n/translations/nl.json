@@ -4,8 +4,8 @@
     "services": "Diensten",
     "properties": "Woningen",
     "about": "Over",
-    "agents": "Agenten",
-    "blog": "Blog",
+    "agents": "Wereldwijd Netwerk",
+    "blog": "Inzichten",
     "signIn": "Inloggen",
     "contact": "Contact",
     "contactUsNow": "Neem Nu Contact Met Ons Op",
@@ -165,21 +165,24 @@
     "realStories": "Echte verhalen van echte klanten die hun droomwoning met Ukon Estate hebben gevonden."
   },
   "blog": {
-    "ourBlog": "Onze Blog",
-    "headline": "Inzichten in Vastgoed",
-    "subheadline": "Blijf op de hoogte met de nieuwste trends, tips en inzichten uit de vastgoedwereld.",
+    "ourBlog": "Inzichten",
+    "headline": "Vastgoed Intelligentie",
+    "subheadline": "Strategische inzichten over internationale vastgoedmarkten.",
     "searchPlaceholder": "Zoek artikelen...",
     "categoryAll": "Alles",
     "categoryBuying": "Kopen",
     "categorySelling": "Verkopen",
     "categoryInvesting": "Investeren",
-    "categoryMarket": "Markt",
-    "readMore": "Lees Meer",
+    "categoryMarketReport": "Marktrapport",
+    "readArticle": "Lees Artikel",
     "noArticlesFound": "Geen artikelen gevonden die aan uw criteria voldoen.",
-    "stayUpdated": "Blijf Geïnformeerd",
-    "subscriberDescription": "Abonneer u op onze nieuwsbrief voor de nieuwste vastgoedinzichten, marktactualisaties en exclusieve tips.",
+    "stayUpdated": "Strategische Marktupdates",
+    "subscriberDescription": "Ontvang periodieke inzichten over internationale vastgoedmarkten en grensoverschrijdende investeringstrends.",
     "emailPlaceholder": "Voer uw e-mailadres in",
-    "subscribe": "Abonneren"
+    "subscribe": "Abonneren",
+    "backToBlog": "Terug naar Inzichten",
+    "closingLabel": "Ukon Estate Onderzoek",
+    "closingText": "Voor advies over internationale vastgoedinvesteringen, neem contact op met ons wereldwijde netwerk."
   },
   "account": {
     "myAccount": "Mijn Account",
@@ -339,7 +342,7 @@
     "rentalManagement": "Huurbeheer",
     "investmentConsulting": "Beleggingsadvisering",
     "propertyValuation": "Waardebepaling van Onroerend Goed",
-    "blog": "Blog"
+    "blog": "Inzichten"
   },
   "common": {
     "loading": "Laden...",

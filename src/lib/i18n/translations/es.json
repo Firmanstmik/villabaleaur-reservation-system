@@ -4,8 +4,8 @@
     "services": "Servicios",
     "properties": "Propiedades",
     "about": "Acerca de",
-    "agents": "Agentes",
-    "blog": "Blog",
+    "agents": "Red Global",
+    "blog": "Inteligencia",
     "signIn": "Iniciar Sesión",
     "contact": "Contacto",
     "contactUsNow": "Contáctanos Ahora",
@@ -165,21 +165,24 @@
     "realStories": "Historias reales de clientes reales que encontraron sus propiedades de ensueño con Ukon Estate."
   },
   "blog": {
-    "ourBlog": "Nuestro Blog",
-    "headline": "Perspectivas Inmobiliarias",
-    "subheadline": "Manténgase informado con las últimas tendencias, consejos e ideas del mundo de los bienes raíces.",
+    "ourBlog": "Inteligencia",
+    "headline": "Inteligencia Inmobiliaria",
+    "subheadline": "Perspectivas estratégicas en mercados inmobiliarios internacionales.",
     "searchPlaceholder": "Buscar artículos...",
     "categoryAll": "Todos",
     "categoryBuying": "Compra",
     "categorySelling": "Venta",
     "categoryInvesting": "Inversión",
-    "categoryMarket": "Mercado",
-    "readMore": "Leer Más",
+    "categoryMarketReport": "Informe de Mercado",
+    "readArticle": "Leer Artículo",
     "noArticlesFound": "No se encontraron artículos que coincidan con sus criterios.",
-    "stayUpdated": "Manténgase Actualizado",
-    "subscriberDescription": "Suscríbase a nuestro boletín para obtener las últimas perspectivas inmobiliarias, actualizaciones del mercado y consejos exclusivos.",
+    "stayUpdated": "Actualizaciones Estratégicas del Mercado",
+    "subscriberDescription": "Reciba perspectivas periódicas sobre mercados inmobiliarios internacionales y tendencias de inversión transfronteriza.",
     "emailPlaceholder": "Ingrese su correo electrónico",
-    "subscribe": "Suscribirse"
+    "subscribe": "Suscribirse",
+    "backToBlog": "Volver a Inteligencia",
+    "closingLabel": "Ukon Estate Research",
+    "closingText": "Para asesoramiento estratégico sobre inversión inmobiliaria internacional, contacte nuestra red global."
   },
   "account": {
     "myAccount": "Mi Cuenta",
@@ -339,7 +342,7 @@
     "rentalManagement": "Gestión de Alquileres",
     "investmentConsulting": "Consultoría de Inversiones",
     "propertyValuation": "Valoración de Propiedades",
-    "blog": "Blog"
+    "blog": "Inteligencia"
   },
   "common": {
     "loading": "Cargando...",

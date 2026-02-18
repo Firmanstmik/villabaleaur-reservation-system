@@ -55,7 +55,7 @@ const About = () => {
 
       <main>
         {/* ── 1. Hero Section ── */}
-        <section className="relative py-36 md:py-44 overflow-hidden">
+        <section className="relative py-28 md:py-36 overflow-hidden">
           <video
             ref={videoRef}
             autoPlay
