@@ -57,7 +57,7 @@ export function RefinePanel({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="absolute right-0 top-[calc(100%+8px)] z-50 w-[420px]
+          className="absolute right-0 top-[calc(100%+8px)] z-50 w-[420px] max-w-[90vw]
                      rounded-xl shadow-xl border border-border/25 p-5 backdrop-blur-lg"
           style={{
             background: `
