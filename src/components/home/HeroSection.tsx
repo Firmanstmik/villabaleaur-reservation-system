@@ -89,10 +89,10 @@ export function HeroSection() {
   }, [showClone]);
 
   return (
-    <section className="w-full bg-background relative" style={{ padding: '2vh 2vw' }}>
+    <section className="w-full bg-background relative" style={{ padding: isMobile ? '0.5vh 3vw 1.5vh' : '2vh 2vw' }}>
       <div
         className="relative w-full overflow-hidden"
-        style={{ height: '85vh', borderRadius: '2.5vw' }}
+        style={{ height: '85vh', borderRadius: isMobile ? '5vw' : '2.5vw' }}
       >
         {/* Background Video */}
         <video
@@ -133,7 +133,7 @@ export function HeroSection() {
         {/* Content Container */}
         <motion.div
           className="relative z-10 h-full flex flex-col justify-center items-start"
-          style={{ paddingLeft: '5vw' }}
+          style={{ paddingLeft: isMobile ? '7vw' : '5vw', paddingRight: isMobile ? '7vw' : undefined, paddingTop: isMobile ? '3vw' : undefined }}
           animate={{
             x: isAuthPanelOpen ? (isMobile ? '0%' : '-6%') : '0%',
             opacity: isAuthPanelOpen ? (isMobile ? 1 : 0.7) : 1,
@@ -150,8 +150,8 @@ export function HeroSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="font-bold text-white leading-[1.05] tracking-tight"
-            style={{ fontSize: '5.5vw', marginBottom: '1.5vw' }}
+            className={`font-bold text-white tracking-tight ${isMobile ? 'leading-[1.2]' : 'leading-[1.05]'}`}
+            style={{ fontSize: isMobile ? '7.5vw' : '5.5vw', marginBottom: isMobile ? '5vw' : '1.5vw' }}
           >
             {(() => {
               const parts = t('hero.headline').split('|');
@@ -172,10 +172,10 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-white/90 font-medium"
             style={{
-              fontSize: '1.1vw',
-              marginBottom: '3vw',
-              maxWidth: '38vw',
-              lineHeight: '1.6'
+              fontSize: isMobile ? '3.8vw' : '1.1vw',
+              marginBottom: isMobile ? '6vw' : '3vw',
+              maxWidth: isMobile ? '85%' : '38vw',
+              lineHeight: isMobile ? '1.75' : '1.6'
             }}
           >
             {t('hero.subheadline')}
@@ -187,16 +187,16 @@ export function HeroSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            style={{ marginBottom: '4vw' }}
+            style={{ marginBottom: isMobile ? '10vw' : '4vw' }}
           >
             <Button
               className="rounded-full bg-white text-black hover:bg-white/90 transition-all border-none flex items-center justify-between group"
               style={{
-                height: 'auto',
-                padding: '0.74vw 0.8vw 0.74vw 2vw',
-                fontSize: '1vw',
+                height: isMobile ? '48px' : 'auto',
+                padding: isMobile ? '8px 10px 8px 24px' : '0.74vw 0.8vw 0.74vw 2vw',
+                fontSize: isMobile ? '14px' : '1vw',
                 borderRadius: '100vw',
-                gap: '1vw'
+                gap: isMobile ? '12px' : '1vw'
               }}
               asChild
             >
@@ -204,9 +204,9 @@ export function HeroSection() {
                 {t('hero.exploreProperties')}
                 <div
                   className="bg-black text-white rounded-full flex items-center justify-center transition-transform group-hover:bg-black/80"
-                  style={{ width: '2.5vw', height: '2.5vw' }}
+                  style={{ width: isMobile ? '32px' : '2.5vw', height: isMobile ? '32px' : '2.5vw' }}
                 >
-                  <ArrowRight className="-rotate-45 group-hover:rotate-0 transition-transform duration-300" style={{ width: '1.2vw', height: '1.2vw' }} />
+                  <ArrowRight className="-rotate-45 group-hover:rotate-0 transition-transform duration-300" style={{ width: isMobile ? '16px' : '1.2vw', height: isMobile ? '16px' : '1.2vw' }} />
                 </div>
               </Link>
             </Button>
@@ -218,20 +218,20 @@ export function HeroSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex items-start"
-            style={{ gap: '4vw' }}
+            className={`flex ${isMobile ? 'flex-col items-start' : 'items-start'}`}
+            style={{ gap: isMobile ? '6vw' : '4vw' }}
           >
             <div>
-              <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>628</div>
-              <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>{t('hero.stats.propertiesTransacted')}</div>
+              <div className="font-bold text-white leading-none" style={{ fontSize: isMobile ? '9vw' : '3.5vw' }}>628</div>
+              <div className={`${isMobile ? 'text-white/60' : 'text-white/80'} font-medium`} style={{ fontSize: isMobile ? '2.8vw' : '0.9vw', marginTop: isMobile ? '1.5vw' : '0.5vw' }}>{t('hero.stats.propertiesTransacted')}</div>
             </div>
             <div>
-              <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>274</div>
-              <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>{t('hero.stats.happyClients')}</div>
+              <div className="font-bold text-white leading-none" style={{ fontSize: isMobile ? '9vw' : '3.5vw' }}>274</div>
+              <div className={`${isMobile ? 'text-white/60' : 'text-white/80'} font-medium`} style={{ fontSize: isMobile ? '2.8vw' : '0.9vw', marginTop: isMobile ? '1.5vw' : '0.5vw' }}>{t('hero.stats.happyClients')}</div>
             </div>
             <div>
-              <div className="font-bold text-white leading-none" style={{ fontSize: '3.5vw' }}>{currencySymbols[currency]}{currencyAmounts[currency]}M</div>
-              <div className="text-white/80 font-medium mt-[0.5vw]" style={{ fontSize: '0.9vw' }}>{t('hero.stats.projectValue')}</div>
+              <div className="font-bold text-white leading-none" style={{ fontSize: isMobile ? '9vw' : '3.5vw' }}>{currencySymbols[currency]}{currencyAmounts[currency]}M</div>
+              <div className={`${isMobile ? 'text-white/60' : 'text-white/80'} font-medium`} style={{ fontSize: isMobile ? '2.8vw' : '0.9vw', marginTop: isMobile ? '1.5vw' : '0.5vw' }}>{t('hero.stats.projectValue')}</div>
             </div>
           </motion.div>
         </motion.div>
@@ -249,20 +249,20 @@ export function HeroSection() {
       <div
         className="absolute z-20"
         style={{
-          bottom: '2vh',
-          right: '2vw',
+          bottom: isMobile ? '1.5vh' : '2vh',
+          right: isMobile ? '3vw' : '2vw',
         }}
       >
         <div
           className="bg-background flex items-end"
           style={{
-            borderTopLeftRadius: '2.5vw',
-            padding: '1.2vw 0.8vw 0.6vw 1.6vw',
-            gap: '0.8vw',
+            borderTopLeftRadius: isMobile ? '4vw' : '2.5vw',
+            padding: isMobile ? '2.5vw 2.5vw 1.5vw 3vw' : '1.2vw 0.8vw 0.6vw 1.6vw',
+            gap: isMobile ? '2vw' : '0.8vw',
           }}
         >
           {/* Avatars */}
-          <div className="flex -space-x-[1.2vw]">
+          <div className={`flex ${isMobile ? '-space-x-[2vw]' : '-space-x-[1.2vw]'}`}>
             {[
               ginoBeeltPhoto,
               roselynnChaiPhoto,
@@ -271,10 +271,10 @@ export function HeroSection() {
             ].map((src, i) => (
               <div
                 key={i}
-                className="rounded-full border-[0.25vw] border-background overflow-hidden relative z-0"
+                className={`rounded-full border-background overflow-hidden relative z-0 ${isMobile ? 'border-[0.5vw]' : 'border-[0.25vw]'}`}
                 style={{
-                  width: '4.2vw',
-                  height: '4.2vw',
+                  width: isMobile ? '7vw' : '4.2vw',
+                  height: isMobile ? '7vw' : '4.2vw',
                   zIndex: 10 - i
                 }}
               >
@@ -285,16 +285,16 @@ export function HeroSection() {
 
           {/* Text */}
           <div className="flex flex-col justify-end" style={{ paddingBottom: '0.15vw' }}>
-            <span className="font-medium text-muted-foreground leading-none" style={{ fontSize: '1vw' }}>
+            <span className="font-medium text-muted-foreground leading-none" style={{ fontSize: isMobile ? '2.6vw' : '1vw' }}>
               {t('hero.stats.googleReviews')}
             </span>
-            <div className="flex items-center mt-[0.4vw] leading-none" style={{ gap: '0.4vw' }}>
-              <div className="flex gap-[0.1vw]">
+            <div className="flex items-center leading-none" style={{ gap: isMobile ? '1vw' : '0.4vw', marginTop: isMobile ? '1vw' : '0.4vw' }}>
+              <div className="flex" style={{ gap: isMobile ? '0.2vw' : '0.1vw' }}>
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="fill-amber-400 text-amber-400" style={{ width: '1.1vw', height: '1.1vw' }} />
+                  <Star key={i} className="fill-amber-400 text-amber-400" style={{ width: isMobile ? '3vw' : '1.1vw', height: isMobile ? '3vw' : '1.1vw' }} />
                 ))}
               </div>
-              <span className="text-foreground font-bold" style={{ fontSize: '1.1vw' }}>{t('hero.stats.rating')}</span>
+              <span className="text-foreground font-bold" style={{ fontSize: isMobile ? '3vw' : '1.1vw' }}>{t('hero.stats.rating')}</span>
             </div>
           </div>
         </div>

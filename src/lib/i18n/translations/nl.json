@@ -1,26 +1,26 @@
 {
   "navigation": {
-    "home": "Startpagina",
+    "home": "Home",
     "services": "Diensten",
-    "properties": "Woningen",
-    "about": "Over",
-    "agents": "Wereldwijd Netwerk",
-    "blog": "Inzichten",
+    "properties": "Aanbod",
+    "about": "Over ons",
+    "agents": "Global Network",
+    "blog": "Intelligence",
     "signIn": "Inloggen",
     "contact": "Contact",
     "contactUsNow": "Neem Nu Contact Met Ons Op",
     "logout": "Afmelden"
   },
   "hero": {
-    "headline": "WAAR DROMEN WERKELIJKHEID WORDEN.",
-    "subheadline": "Wij bieden op maat gemaakte vastgoedoplossingen en begeleiden u bij elke stap met persoonlijke ervaringen die aan uw unieke behoeften en aspiraties voldoen.",
-    "exploreProperties": "Verken Woningen",
+    "headline": "WAAR VISIE|REALITEIT WORDT.",
+    "subheadline": "Strategische vastgoedoplossingen met lokale expertise en internationale coördinatie.",
+    "exploreProperties": "Bekijk Woningen",
     "stats": {
       "projectsComplete": "Projecten Voltooid",
-      "propertiesTransacted": "Vastgoedtransacties",
-      "happyClients": "Tevreden Klanten",
-      "projectValue": "Projectwaarde",
-      "googleReviews": "47+ Google Beoordelingen",
+      "propertiesTransacted": "Transacties",
+      "happyClients": "Cliënten",
+      "projectValue": "Transactiewaarde",
+      "googleReviews": "47+ Google Reviews",
       "rating": "4.8 / 5"
     }
   },

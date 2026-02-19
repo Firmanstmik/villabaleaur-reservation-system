@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Instagram, Facebook } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { whatsappUrl } from '@/data/mockData';
-import logoImage from '@/assets/Ukon-Estate.png';
+import logoImage from '@/assets/Ukon-Estate-icon.png';
 
 interface FooterLink {
   key: string;
@@ -99,7 +99,7 @@ export function Footer() {
                 <img
                   src={logoImage}
                   alt="Ukon Estate"
-                  className="h-14 w-auto object-contain brightness-0 invert"
+                  className="h-20 w-auto object-contain"
                 />
               </Link>
               <p className="text-white/50 text-sm leading-relaxed mb-8 max-w-xs">

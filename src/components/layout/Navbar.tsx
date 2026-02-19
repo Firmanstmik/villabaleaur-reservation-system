@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
@@ -21,6 +21,12 @@ const navLinksConfig = [
   { key: 'blog', path: '/intelligence' },
 ];
 
+// AuthPanel hero variant background — reused for mobile menu
+const mobileMenuBg = `linear-gradient(135deg, rgba(250, 249, 246, 0.95) 0%, rgba(253, 252, 251, 0.95) 100%), url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E")`;
+
+const primaryKeys = ['home', 'properties', 'agents'];
+const secondaryKeys = ['services', 'blog', 'about'];
+
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -29,6 +35,8 @@ export function Navbar() {
   const { user, loading } = useAuth();
   const { t, language } = useLanguage();
   const { toggleAuthPanel } = useAuthPanel();
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   // Helper to build language-prefixed paths
   const withLang = (path: string): string => {
@@ -46,6 +54,23 @@ export function Navbar() {
     name: t(`navigation.${link.key}`),
     localizedPath: withLang(link.path),
   }));
+
+  const primaryLinks = navLinks.filter(l => primaryKeys.includes(l.key));
+  const secondaryLinks = navLinks.filter(l => secondaryKeys.includes(l.key));
+
+  // ESC to close + focus management for mobile menu
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      setTimeout(() => closeButtonRef.current?.focus(), 100);
+      const handleEsc = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setIsMobileMenuOpen(false);
+      };
+      document.addEventListener('keydown', handleEsc);
+      return () => document.removeEventListener('keydown', handleEsc);
+    } else {
+      menuButtonRef.current?.focus();
+    }
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -152,14 +177,14 @@ export function Navbar() {
         initial={{ y: 0 }}
         animate={{ y: isVisible ? 0 : -100 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="fixed top-0 left-0 right-0 z-50 bg-transparent backdrop-blur-md border-b border-transparent transition-colors duration-300"
-        style={{ height: 'auto', padding: '0.8vw 2vw' }}
+        className="fixed top-0 left-0 right-0 z-50 bg-transparent backdrop-blur-md border-b border-transparent transition-colors duration-300 py-3 px-4 lg:py-[0.8vw] lg:px-[2vw]"
+        style={{ height: 'auto' }}
       >
-        <div className="w-full flex items-center justify-between">
-          {/* Logo Group */}
+        <div className="w-full flex items-center justify-between relative">
+          {/* Logo Group — absolute-centered on mobile, normal flow on desktop */}
           <Link
             to={withLang('/')}
-            className="flex items-center gap-[0.8vw]"
+            className="flex items-center gap-[0.8vw] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:relative lg:left-auto lg:top-auto lg:translate-x-0 lg:translate-y-0"
             onClick={(e) => {
               if (basePath === '/') {
                 e.preventDefault();
@@ -171,7 +196,7 @@ export function Navbar() {
             <img
               src={logoImage}
               alt="Ukon Estate Logo"
-              className="h-[3.5vw] w-auto object-contain"
+              className="h-10 max-h-10 lg:h-[3.5vw] lg:max-h-none w-auto object-contain"
             />
           </Link>
 
@@ -241,8 +266,11 @@ export function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
+            ref={menuButtonRef}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-foreground"
+            className="lg:hidden w-10 h-10 shrink-0 flex items-center justify-center text-foreground ml-auto"
+            aria-expanded={isMobileMenuOpen}
+            aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -253,80 +281,175 @@ export function Navbar() {
       {!location.pathname.includes('/property/') && (
         <>
           <div style={{ height: 'calc(3.5vw + 1.6vw)' }} className="hidden lg:block" />
-          <div className="h-20 lg:hidden" />
+          <div className="h-16 lg:hidden" />
         </>
       )}
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 lg:hidden bg-background"
-          >
-            <div
-              className="absolute inset-0 bg-background"
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="mobile-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-40 lg:hidden bg-black/30 backdrop-blur-sm"
               onClick={() => setIsMobileMenuOpen(false)}
+              aria-hidden="true"
             />
-            <div className="flex flex-col h-full pt-24 px-6 gap-6 relative z-50">
-              {navLinks.map((link) => (
+
+            {/* Slide-in Panel */}
+            <motion.div
+              key="mobile-panel"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              className="fixed top-0 right-0 bottom-0 z-50 w-[90vw] backdrop-blur-lg overflow-y-auto lg:hidden"
+              style={{
+                background: mobileMenuBg,
+                borderTopLeftRadius: '24px',
+                borderBottomLeftRadius: '24px',
+              }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Navigation menu"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4">
                 <Link
-                  key={link.key}
-                  to={link.localizedPath}
+                  to={withLang('/')}
                   onClick={(e) => {
-                    handleNavClick(e, link);
+                    if (basePath === '/') {
+                      e.preventDefault();
+                      scrollToTop();
+                    }
                     setIsMobileMenuOpen(false);
                   }}
-                  className="text-2xl font-medium"
                 >
-                  {link.name}
+                  <img src={logoImage} alt="Ukon Estate Logo" className="h-10 w-auto object-contain" />
                 </Link>
-              ))}
-
-              {/* Mobile Locale Dropdown */}
-              <div className="mt-2 pt-4 border-t border-border/30">
-                <LocaleDropdown />
+                <button
+                  ref={closeButtonRef}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-10 h-10 flex items-center justify-center text-[#0e2e50]"
+                  aria-label="Close menu"
+                >
+                  <X size={24} />
+                </button>
               </div>
 
-              {/* Mobile Auth */}
-              {!loading && (
-                <div className="mt-4 space-y-3">
-                  {user ? (
-                    <>
-                      <UserDropdown />
-                      <Button
-                        onClick={handleWhatsAppClick}
-                        className="w-full bg-[#D92C2C] text-white py-6 text-lg rounded-xl"
-                      >
-                        {t('navigation.contactUsNow')}
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        onClick={() => {
-                          openAuthPanel('login');
+              {/* Navigation */}
+              <nav className="flex flex-col px-6 pt-6">
+                {/* Primary Links */}
+                <div className="flex flex-col" style={{ gap: '20px' }}>
+                  {primaryLinks.map((link, index) => (
+                    <motion.div
+                      key={link.key}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.04, duration: 0.25, ease: 'easeOut' }}
+                    >
+                      <Link
+                        to={link.localizedPath}
+                        onClick={(e) => {
+                          handleNavClick(e, link);
                           setIsMobileMenuOpen(false);
                         }}
-                        className="w-full bg-ukon-navy text-white py-6 text-lg rounded-xl"
+                        className="text-lg font-medium text-[#0e2e50] block"
                       >
-                        {t('navigation.signIn')}
-                      </Button>
-                      <Button
-                        onClick={handleWhatsAppClick}
-                        className="w-full bg-[#D92C2C] text-white py-6 text-lg rounded-xl"
-                      >
-                        {t('navigation.contactUsNow')}
-                      </Button>
-                    </>
-                  )}
+                        {link.name}
+                      </Link>
+                    </motion.div>
+                  ))}
                 </div>
-              )}
-            </div>
-          </motion.div>
+
+                {/* Secondary Links */}
+                <div className="flex flex-col mt-6" style={{ gap: '16px' }}>
+                  {secondaryLinks.map((link, index) => (
+                    <motion.div
+                      key={link.key}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: (primaryLinks.length + index) * 0.04, duration: 0.25, ease: 'easeOut' }}
+                    >
+                      <Link
+                        to={link.localizedPath}
+                        onClick={(e) => {
+                          handleNavClick(e, link);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="text-base font-medium text-[#0e2e50]/85 block"
+                      >
+                        {link.name}
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+              </nav>
+
+              {/* Bottom Section */}
+              <div className="px-6 mt-8">
+                <div className="border-t border-black/10" />
+
+                {/* Utility Row: Sign In + Globe */}
+                <div className="flex items-center justify-between pt-4">
+                  {!loading && (
+                    <div>
+                      {user ? (
+                        <UserDropdown />
+                      ) : (
+                        <button
+                          onClick={() => {
+                            toggleAuthPanel('login');
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="text-base font-medium text-[#0e2e50]/70"
+                        >
+                          {t('navigation.signIn')}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  <div className="w-8 h-8 rounded-full border border-[#0e2e50]/15 flex items-center justify-center">
+                    <LocaleDropdown />
+                  </div>
+                </div>
+
+                {/* Contact CTA */}
+                <Button
+                  onClick={() => {
+                    handleWhatsAppClick();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full rounded-full bg-[#0e2e50] text-white hover:bg-[#0e2e50]/90 transition-all border-none flex items-center justify-between group mt-5"
+                  style={{
+                    height: '48px',
+                    padding: '8px 10px 8px 24px',
+                    fontSize: '15px',
+                    borderRadius: '100vw',
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex items-center justify-center w-2 h-2">
+                      <div className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
+                      <div className="relative inline-flex rounded-full bg-green-500 w-full h-full" />
+                    </div>
+                    <span className="font-medium">{t('navigation.contact')}</span>
+                  </div>
+                  <div className="bg-white text-[#0e2e50] rounded-full w-8 h-8 flex items-center justify-center transition-transform group-hover:bg-white/90">
+                    <ArrowRight className="-rotate-45 group-hover:rotate-0 transition-transform duration-300" size={16} />
+                  </div>
+                </Button>
+
+                {/* Bottom spacing */}
+                <div className="pb-8" />
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>

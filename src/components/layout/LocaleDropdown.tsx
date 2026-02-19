@@ -53,7 +53,7 @@ export function LocaleDropdown() {
           title="Language & Currency"
           type="button"
         >
-          <Globe className="w-[1.2vw] h-[1.2vw] lg:w-5 lg:h-5" strokeWidth={1.5} />
+          <Globe className="w-5 h-5 lg:w-[1.2vw] lg:h-[1.2vw]" strokeWidth={1.5} />
           {isLoading && (
             <div className="absolute inset-0 rounded-lg bg-foreground/5 animate-pulse" />
           )}
