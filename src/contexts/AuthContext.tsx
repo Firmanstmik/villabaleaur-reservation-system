@@ -82,6 +82,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUserType(type);
       }
     } catch (error: any) {
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        throw new Error('Unable to connect to authentication service. Please check your internet connection and try again.');
+      }
       throw error;
     }
   };
@@ -114,6 +117,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUserType(metadata.user_type);
       }
     } catch (error: any) {
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        throw new Error('Unable to connect to authentication service. Please check your internet connection and try again.');
+      }
       throw error;
     }
   };
@@ -144,6 +150,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw error;
       }
     } catch (error: any) {
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        throw new Error('Unable to connect to authentication service. Please check your internet connection and try again.');
+      }
       throw error;
     }
   };

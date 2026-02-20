@@ -209,7 +209,7 @@ export function Navbar() {
                 onClick={(e) => handleNavClick(e, link)}
                 className={`font-medium transition-colors hover:text-[#D92C2C] ${isLinkActive(link) ? 'text-[#D92C2C]' : 'text-foreground'
                   }`}
-                style={{ fontSize: '0.9vw' }}
+                style={{ fontSize: '1.05vw' }}
               >
                 {link.name}
               </Link>
@@ -226,7 +226,7 @@ export function Navbar() {
                 onClick={() => toggleAuthPanel('login')}
                 variant="ghost"
                 className="text-foreground hover:text-[#0e2e50] transition-colors font-medium"
-                style={{ fontSize: '0.9vw' }}
+                style={{ fontSize: '1.05vw' }}
               >
                 {t('navigation.signIn')}
               </Button>
@@ -241,7 +241,7 @@ export function Navbar() {
               style={{
                 height: 'auto',
                 padding: '0.56vw 0.6vw 0.56vw 1.5vw',
-                fontSize: '0.9vw',
+                fontSize: '1.05vw',
                 borderRadius: '100vw',
                 gap: '0.8vw'
               }}
@@ -359,7 +359,7 @@ export function Navbar() {
                           handleNavClick(e, link);
                           setIsMobileMenuOpen(false);
                         }}
-                        className="text-lg font-medium text-[#0e2e50] block"
+                        className="text-xl font-medium text-[#0e2e50] block"
                       >
                         {link.name}
                       </Link>
@@ -382,7 +382,7 @@ export function Navbar() {
                           handleNavClick(e, link);
                           setIsMobileMenuOpen(false);
                         }}
-                        className="text-base font-medium text-[#0e2e50]/85 block"
+                        className="text-lg font-medium text-[#0e2e50]/85 block"
                       >
                         {link.name}
                       </Link>
@@ -407,7 +407,7 @@ export function Navbar() {
                             toggleAuthPanel('login');
                             setIsMobileMenuOpen(false);
                           }}
-                          className="text-base font-medium text-[#0e2e50]/70"
+                          className="text-lg font-medium text-[#0e2e50]/70"
                         >
                           {t('navigation.signIn')}
                         </button>
@@ -427,9 +427,9 @@ export function Navbar() {
                   }}
                   className="w-full rounded-full bg-[#0e2e50] text-white hover:bg-[#0e2e50]/90 transition-all border-none flex items-center justify-between group mt-5"
                   style={{
-                    height: '48px',
+                    height: '52px',
                     padding: '8px 10px 8px 24px',
-                    fontSize: '15px',
+                    fontSize: '17px',
                     borderRadius: '100vw',
                   }}
                 >
