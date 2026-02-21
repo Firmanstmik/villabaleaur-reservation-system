@@ -1881,7 +1881,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                 <div className="p-6 bg-secondary/5 rounded-[2.5rem] border border-border/50">
                                     <h3 className="text-sm font-black uppercase tracking-[0.2em] text-[#0e2e50]/40 mb-4 ml-1">Live Preview</h3>
                                     <div className="bg-white rounded-2xl overflow-hidden border border-border/30 max-h-[600px] overflow-y-auto">
-                                        <ListingPreview data={formData} onClose={() => {}} />
+                                        <ListingPreview data={formData} onClose={() => {}} embedded={true} />
                                     </div>
                                 </div>
                             </div>

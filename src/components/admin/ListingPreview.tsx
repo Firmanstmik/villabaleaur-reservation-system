@@ -26,19 +26,21 @@ const ListingPreview = ({ data, onClose, embedded = false }: ListingPreviewProps
             exit={{ opacity: 0 }}
             className={embedded ? "bg-white overflow-y-auto" : "fixed inset-0 z-[100] bg-white overflow-y-auto"}
         >
-            <div className={embedded ? "bg-white border-b border-border px-8 py-4 flex items-center justify-between" : "sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border px-8 py-4 flex items-center justify-between"}>
-                <div>
-                    <h2 className="text-xl font-black text-[#0e2e50]">Live Preview Mode</h2>
-                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Listing: {data.listing_code}</p>
+            {!embedded && (
+                <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border px-8 py-4 flex items-center justify-between">
+                    <div>
+                        <h2 className="text-xl font-black text-[#0e2e50]">Live Preview Mode</h2>
+                        <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Listing: {data.listing_code}</p>
+                    </div>
+                    <Button
+                        variant="ghost"
+                        onClick={onClose}
+                        className="w-12 h-12 rounded-full hover:bg-black/5"
+                    >
+                        <X size={24} />
+                    </Button>
                 </div>
-                <Button
-                    variant="ghost"
-                    onClick={onClose}
-                    className="w-12 h-12 rounded-full hover:bg-black/5"
-                >
-                    <X size={24} />
-                </Button>
-            </div>
+            )}
 
             <main className="pb-24">
                 {/* Hero / Images */}
