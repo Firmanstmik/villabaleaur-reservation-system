@@ -9,7 +9,7 @@ import { useInView } from '@/hooks/useInView';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useFilters } from '@/hooks/useFilters';
 import { supabase } from '@/lib/supabase';
-import heroBg from '@/assets/Ukon_Estate_Hero.webp';
+import heroBg from '@/assets/Ukon_Estate_Hero.avif';
 import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 
 const Properties = () => {

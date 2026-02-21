@@ -8,7 +8,7 @@ import { useInView } from '@/hooks/useInView';
 import { GlobalMap } from '@/components/agents/GlobalMap';
 import { RegionSection } from '@/components/agents/RegionSection';
 import { NetworkModelSection } from '@/components/agents/NetworkModelSection';
-import heroBg from '@/assets/Ukon_Estate_Hero.webp';
+import heroBg from '@/assets/Ukon_Estate_Hero.avif';
 import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 
 import ginoBeeltPhoto from '@/assets/members/Gino_Beelt.avif';

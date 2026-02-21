@@ -4,7 +4,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import heroBg from '@/assets/Ukon_Estate_Hero.webp';
+import heroBg from '@/assets/Ukon_Estate_Hero.avif';
 import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 
 const About = () => {

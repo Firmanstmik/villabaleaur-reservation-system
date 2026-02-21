@@ -7,7 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useAuthPanel } from '@/contexts/AuthPanelContext';
 import { AuthPanel } from '@/components/auth/AuthPanel';
-import heroBg from '@/assets/Ukon_Estate_Hero.webp';
+import heroBg from '@/assets/Ukon_Estate_Hero.avif';
 import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 import ginoBeeltPhoto from '@/assets/members/Gino_Beelt.avif';
 import roselynnChaiPhoto from '@/assets/members/Roselynn_Chai.avif';
