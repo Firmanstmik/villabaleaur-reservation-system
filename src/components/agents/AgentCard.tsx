@@ -26,7 +26,7 @@ export const AgentCard = ({ agent, photo, index }: AgentCardProps) => {
           <img
             src={photo || agent.photo}
             alt={agent.name}
-            className="w-full h-full object-cover transition-transform duration-200 ease-out group-hover:scale-[1.03]"
+            className="w-full h-full object-cover transition-all duration-300 ease-out group-hover:scale-[1.03] group-hover:brightness-110 group-hover:saturate-[1.15]"
           />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/[0.12] transition-colors duration-200" />
 

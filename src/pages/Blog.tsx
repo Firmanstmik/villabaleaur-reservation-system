@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, Calendar, Clock, ArrowRight } from 'lucide-react';
@@ -9,56 +9,17 @@ import { blogArticles, getArticleContent } from '@/data/blogData';
 import { useInView } from '@/hooks/useInView';
 import { useLanguage } from '@/contexts/LanguageContext';
 import heroBg from '@/assets/Ukon_Estate_Hero.avif';
-import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
+import heroVideo from '@/assets/Ukon_Estate_hero-video-v2.mp4';
 
 const Blog = () => {
   const { ref, isInView } = useInView();
   const { t, language } = useLanguage();
   const navigate = useNavigate();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const cloneRef = useRef<HTMLVideoElement>(null);
-  const [showClone, setShowClone] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(
     searchParams.get('category') || 'All'
   );
-
-  useEffect(() => {
-    const video = videoRef.current;
-    const clone = cloneRef.current;
-    if (!video) return;
-
-    video.playbackRate = 0.75;
-    if (clone) clone.playbackRate = 0.75;
-
-    const FADE_DURATION = 1.5;
-
-    const handleTimeUpdate = () => {
-      if (!video.duration || !cloneRef.current) return;
-      const timeLeft = video.duration - video.currentTime;
-
-      if (timeLeft <= FADE_DURATION && !showClone) {
-        cloneRef.current.currentTime = 0;
-        cloneRef.current.play().catch(() => {});
-        setShowClone(true);
-      }
-    };
-
-    const handleSeeked = () => {
-      if (video.currentTime < FADE_DURATION) {
-        setShowClone(false);
-      }
-    };
-
-    video.addEventListener('timeupdate', handleTimeUpdate);
-    video.addEventListener('seeked', handleSeeked);
-
-    return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate);
-      video.removeEventListener('seeked', handleSeeked);
-    };
-  }, [showClone]);
 
   const categoryMap: Record<string, string> = {
     'All': 'blog.categoryAll',
@@ -95,29 +56,14 @@ const Blog = () => {
         {/* Hero Section */}
         <section className="relative py-32 md:py-40 overflow-hidden">
           <video
-            ref={videoRef}
             autoPlay
             loop
             muted
             playsInline
+            preload="metadata"
             poster={heroBg}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ display: 'block', transform: 'scale(1.05)' }}
-          >
-            <source src={heroVideo} type="video/mp4" />
-          </video>
-
-          <video
-            ref={cloneRef}
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            style={{
-              display: 'block',
-              transform: 'scale(1.05)',
-              opacity: showClone ? 1 : 0,
-              transition: 'opacity 1.5s ease-in-out',
-            }}
           >
             <source src={heroVideo} type="video/mp4" />
           </video>

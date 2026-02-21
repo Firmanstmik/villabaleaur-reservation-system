@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { useAuthPanel } from '@/contexts/AuthPanelContext';
 import { AuthPanel } from '@/components/auth/AuthPanel';
 import heroBg from '@/assets/Ukon_Estate_Hero.avif';
-import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
+import heroVideo from '@/assets/Ukon_Estate_hero-video-v2.mp4';
 import ginoBeeltPhoto from '@/assets/members/Gino_Beelt.avif';
 import roselynnChaiPhoto from '@/assets/members/Roselynn_Chai.avif';
 import marcoLoureiroPhoto from '@/assets/members/Marco_Loureiro.avif';
@@ -35,9 +35,6 @@ export function HeroSection() {
   const { language, t } = useLanguage();
   const { currency } = useCurrency();
   const { isAuthPanelOpen, closeAuthPanel, initialMode } = useAuthPanel();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const cloneRef = useRef<HTMLVideoElement>(null);
-  const [showClone, setShowClone] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   // Handle window resize for mobile detection
@@ -50,43 +47,6 @@ export function HeroSection() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    const clone = cloneRef.current;
-    if (!video) return;
-
-    video.playbackRate = 0.75;
-    if (clone) clone.playbackRate = 0.75;
-
-    const FADE_DURATION = 1.5; // seconds before end to start crossfade
-
-    const handleTimeUpdate = () => {
-      if (!video.duration || !cloneRef.current) return;
-      const timeLeft = video.duration - video.currentTime;
-
-      if (timeLeft <= FADE_DURATION && !showClone) {
-        // Start clone at beginning, fade it in
-        cloneRef.current.currentTime = 0;
-        cloneRef.current.play().catch(() => { });
-        setShowClone(true);
-      }
-    };
-
-    const handleSeeked = () => {
-      // Video has looped back to start — hide clone
-      if (video.currentTime < FADE_DURATION) {
-        setShowClone(false);
-      }
-    };
-
-    video.addEventListener('timeupdate', handleTimeUpdate);
-    video.addEventListener('seeked', handleSeeked);
-
-    return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate);
-      video.removeEventListener('seeked', handleSeeked);
-    };
-  }, [showClone]);
 
   return (
     <section className="w-full bg-background relative" style={{ padding: isMobile ? '0.5vh 3vw 1.5vh' : '2vh 2vw' }}>
@@ -96,30 +56,14 @@ export function HeroSection() {
       >
         {/* Background Video */}
         <video
-          ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
+          preload="metadata"
           poster={heroBg}
           className="absolute inset-0 w-full h-full object-cover"
           style={{ display: 'block', transform: 'scale(1.05)' }}
-        >
-          <source src={heroVideo} type="video/mp4" />
-        </video>
-
-        {/* Clone video for crossfade at loop boundary */}
-        <video
-          ref={cloneRef}
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-          style={{
-            display: 'block',
-            transform: 'scale(1.05)',
-            opacity: showClone ? 1 : 0,
-            transition: `opacity ${1.5}s ease-in-out`,
-          }}
         >
           <source src={heroVideo} type="video/mp4" />
         </video>

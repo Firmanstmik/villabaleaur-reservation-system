@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -10,14 +10,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useFilters } from '@/hooks/useFilters';
 import { supabase } from '@/lib/supabase';
 import heroBg from '@/assets/Ukon_Estate_Hero.avif';
-import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
+import heroVideo from '@/assets/Ukon_Estate_hero-video-v2.mp4';
 
 const Properties = () => {
   const { ref, isInView } = useInView();
   const { t } = useLanguage();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const cloneRef = useRef<HTMLVideoElement>(null);
-  const [showClone, setShowClone] = useState(false);
   const [displayProperties, setDisplayProperties] = useState<any[]>([]);
 
   useEffect(() => {
@@ -56,42 +53,6 @@ const Properties = () => {
     fetchProperties();
   }, []);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    const clone = cloneRef.current;
-    if (!video) return;
-
-    video.playbackRate = 0.75;
-    if (clone) clone.playbackRate = 0.75;
-
-    const FADE_DURATION = 1.5;
-
-    const handleTimeUpdate = () => {
-      if (!video.duration || !cloneRef.current) return;
-      const timeLeft = video.duration - video.currentTime;
-
-      if (timeLeft <= FADE_DURATION && !showClone) {
-        cloneRef.current.currentTime = 0;
-        cloneRef.current.play().catch(() => { });
-        setShowClone(true);
-      }
-    };
-
-    const handleSeeked = () => {
-      if (video.currentTime < FADE_DURATION) {
-        setShowClone(false);
-      }
-    };
-
-    video.addEventListener('timeupdate', handleTimeUpdate);
-    video.addEventListener('seeked', handleSeeked);
-
-    return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate);
-      video.removeEventListener('seeked', handleSeeked);
-    };
-  }, [showClone]);
-
   // Initialize filters and get filtered results
   const { filters, setFilter, resetFilters, filteredProperties, activeFilterCount } =
     useFilters(displayProperties);
@@ -105,30 +66,14 @@ const Properties = () => {
         <section className="relative py-36 md:py-44 overflow-hidden">
           {/* Background Video */}
           <video
-            ref={videoRef}
             autoPlay
             loop
             muted
             playsInline
+            preload="metadata"
             poster={heroBg}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ display: 'block', transform: 'scale(1.05)' }}
-          >
-            <source src={heroVideo} type="video/mp4" />
-          </video>
-
-          {/* Clone video for crossfade at loop boundary */}
-          <video
-            ref={cloneRef}
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            style={{
-              display: 'block',
-              transform: 'scale(1.05)',
-              opacity: showClone ? 1 : 0,
-              transition: 'opacity 1.5s ease-in-out',
-            }}
           >
             <source src={heroVideo} type="video/mp4" />
           </video>

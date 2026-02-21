@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -9,7 +9,7 @@ import { GlobalMap } from '@/components/agents/GlobalMap';
 import { RegionSection } from '@/components/agents/RegionSection';
 import { NetworkModelSection } from '@/components/agents/NetworkModelSection';
 import heroBg from '@/assets/Ukon_Estate_Hero.avif';
-import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
+import heroVideo from '@/assets/Ukon_Estate_hero-video-v2.mp4';
 
 import ginoBeeltPhoto from '@/assets/members/Gino_Beelt.avif';
 import pakKumisPhoto from '@/assets/members/Pak_Kumis.avif';
@@ -43,46 +43,7 @@ const regions: { key: RegionKey; filterKey: string; titleKey: string; subtextKey
 const Agents = () => {
   const { t } = useLanguage();
   const { ref, isInView } = useInView();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const cloneRef = useRef<HTMLVideoElement>(null);
-  const [showClone, setShowClone] = useState(false);
   const [activeFilter, setActiveFilter] = useState<RegionKey>('all');
-
-  useEffect(() => {
-    const video = videoRef.current;
-    const clone = cloneRef.current;
-    if (!video) return;
-
-    video.playbackRate = 0.75;
-    if (clone) clone.playbackRate = 0.75;
-
-    const FADE_DURATION = 1.5;
-
-    const handleTimeUpdate = () => {
-      if (!video.duration || !cloneRef.current) return;
-      const timeLeft = video.duration - video.currentTime;
-
-      if (timeLeft <= FADE_DURATION && !showClone) {
-        cloneRef.current.currentTime = 0;
-        cloneRef.current.play().catch(() => { });
-        setShowClone(true);
-      }
-    };
-
-    const handleSeeked = () => {
-      if (video.currentTime < FADE_DURATION) {
-        setShowClone(false);
-      }
-    };
-
-    video.addEventListener('timeupdate', handleTimeUpdate);
-    video.addEventListener('seeked', handleSeeked);
-
-    return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate);
-      video.removeEventListener('seeked', handleSeeked);
-    };
-  }, [showClone]);
 
   const handlePartnership = () => {
     const message = encodeURIComponent(`Hello, I'm interested in exploring a partnership with Ukon Estate.`);
@@ -121,29 +82,14 @@ const Agents = () => {
         {/* ── 1. Hero Section — Institutional ── */}
         <section className="relative py-16 md:py-22 overflow-hidden">
           <video
-            ref={videoRef}
             autoPlay
             loop
             muted
             playsInline
+            preload="metadata"
             poster={heroBg}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ display: 'block', transform: 'scale(1.05)' }}
-          >
-            <source src={heroVideo} type="video/mp4" />
-          </video>
-
-          <video
-            ref={cloneRef}
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            style={{
-              display: 'block',
-              transform: 'scale(1.05)',
-              opacity: showClone ? 1 : 0,
-              transition: 'opacity 1.5s ease-in-out',
-            }}
           >
             <source src={heroVideo} type="video/mp4" />
           </video>

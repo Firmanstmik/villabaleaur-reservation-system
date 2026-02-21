@@ -111,7 +111,7 @@ export function AgentsCarousel() {
           {duplicatedAgents.map((agent, index) => (
             <div
               key={`${agent.id}-${index}`}
-              className="relative flex-shrink-0 select-none"
+              className="group relative flex-shrink-0 select-none"
               style={{ width: '19vw', minWidth: '260px', maxWidth: '340px' }}
             >
               <div
@@ -121,7 +121,7 @@ export function AgentsCarousel() {
                 <img
                   src={agentPhotos[agent.id] || agent.photo}
                   alt={agent.name}
-                  className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-500 hover:scale-105 pointer-events-none"
+                  className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 group-hover:brightness-110 group-hover:saturate-[1.15] transition-all duration-300 ease-out pointer-events-none"
                   draggable={false}
                 />
               </div>
