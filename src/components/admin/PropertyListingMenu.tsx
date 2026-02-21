@@ -55,15 +55,17 @@ export function PropertyListingMenu({ property, onRefresh, onEdit }: PropertyLis
   const handleToggleFeatured = async (plan: PricingPlan) => {
     setLoading(true);
     try {
-      // In a real app, this would process payment first
-      // For now, we'll just toggle the featured flag
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
       const { error } = await supabase
         .from('properties')
         .update({
           featured: !isFeatured,
-          featured_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days default
+          featured_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         })
-        .eq('id', property.id);
+        .eq('id', property.id)
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
@@ -85,10 +87,14 @@ export function PropertyListingMenu({ property, onRefresh, onEdit }: PropertyLis
   const handleDeleteListing = async () => {
     setLoading(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
       const { error } = await supabase
         .from('properties')
         .delete()
-        .eq('id', property.id);
+        .eq('id', property.id)
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
@@ -107,7 +113,7 @@ export function PropertyListingMenu({ property, onRefresh, onEdit }: PropertyLis
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="p-3 hover:bg-white hover:shadow-md rounded-2xl transition-all text-muted-foreground">
+          <button onClick={(e) => e.stopPropagation()} className="p-3 hover:bg-white hover:shadow-md rounded-2xl transition-all text-muted-foreground">
             <MoreVertical size={18} />
           </button>
         </DropdownMenuTrigger>

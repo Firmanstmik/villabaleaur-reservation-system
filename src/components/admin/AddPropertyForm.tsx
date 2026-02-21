@@ -259,10 +259,14 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
             const loadProperty = async () => {
                 try {
                     setLoading(true);
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (!user) throw new Error('Not authenticated');
+
                     const { data, error } = await supabase
                         .from('properties')
                         .select('*')
                         .eq('id', propertyId)
+                        .eq('user_id', user.id)
                         .single();
 
                     if (error) throw error;
@@ -710,11 +714,13 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
             let error;
 
             if (isEditMode && propertyId) {
-                // Update existing property
+                // Update existing property — exclude user_id to prevent ownership reassignment
+                const { user_id: _uid, ...updatePayload } = payload;
                 const { error: updateError } = await supabase
                     .from('properties')
-                    .update(payload)
-                    .eq('id', propertyId);
+                    .update(updatePayload)
+                    .eq('id', propertyId)
+                    .eq('user_id', user.id);
                 error = updateError;
                 if (!error) {
                     toast.success('Property updated successfully!');
