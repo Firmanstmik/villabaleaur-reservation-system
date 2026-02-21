@@ -290,7 +290,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                             bedrooms: data.bedrooms?.toString() || '',
                             bathrooms: data.bathrooms?.toString() || '',
                             m2: data.m2?.toString() || '',
-                            status: data.status || 'sale',
+                            status: data.status || 'draft',
                             property_type: data.property_type || 'Villa',
                             ownership: data.ownership || 'Freehold',
                             year_built: data.year_built?.toString() || new Date().getFullYear().toString(),
@@ -497,14 +497,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
     };
 
     const handleSelectChange = (name: string, value: string) => {
-        setFormData(prev => {
-            const updates: any = { [name]: value };
-            // Sync status with price_type for market filtering
-            if (name === 'price_type') {
-                updates.status = value;
-            }
-            return { ...prev, ...updates };
-        });
+        setFormData(prev => ({ ...prev, [name]: value }));
         setHasChanges(true);
     };
 
@@ -671,7 +664,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                 bedrooms: parseInt(formData.bedrooms) || 0,
                 bathrooms: parseInt(formData.bathrooms) || 0,
                 m2: parseInt(formData.m2) || 0,
-                status: formData.status,
+                status: isEditMode ? formData.status : 'active',
                 property_type: formData.property_type,
                 ownership: formData.ownership,
                 year_built: formData.year_built,

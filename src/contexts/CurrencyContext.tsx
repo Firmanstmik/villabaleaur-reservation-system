@@ -93,9 +93,9 @@ async function fetchExchangeRates(): Promise<ExchangeRates> {
     }
   }
 
-  // All APIs failed
+  // All APIs failed — return safe 1:1 fallback so the app keeps working
   console.error('❌ All exchange rate APIs failed');
-  return null as any;
+  return { EUR: 1, USD: 1, IDR: 1, GBP: 1 };
 }
 
 // Get cached exchange rates or fetch new ones
