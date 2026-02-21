@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,13 @@ export function HeroSection() {
   const { language, t } = useLanguage();
   const { currency } = useCurrency();
   const { isAuthPanelOpen, closeAuthPanel, initialMode } = useAuthPanel();
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Programmatically trigger play as fallback for iOS Safari
+  useEffect(() => {
+    videoRef.current?.play().catch(() => {});
+  }, []);
 
   // Handle window resize for mobile detection
   useEffect(() => {
@@ -56,17 +62,16 @@ export function HeroSection() {
       >
         {/* Background Video */}
         <video
+          ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
-
           poster={heroBg}
+          src={heroVideo}
           className="absolute inset-0 w-full h-full object-cover"
           style={{ display: 'block', transform: 'scale(1.05)' }}
-        >
-          <source src={heroVideo} type="video/mp4" />
-        </video>
+        />
 
         {/* Dark Overlay — 10% opacity, above video, below content */}
         <div className="absolute inset-0 bg-black/[0.10]" />

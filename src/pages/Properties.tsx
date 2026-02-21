@@ -70,13 +70,11 @@ const Properties = () => {
             loop
             muted
             playsInline
-  
             poster={heroBg}
+            src={heroVideo}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ display: 'block', transform: 'scale(1.05)' }}
-          >
-            <source src={heroVideo} type="video/mp4" />
-          </video>
+          />
 
           {/* Dark Overlay */}
           <div className="absolute inset-0 bg-black/[0.10]" />
