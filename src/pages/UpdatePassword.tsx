@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { AlertCircle, Lock, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
+import logoImage from '@/assets/Ukon-Estate.png';
 
 const UpdatePassword = () => {
   const { language } = useLanguage();
@@ -83,10 +84,9 @@ const UpdatePassword = () => {
   // Loading state while checking session
   if (isValidSession === null) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-2">
-          <p className="text-sm text-muted-foreground">Verifying your reset link...</p>
-        </div>
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <img src={logoImage} alt="Ukon Estate" className="h-10 w-auto object-contain mb-8" />
+        <p className="text-sm text-muted-foreground">Verifying your reset link...</p>
       </div>
     );
   }
@@ -94,7 +94,8 @@ const UpdatePassword = () => {
   // Invalid or expired token
   if (isValidSession === false) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-6">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
+        <img src={logoImage} alt="Ukon Estate" className="h-10 w-auto object-contain mb-12" />
         <div className="w-full max-w-md text-center space-y-6">
           <h1 className="text-2xl font-bold text-foreground">Link expired</h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
@@ -112,7 +113,8 @@ const UpdatePassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-6">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
+      <img src={logoImage} alt="Ukon Estate" className="h-10 w-auto object-contain mb-12" />
       <div className="w-full max-w-md space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Set new password</h1>
