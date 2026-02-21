@@ -102,7 +102,7 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
     }
   };
 
-  const propertyStatus = (property.status || (property as any).price_type || 'sale') as keyof typeof statusLabelKeys;
+  const propertyStatus = ((property as any).price_type || property.status || 'sale') as keyof typeof statusLabelKeys;
   const propertyTitle = property.title || 'Property Listing';
   const propertyImage = property.image || (property as any).image_url || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80';
   const propertySqft = property.sqft || (property as any).m2 || 0;
