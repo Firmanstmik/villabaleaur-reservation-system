@@ -31,7 +31,7 @@ export const RegionSection = ({ id, title, subtext, agents, agentPhotos }: Regio
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {agents.map((agent, index) => (
           <AgentCard
             key={agent.id}

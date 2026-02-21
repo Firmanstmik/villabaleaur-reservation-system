@@ -9,10 +9,10 @@ import { useAuthPanel } from '@/contexts/AuthPanelContext';
 import { AuthPanel } from '@/components/auth/AuthPanel';
 import heroBg from '@/assets/Ukon_Estate_Hero.webp';
 import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
-import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
-import roselynnChaiPhoto from '@/assets/Roselynn_Chai.avif';
-import marcoLoureiroPhoto from '@/assets/Marco_Loureiro.avif';
-import afifahUkonPhoto from '@/assets/Afifah_Ukon.avif';
+import ginoBeeltPhoto from '@/assets/members/Gino_Beelt.avif';
+import roselynnChaiPhoto from '@/assets/members/Roselynn_Chai.avif';
+import marcoLoureiroPhoto from '@/assets/members/Marco_Loureiro.avif';
+import afifahUkonPhoto from '@/assets/members/Afifah_Ukon.avif';
 import { stats } from '@/data/mockData';
 
 // Currency symbols

@@ -11,15 +11,15 @@ import { NetworkModelSection } from '@/components/agents/NetworkModelSection';
 import heroBg from '@/assets/Ukon_Estate_Hero.webp';
 import heroVideo from '@/assets/Ukon_Estate_hero-video.mp4';
 
-import ginoBeeltPhoto from '@/assets/Gino_Beelt.avif';
-import pakKumisPhoto from '@/assets/Pak_Kumis.avif';
-import paulWenninkPhoto from '@/assets/Paul_Wennink.avif';
-import raffyUkonPhoto from '@/assets/Raffy_Ukon.avif';
-import roselynnChaiPhoto from '@/assets/Roselynn_Chai.avif';
-import marcoLoureiroPhoto from '@/assets/Marco_Loureiro.avif';
-import jeroenEgbersPhoto from '@/assets/Jeroen_Egbers.avif';
-import hendrikUkonPhoto from '@/assets/Hendrik_Ukon.avif';
-import afifahUkonPhoto from '@/assets/Afifah_Ukon.avif';
+import ginoBeeltPhoto from '@/assets/members/Gino_Beelt.avif';
+import pakKumisPhoto from '@/assets/members/Pak_Kumis.avif';
+import paulWenninkPhoto from '@/assets/members/Paul_Wennink.avif';
+import raffyUkonPhoto from '@/assets/members/Raffy_Ukon.avif';
+import roselynnChaiPhoto from '@/assets/members/Roselynn_Chai.avif';
+import marcoLoureiroPhoto from '@/assets/members/Marco_Loureiro.avif';
+import jeroenEgbersPhoto from '@/assets/members/Jeroen_Egbers.avif';
+import hendrikUkonPhoto from '@/assets/members/Hendrik_Ukon.avif';
+import afifahUkonPhoto from '@/assets/members/Afifah_Ukon.avif';
 
 const agentPhotos: Record<string, string> = {
   '1': ginoBeeltPhoto,
