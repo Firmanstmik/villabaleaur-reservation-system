@@ -46,6 +46,16 @@ function RootRedirect() {
 }
 
 /**
+ * AuthCallbackRedirect handles Supabase email verification links
+ * that arrive without a language prefix (/auth/callback → /:lang/auth/callback)
+ */
+function AuthCallbackRedirect() {
+  const { language } = useLanguage();
+  const location = useLocation();
+  return <Navigate to={`/${language}/auth/callback${location.hash}`} replace />;
+}
+
+/**
  * AppRoutes contains all the language-prefixed routes
  * Structure: /:lang/path (where lang is en, id, nl, es)
  */
@@ -59,6 +69,9 @@ function AppRoutes() {
     <Routes>
       {/* Root redirect to language-specific home */}
       <Route path="/" element={<RootRedirect />} />
+
+      {/* Redirect non-prefixed auth callback to language-prefixed version */}
+      <Route path="/auth/callback" element={<AuthCallbackRedirect />} />
 
       {/* Language-prefixed routes */}
       <Route path="/:lang" element={<Index />} />
