@@ -115,7 +115,7 @@ const propertySchema = z.object({
     }
 );
 
-type Step = 'basic' | 'details' | 'media' | 'amenities' | 'performance';
+type Step = 'basic' | 'details' | 'media' | 'amenities' | 'review' | 'performance';
 
 interface AddPropertyFormProps {
     onComplete: () => void;
@@ -404,7 +404,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
         { id: 'details', label: 'Specifications', icon: Layers },
         { id: 'media', label: 'Media', icon: ImageIcon },
         { id: 'amenities', label: 'Amenities', icon: ShieldCheck },
-        { id: 'performance', label: isEditMode ? 'Performance' : 'Review', icon: ClipboardCheck },
+        { id: isEditMode ? 'performance' : 'review', label: isEditMode ? 'Performance' : 'Review', icon: ClipboardCheck },
     ];
 
     // Generate optimization suggestions based on form data
@@ -831,6 +831,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
         if (currentStep === 'details') setCurrentStep('basic');
         else if (currentStep === 'media') setCurrentStep('details');
         else if (currentStep === 'amenities') setCurrentStep('media');
+        else if (currentStep === 'review') setCurrentStep('amenities');
         else if (currentStep === 'performance') setCurrentStep('amenities');
     };
 
@@ -1873,8 +1874,8 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                         </motion.div>
                     )}
 
-                    {currentStep === 'performance' && (
-                        <motion.div key="performance" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="grid grid-cols-3 gap-8">
+                    {currentStep === 'review' && (
+                        <motion.div key="review" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="grid grid-cols-3 gap-8">
                             {/* Left: Preview (2/3) */}
                             <div className="col-span-2">
                                 <div className="p-6 bg-secondary/5 rounded-[2.5rem] border border-border/50">
@@ -1955,7 +1956,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                     </Button>
                 </div>
 
-                {currentStep === 'performance' ? (
+                {(currentStep === 'performance' || currentStep === 'review') ? (
                     <Button
                         onClick={handleSubmit}
                         disabled={loading || uploading}
