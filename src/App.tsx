@@ -3,27 +3,27 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { AuthPanelProvider, useAuthPanel } from "@/contexts/AuthPanelContext";
 import { AuthPanel } from "@/components/auth/AuthPanel";
-import Index from "./pages/Index";
-import Properties from "./pages/Properties";
-import PropertyDetail from "./pages/PropertyDetail";
 
-// Core Layout components
-import About from "./pages/About";
-import Agents from "./pages/Agents";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Account from "./pages/Account";
-import AuthCallback from "./pages/AuthCallback";
-import NotFound from "./pages/NotFound";
+// Route-based code splitting — each page loads on demand
+const Index = lazy(() => import("./pages/Index"));
+const Properties = lazy(() => import("./pages/Properties"));
+const PropertyDetail = lazy(() => import("./pages/PropertyDetail"));
+const About = lazy(() => import("./pages/About"));
+const Agents = lazy(() => import("./pages/Agents"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const Login = lazy(() => import("./pages/Login"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Account = lazy(() => import("./pages/Account"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
@@ -48,8 +48,13 @@ function RootRedirect() {
  * AppRoutes contains all the language-prefixed routes
  * Structure: /:lang/path (where lang is en, id, nl, es)
  */
+function PageLoader() {
+  return <div className="min-h-screen bg-background" />;
+}
+
 function AppRoutes() {
   return (
+    <Suspense fallback={<PageLoader />}>
     <Routes>
       {/* Root redirect to language-specific home */}
       <Route path="/" element={<RootRedirect />} />
@@ -70,6 +75,7 @@ function AppRoutes() {
       {/* Catch-all 404 */}
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </Suspense>
   );
 }
 
