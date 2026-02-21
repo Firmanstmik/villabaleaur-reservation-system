@@ -23,6 +23,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Account = lazy(() => import("./pages/Account"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+const UpdatePassword = lazy(() => import("./pages/UpdatePassword"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -71,6 +72,7 @@ function AppRoutes() {
       <Route path="/:lang/dashboard" element={<Dashboard />} />
       <Route path="/:lang/account" element={<Account />} />
       <Route path="/:lang/auth/callback" element={<AuthCallback />} />
+      <Route path="/:lang/auth/update-password" element={<UpdatePassword />} />
 
       {/* Catch-all 404 */}
       <Route path="*" element={<NotFound />} />

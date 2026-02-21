@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { AlertCircle, Eye, EyeOff, Mail, Lock, CheckCircle2, X, Home, Building2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-type AuthStep = 'credentials' | 'magic-link-sent';
+type AuthStep = 'credentials' | 'magic-link-sent' | 'reset-request' | 'reset-sent';
 type AuthMode = 'login' | 'signup';
 
 interface AuthPanelProps {
@@ -48,7 +48,7 @@ export const AuthPanel = React.memo(
     // Refs and context
     const emailInputRef = useRef<HTMLInputElement>(null);
     const passwordInputRef = useRef<HTMLInputElement>(null);
-    const { signIn, signUp, sendMagicLink } = useAuth();
+    const { signIn, signUp, sendMagicLink, resetPassword } = useAuth();
     const { language } = useLanguage();
     const navigate = useNavigate();
 
@@ -293,6 +293,41 @@ export const AuthPanel = React.memo(
       }
     };
 
+    // Reset password handler
+    const handleResetPassword = async () => {
+      if (!email.trim()) {
+        setError('Please enter your email');
+        return;
+      }
+
+      if (!validateEmail(email)) {
+        setError('Please enter a valid email address');
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        await resetPassword(email, language);
+        setAuthStep('reset-sent');
+      } catch (err: any) {
+        const errorMessage = err?.message || 'Failed to send reset link. Please try again.';
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Return to login from reset flow
+    const handleBackToLogin = () => {
+      setAuthStep('credentials');
+      setAuthMode('login');
+      setEmail('');
+      setError(null);
+    };
+
     // Panel position and sizing based on variant
     const panelPositioning = {
       hero: 'absolute inset-y-0 right-0',
@@ -375,7 +410,9 @@ export const AuthPanel = React.memo(
                       Client Portal
                     </h2>
                     <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                      Access your saved properties and personalized listings.
+                      {authStep === 'reset-request' || authStep === 'reset-sent'
+                        ? 'Reset your password securely.'
+                        : 'Access your saved properties and personalized listings.'}
                     </p>
                   </motion.div>
                 </div>
@@ -460,9 +497,18 @@ export const AuthPanel = React.memo(
                         <>
                           {/* Password field for login */}
                           <div>
-                            <Label htmlFor="password" className="text-sm font-medium mb-2 block">
-                              Password
-                            </Label>
+                            <div className="flex items-center justify-between mb-2">
+                              <Label htmlFor="password" className="text-sm font-medium">
+                                Password
+                              </Label>
+                              <button
+                                type="button"
+                                onClick={() => { setAuthStep('reset-request'); setError(null); }}
+                                className="text-xs text-muted-foreground hover:text-ukon-red transition-colors"
+                              >
+                                Forgot password?
+                              </button>
+                            </div>
                             <div className="relative">
                               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
                               <Input
@@ -775,6 +821,73 @@ export const AuthPanel = React.memo(
                             ? `Resend in ${resendCountdown}s`
                             : 'Resend link'}
                         </button>
+                      </motion.div>
+                    </div>
+                  )}
+                  {/* RESET REQUEST STEP */}
+                  {authStep === 'reset-request' && (
+                    <div className="space-y-6">
+                      <div>
+                        <Label htmlFor="reset-email" className="text-sm font-medium mb-2 block">
+                          Email address
+                        </Label>
+                        <div className="relative">
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                          <Input
+                            id="reset-email"
+                            type="email"
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={(e) => {
+                              setEmail(e.target.value);
+                              setError(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleResetPassword();
+                            }}
+                            disabled={loading}
+                            className="h-14 pl-12 pr-5 text-base rounded-xl border-border/50 focus:border-ukon-navy/50 focus:ring-2 focus:ring-ukon-navy/10 transition-all duration-200"
+                          />
+                        </div>
+                      </div>
+
+                      <Button
+                        onClick={handleResetPassword}
+                        disabled={loading}
+                        className="w-full h-14 text-base font-semibold rounded-xl bg-ukon-navy text-white hover:bg-ukon-navy/90 hover:shadow-lg hover:shadow-ukon-navy/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {loading ? 'Sending...' : 'Send reset link'}
+                      </Button>
+
+                      <button
+                        type="button"
+                        onClick={handleBackToLogin}
+                        className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+                      >
+                        Back to login
+                      </button>
+                    </div>
+                  )}
+
+                  {/* RESET SENT STEP */}
+                  {authStep === 'reset-sent' && (
+                    <div className="flex flex-col items-center justify-center py-12">
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="text-center"
+                      >
+                        <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+                          If an account exists for this email, a reset link has been sent.
+                        </p>
+
+                        <Button
+                          onClick={handleBackToLogin}
+                          className="w-full h-14 text-base font-semibold rounded-xl bg-ukon-navy text-white hover:bg-ukon-navy/90 hover:shadow-lg hover:shadow-ukon-navy/20 transition-all duration-300"
+                        >
+                          Return to login
+                        </Button>
                       </motion.div>
                     </div>
                   )}

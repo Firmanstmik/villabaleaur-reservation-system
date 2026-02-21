@@ -12,6 +12,7 @@ export interface AuthContextType {
   signUp: (email: string, password: string, metadata: { name: string; user_type: 'buyer' | 'agent' }) => Promise<void>;
   signOut: () => Promise<void>;
   sendMagicLink: (email: string) => Promise<void>;
+  resetPassword: (email: string, language: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -157,6 +158,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const resetPassword = async (email: string, language: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/${language}/auth/update-password`,
+      });
+
+      if (error) {
+        throw error;
+      }
+    } catch (error: any) {
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        throw new Error('Unable to connect to authentication service. Please check your internet connection and try again.');
+      }
+      throw error;
+    }
+  };
+
   const value: AuthContextType = {
     user,
     session,
@@ -166,6 +184,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signUp,
     signOut,
     sendMagicLink,
+    resetPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
