@@ -60,18 +60,27 @@ export function HeroSection() {
         className="relative w-full overflow-hidden"
         style={{ height: '85vh', borderRadius: isMobile ? '5vw' : '2.5vw' }}
       >
-        {/* Background Video */}
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster={heroBg}
-          src={heroVideo}
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ display: 'block', transform: 'scale(1.05)' }}
-        />
+        {/* Background Video (desktop/tablet) or Static Image (mobile) */}
+        {isMobile ? (
+          <img
+            src={heroBg}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ display: 'block', transform: 'scale(1.05)' }}
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster={heroBg}
+            src={heroVideo}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ display: 'block', transform: 'scale(1.05)' }}
+          />
+        )}
 
         {/* Dark Overlay — 10% opacity, above video, below content */}
         <div className="absolute inset-0 bg-black/[0.10]" />
