@@ -60,7 +60,7 @@ const Blog = () => {
             loop
             muted
             playsInline
-            preload="metadata"
+  
             poster={heroBg}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ display: 'block', transform: 'scale(1.05)' }}
