@@ -84,8 +84,8 @@ const UpdatePassword = () => {
   // Loading state while checking session
   if (isValidSession === null) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-        <img src={logoImage} alt="Ukon Estate" className="h-10 w-auto object-contain mb-8" />
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center pb-24">
+        <img src={logoImage} alt="Ukon Estate" className="h-16 w-auto object-contain mb-10" />
         <p className="text-sm text-muted-foreground">Verifying your reset link...</p>
       </div>
     );
@@ -94,8 +94,8 @@ const UpdatePassword = () => {
   // Invalid or expired token
   if (isValidSession === false) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
-        <img src={logoImage} alt="Ukon Estate" className="h-10 w-auto object-contain mb-12" />
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center pb-24 px-6">
+        <img src={logoImage} alt="Ukon Estate" className="h-16 w-auto object-contain mb-14" />
         <div className="w-full max-w-md text-center space-y-6">
           <h1 className="text-2xl font-bold text-foreground">Link expired</h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
@@ -113,8 +113,8 @@ const UpdatePassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
-      <img src={logoImage} alt="Ukon Estate" className="h-10 w-auto object-contain mb-12" />
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center pb-24 px-6">
+      <img src={logoImage} alt="Ukon Estate" className="h-16 w-auto object-contain mb-14" />
       <div className="w-full max-w-md space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Set new password</h1>
