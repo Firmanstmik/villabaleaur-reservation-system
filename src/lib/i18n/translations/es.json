@@ -41,6 +41,48 @@
     "noPropertiesFound": "No se encontraron propiedades que coincidan con sus criterios.",
     "notFound": "Propiedad no encontrada"
   },
+  "filters": {
+    "transactionType": {
+      "all": "Todos",
+      "sale": "En Venta",
+      "rent": "En Alquiler"
+    },
+    "country": "País",
+    "location": "Ubicación",
+    "locationPlaceholder": "Ciudad, distrito, dirección...",
+    "priceRange": "Rango de Precio",
+    "bedrooms": "Dormitorios",
+    "beds": "Dormitorios",
+    "propertyType": "Tipo de Propiedad",
+    "allTypes": "Todos los Tipos",
+    "propertyTypes": {
+      "villa": "Villa",
+      "house": "Casa",
+      "apartment": "Apartamento",
+      "penthouse": "Ático",
+      "commercial": "Comercial",
+      "land": "Terreno"
+    },
+    "refine": "Refinar",
+    "any": "Cualquiera",
+    "clearAll": "Borrar Todo",
+    "propertiesFound": "propiedades encontradas",
+    "bathrooms": "Baños",
+    "baths": "Baños",
+    "interiorSize": "Superficie Interior (m²)",
+    "minSize": "Mín m²",
+    "maxSize": "Máx m²",
+    "lifestyle": {
+      "waterfront": "Frente al Agua",
+      "beachfront": "Frente a la Playa",
+      "city_center": "Centro de la Ciudad",
+      "gated": "Cerrada",
+      "pool": "Piscina",
+      "garden": "Jardín"
+    },
+    "minPrice": "Mín",
+    "maxPrice": "Máx"
+  },
   "propertyDetail": {
     "description": "Descripción",
     "homeInfoAmenities": "Información del Hogar y Servicios",

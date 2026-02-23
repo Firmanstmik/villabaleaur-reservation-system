@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState, useTransition, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useTransition, ReactNode } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 export type SupportedLanguage = 'en' | 'id' | 'nl' | 'es';
@@ -7,7 +7,7 @@ export interface LanguageContextType {
   language: SupportedLanguage;
   translations: Record<string, any>;
   setLanguage: (lang: SupportedLanguage) => void;
-  t: (key: string) => string;
+  t: (key?: string) => string;
   isLoading: boolean;
   isPending: boolean;
   availableLanguages: SupportedLanguage[];
@@ -30,6 +30,12 @@ async function loadTranslations(lang: SupportedLanguage): Promise<Record<string,
     }
     return {};
   }
+}
+
+// Resolve a dot-notation key against a translations object
+function resolveKey(key: string, obj: Record<string, any>): string | undefined {
+  const value = key.split('.').reduce<any>((acc, part) => acc?.[part], obj);
+  return typeof value === 'string' ? value : undefined;
 }
 
 // Auto-detect language from browser
@@ -78,13 +84,25 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
 
+  // Cache English translations for fallback
+  const enFallbackRef = useRef<Record<string, any>>({});
+
   // Load translations on mount and language change
   useEffect(() => {
     let isMounted = true;
 
     const load = async () => {
       setIsLoading(true);
-      const trans = await loadTranslations(language);
+
+      // Always ensure English fallback is loaded
+      if (Object.keys(enFallbackRef.current).length === 0) {
+        enFallbackRef.current = await loadTranslations('en');
+      }
+
+      const trans = language === 'en'
+        ? enFallbackRef.current
+        : await loadTranslations(language);
+
       if (isMounted) {
         setTranslations(trans);
         setIsLoading(false);
@@ -134,22 +152,28 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     });
   };
 
-  // Translation function with dot notation support
-  const t = (key: string): string => {
-    const keys = key.split('.');
-    let value: any = translations;
+  // Translation function: active locale → English fallback → raw key
+  const t = (key?: string): string => {
+    if (typeof key !== 'string') return '';
 
-    for (const k of keys) {
-      if (value && typeof value === 'object' && k in value) {
-        value = value[k];
-      } else {
-        // If key not found in current language, return the key as fallback
-        // (Do not recurse to avoid infinite loops)
-        return key;
+    // Try active locale first
+    const value = resolveKey(key, translations);
+    if (value !== undefined) return value;
+
+    // Fallback to English
+    const fallback = resolveKey(key, enFallbackRef.current);
+    if (fallback !== undefined) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`[i18n] Missing "${language}" translation for: ${key}`);
       }
+      return fallback;
     }
 
-    return typeof value === 'string' ? value : key;
+    // Last resort: return the key itself
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`[i18n] Missing translation key in all locales: ${key}`);
+    }
+    return key;
   };
 
   // Memoize context value to prevent unnecessary re-renders
@@ -162,6 +186,11 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     isPending,
     availableLanguages: SUPPORTED_LANGUAGES,
   }), [language, translations, isLoading, isPending]);
+
+  // Block render until translations are loaded to prevent raw key flash
+  if (isLoading) {
+    return <div className="min-h-screen bg-background" />;
+  }
 
   return (
     <LanguageContext.Provider value={value}>

@@ -41,6 +41,48 @@
     "noPropertiesFound": "Geen panden gevonden die aan uw criteria voldoen.",
     "notFound": "Woning niet gevonden"
   },
+  "filters": {
+    "transactionType": {
+      "all": "Alle",
+      "sale": "Te Koop",
+      "rent": "Te Huur"
+    },
+    "country": "Land",
+    "location": "Locatie",
+    "locationPlaceholder": "Stad, wijk, adres...",
+    "priceRange": "Prijsklasse",
+    "bedrooms": "Slaapkamers",
+    "beds": "Slaapkamers",
+    "propertyType": "Woningtype",
+    "allTypes": "Alle Types",
+    "propertyTypes": {
+      "villa": "Villa",
+      "house": "Huis",
+      "apartment": "Appartement",
+      "penthouse": "Penthouse",
+      "commercial": "Commercieel",
+      "land": "Grond"
+    },
+    "refine": "Verfijnen",
+    "any": "Alle",
+    "clearAll": "Alles Wissen",
+    "propertiesFound": "woningen gevonden",
+    "bathrooms": "Badkamers",
+    "baths": "Badkamers",
+    "interiorSize": "Interieur Oppervlakte (m²)",
+    "minSize": "Min m²",
+    "maxSize": "Max m²",
+    "lifestyle": {
+      "waterfront": "Waterkant",
+      "beachfront": "Strandlocatie",
+      "city_center": "Stadscentrum",
+      "gated": "Beveiligd",
+      "pool": "Zwembad",
+      "garden": "Tuin"
+    },
+    "minPrice": "Min",
+    "maxPrice": "Max"
+  },
   "propertyDetail": {
     "description": "Omschrijving",
     "homeInfoAmenities": "Huisinfo & Voorzieningen",

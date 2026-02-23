@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ukonLogo from '@/assets/Ukon Estate-02.png';
+import { DescriptionRenderer } from '@/components/property/DescriptionRenderer';
 
 interface ListingPreviewProps {
     data: any;
@@ -87,9 +88,13 @@ const ListingPreview = ({ data, onClose, embedded = false }: ListingPreviewProps
                         {/* Description */}
                         <section>
                             <h3 className="text-2xl font-bold mb-6 text-[#0e2e50]">Description</h3>
-                            <div className="prose prose-slate max-w-none text-muted-foreground text-lg leading-relaxed whitespace-pre-line">
-                                {data.description || 'No description provided.'}
-                            </div>
+                            {data.description_json ? (
+                                <DescriptionRenderer json={data.description_json} />
+                            ) : (
+                                <div className="prose prose-slate max-w-none text-muted-foreground text-lg leading-relaxed whitespace-pre-line">
+                                    {data.description_summary || data.description || 'No description provided.'}
+                                </div>
+                            )}
                         </section>
 
                         {/* Specs */}

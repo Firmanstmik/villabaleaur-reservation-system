@@ -41,6 +41,48 @@
     "noPropertiesFound": "Tidak ada properti yang sesuai dengan kriteria Anda.",
     "notFound": "Properti tidak ditemukan"
   },
+  "filters": {
+    "transactionType": {
+      "all": "Semua",
+      "sale": "Dijual",
+      "rent": "Disewa"
+    },
+    "country": "Negara",
+    "location": "Lokasi",
+    "locationPlaceholder": "Kota, distrik, alamat...",
+    "priceRange": "Rentang Harga",
+    "bedrooms": "Kamar Tidur",
+    "beds": "Kamar Tidur",
+    "propertyType": "Tipe Properti",
+    "allTypes": "Semua Tipe",
+    "propertyTypes": {
+      "villa": "Vila",
+      "house": "Rumah",
+      "apartment": "Apartemen",
+      "penthouse": "Penthouse",
+      "commercial": "Komersial",
+      "land": "Tanah"
+    },
+    "refine": "Saring",
+    "any": "Semua",
+    "clearAll": "Hapus Semua",
+    "propertiesFound": "properti ditemukan",
+    "bathrooms": "Kamar Mandi",
+    "baths": "Kamar Mandi",
+    "interiorSize": "Luas Interior (m²)",
+    "minSize": "Min m²",
+    "maxSize": "Max m²",
+    "lifestyle": {
+      "waterfront": "Tepi Air",
+      "beachfront": "Tepi Pantai",
+      "city_center": "Pusat Kota",
+      "gated": "Berpagar",
+      "pool": "Kolam Renang",
+      "garden": "Taman"
+    },
+    "minPrice": "Min",
+    "maxPrice": "Maks"
+  },
   "propertyDetail": {
     "description": "Deskripsi",
     "homeInfoAmenities": "Info Rumah & Fasilitas",

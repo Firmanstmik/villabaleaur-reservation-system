@@ -76,6 +76,12 @@ export default defineConfig(({ mode }) => ({
             '@supabase/supabase-js',
             '@tanstack/react-query',
           ],
+          // Rich text editor — only needed on Dashboard
+          'vendor-tiptap': [
+            '@tiptap/react',
+            '@tiptap/starter-kit',
+            '@tiptap/extension-placeholder',
+          ],
         },
       },
     },

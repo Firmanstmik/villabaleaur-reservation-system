@@ -48,6 +48,7 @@ import {
 import { supabase } from '@/lib/supabase';
 import { PropertyMap } from '@/components/map/PropertyMap';
 import NearbyAmenities from '@/components/property/NearbyAmenities';
+import { DescriptionRenderer } from '@/components/property/DescriptionRenderer';
 
 const PropertyDetail = () => {
     const { id } = useParams();
@@ -401,24 +402,26 @@ const PropertyDetail = () => {
                             {/* Description */}
                             <section>
                                 <h3 className="text-2xl font-bold mb-6">{t('propertyDetail.description')}</h3>
-                                <div className="prose prose-slate max-w-none text-muted-foreground text-lg leading-relaxed">
-                                    {property.description ? (
+                                {property.description_json ? (
+                                    <DescriptionRenderer json={property.description_json} />
+                                ) : property.description ? (
+                                    <div className="max-w-[680px] text-lg leading-[1.75] text-muted-foreground">
                                         <p>{property.description}</p>
-                                    ) : (
-                                        <>
-                                            <p>
-                                                Experience the pinnacle of luxury living in this exquisite {property.title.toLowerCase()}.
-                                                Nestled in a prime location, this property offers a rare
-                                                combination of modern design, unmatched comfort, and strategic location.
-                                            </p>
-                                            <p className="mt-4">
-                                                The interior boasts high ceilings, floor-to-ceiling windows that flood the rooms with natural light,
-                                                and premium finishes throughout. Whether you're looking for a permanent residence or an
-                                                investment opportunity, this property delivers on every front.
-                                            </p>
-                                        </>
-                                    )}
-                                </div>
+                                    </div>
+                                ) : (
+                                    <div className="max-w-[680px] text-lg leading-[1.75] text-muted-foreground">
+                                        <p>
+                                            Experience the pinnacle of luxury living in this exquisite {property.title.toLowerCase()}.
+                                            Nestled in a prime location, this property offers a rare
+                                            combination of modern design, unmatched comfort, and strategic location.
+                                        </p>
+                                        <p className="mt-4">
+                                            The interior boasts high ceilings, floor-to-ceiling windows that flood the rooms with natural light,
+                                            and premium finishes throughout. Whether you're looking for a permanent residence or an
+                                            investment opportunity, this property delivers on every front.
+                                        </p>
+                                    </div>
+                                )}
                             </section>
 
                             {/* Property Details & Amenities */}

@@ -82,6 +82,8 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { ListingControlHeader } from './ListingControlHeader';
 import { PerformanceSnapshot } from './PerformanceSnapshot';
 import { OptimizationSuggestions, type OptimizationSuggestion } from './OptimizationSuggestions';
+import { DescriptionEditor } from './DescriptionEditor';
+import { tiptapJsonToPlainText, plainTextToTiptapJson, type JSONContent } from '@/lib/tiptap-utils';
 import { MarketIntelligence } from './MarketIntelligence';
 import { LuxuryTabNavigation, type Tab as TabType } from './LuxuryTabNavigation';
 import { PhaseIndicator } from './PhaseIndicator';
@@ -189,6 +191,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
         title: '',
         description: '',
         description_summary: '',
+        description_json: null as JSONContent | null,
         description_interior: '',
         description_outdoor: '',
         description_investment: '',
@@ -277,6 +280,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                             title: data.title || '',
                             description: data.description || '',
                             description_summary: data.description || '',
+                            description_json: data.description_json || (data.description ? plainTextToTiptapJson(data.description) : null),
                             description_interior: data.description_interior || '',
                             description_outdoor: data.description_outdoor || '',
                             description_investment: data.description_investment || '',
@@ -655,6 +659,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
             const payload = {
                 title: formData.title,
                 description: formData.description_summary,
+                description_json: formData.description_json,
                 address: formData.address,
                 latitude: formData.latitude,
                 longitude: formData.longitude,
@@ -749,6 +754,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
             const payload = {
                 title: formData.title,
                 description: formData.description_summary,
+                description_json: formData.description_json,
                 address: formData.address,
                 latitude: formData.latitude,
                 longitude: formData.longitude,
@@ -1150,12 +1156,18 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                             {/* Property Description */}
                             <div className="space-y-2">
                                 <label className="text-sm font-bold text-[#0e2e50] ml-1">Property Description</label>
-                                <Textarea
-                                    name="description_summary"
-                                    placeholder="Describe the property's unique features, floors, and vibe..."
-                                    value={formData.description_summary}
-                                    onChange={handleInputChange}
-                                    className={`min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed ${errors.description_summary ? 'border-ukon-red ring-1 ring-ukon-red' : ''}`}
+                                <DescriptionEditor
+                                    content={formData.description_json}
+                                    onChange={(json) => {
+                                        const plainText = tiptapJsonToPlainText(json);
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            description_json: json,
+                                            description_summary: plainText,
+                                        }));
+                                        setHasChanges(true);
+                                    }}
+                                    error={errors.description_summary}
                                 />
                                 {errors.description_summary && <p className="text-xs text-ukon-red font-bold ml-2">{errors.description_summary}</p>}
                             </div>
@@ -1740,12 +1752,18 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                         <motion.div key="amenities" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
                             <div className="space-y-2">
                                 <label className="text-sm font-bold text-[#0e2e50] ml-1">Property Description</label>
-                                <Textarea
-                                    name="description_summary"
-                                    placeholder="Describe the property's unique features, floors, and vibe..."
-                                    value={formData.description_summary}
-                                    onChange={handleInputChange}
-                                    className={`min-h-[200px] rounded-[2rem] bg-secondary/5 border-border resize-none p-6 font-medium leading-relaxed ${errors.description_summary ? 'border-ukon-red ring-1 ring-ukon-red' : ''}`}
+                                <DescriptionEditor
+                                    content={formData.description_json}
+                                    onChange={(json) => {
+                                        const plainText = tiptapJsonToPlainText(json);
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            description_json: json,
+                                            description_summary: plainText,
+                                        }));
+                                        setHasChanges(true);
+                                    }}
+                                    error={errors.description_summary}
                                 />
                                 {errors.description_summary && <p className="text-xs text-ukon-red font-bold ml-2">{errors.description_summary}</p>}
                             </div>

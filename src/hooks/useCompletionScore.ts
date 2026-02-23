@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { analyzeContent, type JSONContent } from '@/lib/tiptap-utils';
 
 interface CompletionScoreReturn {
   score: number;
@@ -10,7 +11,7 @@ interface CompletionScoreReturn {
 export function useCompletionScore(formData: any): CompletionScoreReturn {
   return useMemo(() => {
     let score = 0;
-    const maxScore = 100;
+    const maxScore = 115;
     const missing: string[] = [];
 
     // Title (10 points)
@@ -112,7 +113,36 @@ export function useCompletionScore(formData: any): CompletionScoreReturn {
       score += 5;
     }
 
-    // Cap score at maxScore (shouldn't exceed it due to the breakdown above)
+    // Rich text formatting bonuses (5 + 5 + 5 = 15 points)
+    const descJson = formData.description_json as JSONContent | null;
+    if (descJson) {
+      const analysis = analyzeContent(descJson);
+
+      // Uses headings (5 points)
+      if (analysis.headingCount >= 1) {
+        score += 5;
+      } else {
+        missing.push('Use headings to structure description');
+      }
+
+      // 500+ words (5 points)
+      if (analysis.wordCount >= 500) {
+        score += 5;
+      } else {
+        missing.push('Write 500+ words in description');
+      }
+
+      // Uses list formatting (5 points)
+      if (analysis.listCount >= 1) {
+        score += 5;
+      } else {
+        missing.push('Add a feature list to description');
+      }
+    } else {
+      missing.push('Use rich text formatting in description');
+    }
+
+    // Cap score at maxScore
     const cappedScore = Math.min(score, maxScore);
     const percent = Math.round((cappedScore / maxScore) * 100);
 
