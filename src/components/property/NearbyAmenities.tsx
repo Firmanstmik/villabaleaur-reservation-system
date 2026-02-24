@@ -5,6 +5,12 @@
 
 import { NearbyPOI, POI_CATEGORIES } from '@/types/poi';
 import { Info } from 'lucide-react';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion';
 
 interface NearbyAmenitiesProps {
   amenities: NearbyPOI[] | undefined;
@@ -51,48 +57,48 @@ const NearbyAmenities = ({
     .sort((a, b) => (a.config?.priority || 999) - (b.config?.priority || 999))
     .filter((item) => item.config); // Filter out unknown categories
 
-  return (
-    <div className="space-y-8">
-      {sortedCategories.map(({ category, config, items }) => (
-        <div key={category} className="space-y-4">
-          {/* Category Header */}
-          <h5 className="text-sm font-bold text-[#0e2e50] flex items-center gap-2">
-            <div className="w-1 h-5 bg-[#0e2e50] rounded-full" />
-            <span className="text-lg">
-              {config.icon} {config.label}
-            </span>
-          </h5>
+  // Expand top 2 categories by default (highest priority)
+  const defaultExpanded = sortedCategories.slice(0, 2).map((c) => c.category);
 
-          {/* Amenities Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {items.map((amenity, idx) => (
-              <div
-                key={`${category}-${idx}`}
-                className="flex items-center justify-between p-4 bg-secondary/10 rounded-xl border border-border/50 hover:border-border hover:bg-secondary/20 transition-all"
-              >
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-2xl shadow-sm flex-shrink-0">
-                    {config.icon}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-semibold text-sm text-[#0e2e50] truncate">
-                      {amenity.name}
-                    </p>
-                    {amenity.address && (
-                      <p className="text-xs text-muted-foreground truncate">
-                        {amenity.address}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <span className="text-xs font-bold px-3 py-1 bg-[#0e2e50]/5 text-[#0e2e50] rounded-lg whitespace-nowrap ml-2">
-                  {amenity.distance_display}
+  return (
+    <div>
+      <Accordion type="multiple" defaultValue={defaultExpanded}>
+        {sortedCategories.map(({ category, config, items }) => (
+          <AccordionItem key={category} value={category} className="border-none">
+            <AccordionTrigger className="py-3 hover:no-underline">
+              <span className="flex items-center gap-2 text-sm font-bold text-[#0e2e50]">
+                <span className="text-base">{config.icon}</span>
+                {config.label}
+                <span className="text-[11px] font-semibold text-muted-foreground bg-secondary/20 px-2 py-0.5 rounded-full">
+                  {items.length}
                 </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {items.map((amenity, idx) => (
+                  <div
+                    key={`${category}-${idx}`}
+                    className="flex items-center justify-between p-3 bg-secondary/10 rounded-xl border border-border/50 hover:border-border hover:bg-secondary/20 transition-all"
+                  >
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-lg shadow-sm flex-shrink-0">
+                        {config.icon}
+                      </div>
+                      <p className="font-semibold text-sm text-[#0e2e50] truncate min-w-0">
+                        {amenity.name}
+                      </p>
+                    </div>
+                    <span className="text-xs font-bold px-3 py-1 bg-[#0e2e50]/5 text-[#0e2e50] rounded-lg whitespace-nowrap ml-2">
+                      {amenity.distance_display}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      ))}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
 
       {/* Metadata */}
       {amenities.some((a) => a.custom) && (

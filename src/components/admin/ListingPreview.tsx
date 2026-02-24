@@ -8,6 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import ukonLogo from '@/assets/Ukon Estate-02.png';
 import { DescriptionRenderer } from '@/components/property/DescriptionRenderer';
+import { getEmbedUrl } from '@/lib/video-utils';
 
 interface ListingPreviewProps {
     data: any;
@@ -96,6 +97,22 @@ const ListingPreview = ({ data, onClose, embedded = false }: ListingPreviewProps
                                 </div>
                             )}
                         </section>
+
+                        {/* Video Tour */}
+                        {data.video_url && getEmbedUrl(data.video_url) && (
+                            <section>
+                                <h3 className="text-2xl font-bold mb-6 text-[#0e2e50]">Video Tour</h3>
+                                <div className="rounded-2xl overflow-hidden border border-border/50 aspect-video">
+                                    <iframe
+                                        src={getEmbedUrl(data.video_url)!}
+                                        className="w-full h-full"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        title="Property Video Tour"
+                                    />
+                                </div>
+                            </section>
+                        )}
 
                         {/* Specs */}
                         <section className="p-10 bg-secondary/10 rounded-[2.5rem] border border-border">

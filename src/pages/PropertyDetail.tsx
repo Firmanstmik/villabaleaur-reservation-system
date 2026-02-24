@@ -49,6 +49,7 @@ import { supabase } from '@/lib/supabase';
 import { PropertyMap } from '@/components/map/PropertyMap';
 import NearbyAmenities from '@/components/property/NearbyAmenities';
 import { DescriptionRenderer } from '@/components/property/DescriptionRenderer';
+import { getEmbedUrl } from '@/lib/video-utils';
 
 const PropertyDetail = () => {
     const { id } = useParams();
@@ -86,7 +87,8 @@ const PropertyDetail = () => {
                         listingCode: data.listing_code || data.listingCode,
                         description: data.description || data.description,
                         nearbyAmenities: data.nearby_amenities || data.nearbyAmenities,
-                        images: data.images || [data.image_url || data.image]
+                        images: data.images || [data.image_url || data.image],
+                        video_url: data.video_url
                     };
                     setProperty(normalized);
 
@@ -424,6 +426,22 @@ const PropertyDetail = () => {
                                 )}
                             </section>
 
+                            {/* Video Tour */}
+                            {property.video_url && getEmbedUrl(property.video_url) && (
+                                <section>
+                                    <h3 className="text-2xl font-bold mb-6">Video Tour</h3>
+                                    <div className="rounded-2xl overflow-hidden border border-border/50 aspect-video">
+                                        <iframe
+                                            src={getEmbedUrl(property.video_url)!}
+                                            className="w-full h-full"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                            title="Property Video Tour"
+                                        />
+                                    </div>
+                                </section>
+                            )}
+
                             {/* Property Details & Amenities */}
                             <section>
                                 <h3 className="text-2xl font-bold mb-8">{t('propertyDetail.homeInfoAmenities')}</h3>
@@ -577,12 +595,15 @@ const PropertyDetail = () => {
                                         <h4 className="text-lg font-bold border-b border-border pb-2">{t('propertyDetail.overview')}</h4>
                                         <div className="space-y-4">
                                             {[
-                                                { labelKey: 'propertyDetail.propertyCode', value: property.listingCode },
+                                                { labelKey: 'propertyDetail.propertyCode', value: property.listing_code || property.listingCode },
+                                                { labelKey: 'propertyDetail.bedrooms', value: property.bedrooms },
+                                                { labelKey: 'propertyDetail.bathrooms', value: property.bathrooms },
+                                                { labelKey: 'propertyDetail.buildingArea', value: property.m2 ? `${property.m2} m²` : null },
+                                                { labelKey: 'propertyDetail.landSize', value: property.land_size ? `${property.land_size} m²` : null },
+                                                { labelKey: 'propertyDetail.yearBuilt', value: property.year_built || property.yearBuilt },
                                                 { labelKey: 'propertyDetail.ownership', value: property.ownership },
-                                                { labelKey: 'propertyDetail.yearOfConstruction', value: property.yearBuilt },
-                                                { labelKey: 'propertyDetail.buildingArea', value: property.buildingArea },
-                                                { labelKey: 'propertyDetail.surfaceArea', value: property.surfaceArea },
-                                                { labelKey: 'propertyDetail.status', value: property.status === 'investment' ? t('properties.forInvestment') : t('properties.available') },
+                                                { labelKey: 'propertyDetail.furnishing', value: ({ 'unfurnished': 'Unfurnished', 'semi-furnished': 'Semi-Furnished', 'fully-furnished': 'Fully Furnished' } as Record<string, string>)[property.furnishing] || property.furnishing },
+                                                { labelKey: 'propertyDetail.parking', value: ({ 'private': 'Private Garage', 'carport': 'Carport', 'shared': 'Shared', 'street': 'Street' } as Record<string, string>)[property.parking_type] || property.parking_type },
                                             ].map((item) => (
                                                 <div key={item.labelKey} className="flex justify-between text-sm">
                                                     <span className="text-muted-foreground">{t(item.labelKey)}</span>
