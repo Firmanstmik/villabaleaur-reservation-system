@@ -22,6 +22,7 @@ import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import AddPropertyForm from '@/components/admin/AddPropertyForm';
 import { PropertyListingMenu } from '@/components/admin/PropertyListingMenu';
+import SellerSettings from '@/components/settings/SellerSettings';
 
 type Tab = 'overview' | 'listings' | 'add-new' | 'edit' | 'settings';
 
@@ -394,24 +395,14 @@ const Dashboard = () => {
                             </motion.div>
                         )}
 
-                        {activeTab === 'settings' && (
+                        {activeTab === 'settings' && user && (
                             <motion.div
-                                key="placeholder"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="h-[60vh] flex flex-col items-center justify-center text-center p-8 bg-white rounded-[2.5rem] border border-border mt-10"
+                                key="settings"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
                             >
-                                <div className="w-20 h-20 bg-secondary/20 rounded-3xl flex items-center justify-center mb-6">
-                                    <Settings className="text-[#0e2e50]/40" size={40} />
-                                </div>
-                                <h3 className="text-2xl font-bold text-[#0e2e50]">Settings coming soon</h3>
-                                <p className="text-muted-foreground mt-2 max-w-sm">We're working hard to bring the full settings experience to you. Stay tuned!</p>
-                                <Button
-                                    onClick={() => setActiveTab('overview')}
-                                    className="mt-8 bg-[#0e2e50] text-white rounded-full"
-                                >
-                                    Back to Overview
-                                </Button>
+                                <SellerSettings user={user} />
                             </motion.div>
                         )}
                     </AnimatePresence>

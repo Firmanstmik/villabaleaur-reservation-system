@@ -473,8 +473,16 @@ const Account = () => {
                 </Button>
               </form>
 
-              {/* Logout */}
+              {/* Full Settings Link */}
               <div className="mt-8 pt-8 border-t border-border">
+                <Button
+                  onClick={() => navigate(`/${language}/account/settings`)}
+                  variant="outline"
+                  className="w-full h-12 rounded-xl flex items-center justify-center gap-2 mb-4"
+                >
+                  <Settings className="h-4 w-4" />
+                  All Settings
+                </Button>
                 <Button
                   onClick={handleLogout}
                   variant="destructive"
