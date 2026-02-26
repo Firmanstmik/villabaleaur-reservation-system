@@ -117,7 +117,7 @@ export function PropertyListingMenu({ property, onRefresh, onEdit }: PropertyLis
             <MoreVertical size={18} />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuContent align="end" className="w-56" onClick={(e) => e.stopPropagation()}>
           <DropdownMenuLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
             {t('dashboard.actions') || 'Actions'}
           </DropdownMenuLabel>
