@@ -32,7 +32,6 @@ const Partners = () => {
     strategic_motivation: '',
     contact_email: '',
     contact_phone: '',
-    linkedin: '',
   });
 
   useEffect(() => {
@@ -40,6 +39,9 @@ const Partners = () => {
     if (!user || userType !== 'agent') {
       setCheckingApplication(false);
       return;
+    }
+    if (user.email) {
+      setFormData(prev => ({ ...prev, contact_email: prev.contact_email || user.email! }));
     }
     const checkExisting = async () => {
       const { data } = await supabase
@@ -66,9 +68,8 @@ const Partners = () => {
           number_of_agents: parseInt(formData.number_of_agents, 10),
           areas_active: formData.areas_active,
           strategic_motivation: formData.strategic_motivation,
-          contact_email: formData.contact_email || null,
-          contact_phone: formData.contact_phone || null,
-          linkedin: formData.linkedin || null,
+          contact_email: formData.contact_email,
+          contact_phone: formData.contact_phone,
         });
       if (error) {
         if (error.code === '23505') {
@@ -90,6 +91,13 @@ const Partners = () => {
 
   const updateField = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const normalizeUrl = (value: string): string => {
+    const trimmed = value.trim();
+    if (!trimmed) return trimmed;
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    return `https://${trimmed}`;
   };
 
   const renderFormSection = () => {
@@ -155,10 +163,11 @@ const Partners = () => {
             <div className="space-y-2">
               <Label className="text-white/80 text-sm font-medium">{t('partners.formAgencyWebsite')}</Label>
               <Input
-                type="url"
+                type="text"
                 required
                 value={formData.agency_website}
                 onChange={(e) => updateField('agency_website', e.target.value)}
+                onBlur={(e) => updateField('agency_website', normalizeUrl(e.target.value))}
                 placeholder={t('partners.formAgencyWebsitePlaceholder')}
                 className="bg-white/10 border-white/20 text-white placeholder:text-white/30 focus:border-white/40 h-12 rounded-xl"
               />
@@ -205,6 +214,7 @@ const Partners = () => {
               <Label className="text-white/80 text-sm font-medium">{t('partners.formContactEmail')}</Label>
               <Input
                 type="email"
+                required
                 value={formData.contact_email}
                 onChange={(e) => updateField('contact_email', e.target.value)}
                 placeholder={t('partners.formContactEmailPlaceholder')}
@@ -215,23 +225,13 @@ const Partners = () => {
               <Label className="text-white/80 text-sm font-medium">{t('partners.formContactPhone')}</Label>
               <Input
                 type="tel"
+                required
                 value={formData.contact_phone}
                 onChange={(e) => updateField('contact_phone', e.target.value)}
                 placeholder={t('partners.formContactPhonePlaceholder')}
                 className="bg-white/10 border-white/20 text-white placeholder:text-white/30 focus:border-white/40 h-12 rounded-xl"
               />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-white/80 text-sm font-medium">{t('partners.formLinkedin')}</Label>
-            <Input
-              type="url"
-              value={formData.linkedin}
-              onChange={(e) => updateField('linkedin', e.target.value)}
-              placeholder={t('partners.formLinkedinPlaceholder')}
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/30 focus:border-white/40 h-12 rounded-xl"
-            />
           </div>
 
           <div className="pt-4">
