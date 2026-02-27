@@ -12,7 +12,9 @@ import {
     Building2,
     Users,
     TrendingUp,
-    Star
+    Star,
+    Shield,
+    X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +23,7 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDashboardTransition, storeReturnUrl } from '@/components/layout/DashboardTransition';
 import AddPropertyForm from '@/components/admin/AddPropertyForm';
 import { PropertyListingMenu } from '@/components/admin/PropertyListingMenu';
 import SellerSettings from '@/components/settings/SellerSettings';
@@ -34,7 +37,11 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const { language, t } = useLanguage();
     const { formatPrice, currency } = useCurrency();
-    const { userType: resolvedUserType } = useAuth();
+    const { userType: resolvedUserType, isAdmin } = useAuth();
+    const { flipTo, slideClose, getMotionProps } = useDashboardTransition();
+
+    // Store return URL on mount (before entering dashboard)
+    useEffect(() => { storeReturnUrl(); }, []);
 
     const [properties, setProperties] = useState<any[]>([]);
     const [statsLoading, setStatsLoading] = useState(true);
@@ -125,12 +132,13 @@ const Dashboard = () => {
     const recentListings = properties.slice(0, 5);
 
     return (
+        <motion.div style={{ perspective: 1200 }} {...getMotionProps()} className="min-h-screen">
         <div className="min-h-screen bg-secondary/30 flex">
             {/* Sidebar */}
             <aside className="w-64 bg-[#0e2e50] text-white flex flex-col p-6 fixed h-full z-10">
                 <div className="mb-10 px-2">
                     <h1 className="text-xl font-bold tracking-tighter text-white">UKON ESTATE</h1>
-                    <p className="text-[10px] text-white/50 uppercase tracking-widest mt-1 font-bold">Admin Panel</p>
+                    <p className="text-[10px] text-white/50 uppercase tracking-widest mt-1 font-bold">{t('admin.backToDashboard')}</p>
                 </div>
 
                 <nav className="flex-1 space-y-1">
@@ -156,9 +164,29 @@ const Dashboard = () => {
                     ))}
                 </nav>
 
+                {/* Switch to Admin Panel (admin only) */}
+                {isAdmin && (
+                    <button
+                        onClick={() => flipTo(`/${language}/dashboard/admin`)}
+                        className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-white/5 transition-all mt-auto mb-1"
+                    >
+                        <Shield size={20} />
+                        {t('admin.title')}
+                    </button>
+                )}
+
+                {/* Close dashboard */}
+                <button
+                    onClick={slideClose}
+                    className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-white/5 transition-all ${!isAdmin ? 'mt-auto' : ''} mb-1`}
+                >
+                    <X size={20} />
+                    {t('common.close')}
+                </button>
+
                 <button
                     onClick={handleLogout}
-                    className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-ukon-red/20 transition-all mt-auto border border-transparent hover:border-ukon-red/30"
+                    className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-ukon-red/20 transition-all border border-transparent hover:border-ukon-red/30"
                 >
                     <LogOut size={20} />
                     {t('navigation.logout')}
@@ -412,6 +440,7 @@ const Dashboard = () => {
                 </div>
             </main>
         </div>
+        </motion.div>
     );
 };
 

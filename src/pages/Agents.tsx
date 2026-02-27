@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { agents, whatsappNumber } from '@/data/mockData';
+import { agents } from '@/data/mockData';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useInView } from '@/hooks/useInView';
 import { GlobalMap } from '@/components/agents/GlobalMap';
@@ -41,14 +42,9 @@ const regions: { key: RegionKey; filterKey: string; titleKey: string; subtextKey
 ];
 
 const Agents = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { ref, isInView } = useInView();
   const [activeFilter, setActiveFilter] = useState<RegionKey>('all');
-
-  const handlePartnership = () => {
-    const message = encodeURIComponent(`Hello, I'm interested in exploring a partnership with Ukon Estate.`);
-    window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${message}`, '_blank');
-  };
 
   const handleFilterClick = (key: RegionKey) => {
     setActiveFilter(key);
@@ -208,12 +204,12 @@ const Agents = () => {
               <p className="text-white/60 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
                 {t('agents.partnerSubtext')}
               </p>
-              <button
-                onClick={handlePartnership}
+              <Link
+                to={`/${language}/partners`}
                 className="inline-flex items-center px-8 py-3.5 bg-white text-ukon-navy font-medium text-base rounded-lg hover:bg-white/90 transition-colors duration-150"
               >
                 {t('agents.explorePartnership')} →
-              </button>
+              </Link>
             </motion.div>
           </div>
         </section>

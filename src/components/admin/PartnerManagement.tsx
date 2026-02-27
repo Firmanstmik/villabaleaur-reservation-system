@@ -5,7 +5,6 @@ import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,7 +24,7 @@ interface SellerProfile {
     is_ukon_partner: boolean;
     profile_image_url: string | null;
     created_at: string;
-    user: { email: string } | null;
+    user_email: string | null;
 }
 
 const PartnerManagement = () => {
@@ -45,13 +44,10 @@ const PartnerManagement = () => {
 
     const fetchSellers = async () => {
         try {
-            const { data, error } = await supabase
-                .from('seller_profiles')
-                .select('id, user_id, agency_name, license_number, is_ukon_partner, profile_image_url, created_at, user:user_id(email)')
-                .order('created_at', { ascending: false });
+            const { data, error } = await supabase.rpc('get_seller_profiles_admin');
 
             if (error) throw error;
-            setSellers((data as unknown as SellerProfile[]) || []);
+            setSellers((data as SellerProfile[]) || []);
         } catch (err) {
             console.error('Error fetching sellers:', err);
             toast.error('Failed to load seller profiles');
@@ -68,7 +64,7 @@ const PartnerManagement = () => {
         setConfirmDialog({
             open: true,
             profileId: profile.id,
-            agencyName: profile.agency_name || profile.user?.email || 'Unknown',
+            agencyName: profile.agency_name || profile.user_email || 'Unknown',
             currentValue: profile.is_ukon_partner,
         });
     };
@@ -112,7 +108,7 @@ const PartnerManagement = () => {
         const q = search.toLowerCase();
         return (
             s.agency_name?.toLowerCase().includes(q) ||
-            s.user?.email?.toLowerCase().includes(q) ||
+            s.user_email?.toLowerCase().includes(q) ||
             s.license_number?.toLowerCase().includes(q)
         );
     });
@@ -194,7 +190,7 @@ const PartnerManagement = () => {
                             </div>
 
                             <p className="text-sm text-muted-foreground truncate">
-                                {seller.user?.email || '—'}
+                                {seller.user_email || '—'}
                             </p>
 
                             <p className="hidden md:block text-sm text-muted-foreground truncate">

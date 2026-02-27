@@ -87,7 +87,42 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 
--- 1f. Role column protection trigger
+-- 1f. Admin function to get all seller profiles with emails
+-- SECURITY DEFINER allows access to auth.users (not exposed via API)
+CREATE OR REPLACE FUNCTION public.get_seller_profiles_admin()
+RETURNS TABLE (
+  id UUID,
+  user_id UUID,
+  agency_name TEXT,
+  license_number TEXT,
+  is_ukon_partner BOOLEAN,
+  profile_image_url TEXT,
+  created_at TIMESTAMPTZ,
+  user_email TEXT
+) AS $$
+BEGIN
+  -- Only admins can call this
+  IF NOT public.is_admin() THEN
+    RAISE EXCEPTION 'Unauthorized: admin access required';
+  END IF;
+
+  RETURN QUERY
+  SELECT
+    sp.id,
+    sp.user_id,
+    sp.agency_name,
+    sp.license_number,
+    sp.is_ukon_partner,
+    sp.profile_image_url,
+    sp.created_at,
+    au.email AS user_email
+  FROM seller_profiles sp
+  LEFT JOIN auth.users au ON au.id = sp.user_id
+  ORDER BY sp.created_at DESC;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+
+-- 1g. Role column protection trigger
 -- Prevents non-admins from modifying the role column on user_profiles
 CREATE OR REPLACE FUNCTION public.protect_role_column()
 RETURNS TRIGGER AS $$

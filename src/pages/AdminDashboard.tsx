@@ -1,19 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, LayoutDashboard, LogOut } from 'lucide-react';
+import { Shield, LayoutDashboard, LogOut, X, FileText } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { AdminGuard } from '@/components/guards/AdminGuard';
+import { useDashboardTransition, storeReturnUrl } from '@/components/layout/DashboardTransition';
 import PartnerManagement from '@/components/admin/PartnerManagement';
+import ApplicationManagement from '@/components/admin/ApplicationManagement';
 
-type AdminTab = 'partners';
+type AdminTab = 'partners' | 'applications';
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState<AdminTab>('partners');
     const navigate = useNavigate();
     const { language, t } = useLanguage();
+    const { flipTo, slideClose, getMotionProps } = useDashboardTransition();
+
+    // Store return URL on mount (before entering dashboard)
+    useEffect(() => { storeReturnUrl(); }, []);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
@@ -23,10 +29,12 @@ const AdminDashboard = () => {
 
     const navigationItems = [
         { id: 'partners' as AdminTab, icon: Shield, label: t('admin.partnerManagement') },
+        { id: 'applications' as AdminTab, icon: FileText, label: t('admin.applications') },
     ];
 
     return (
         <AdminGuard>
+            <motion.div style={{ perspective: 1200 }} {...getMotionProps()} className="min-h-screen">
             <div className="min-h-screen bg-secondary/30 flex">
                 {/* Sidebar */}
                 <aside className="w-64 bg-[#0e2e50] text-white flex flex-col p-6 fixed h-full z-10">
@@ -58,13 +66,22 @@ const AdminDashboard = () => {
                         ))}
                     </nav>
 
-                    {/* Back to Agent Dashboard */}
+                    {/* Flip to Agent Dashboard */}
                     <button
-                        onClick={() => navigate(`/${language}/dashboard`)}
-                        className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-white/5 transition-all mb-2"
+                        onClick={() => flipTo(`/${language}/dashboard`)}
+                        className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-white/5 transition-all mt-auto mb-1"
                     >
                         <LayoutDashboard size={20} />
                         {t('admin.backToDashboard')}
+                    </button>
+
+                    {/* Close dashboard */}
+                    <button
+                        onClick={slideClose}
+                        className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-white/5 transition-all mb-1"
+                    >
+                        <X size={20} />
+                        {t('common.close')}
                     </button>
 
                     <button
@@ -90,10 +107,21 @@ const AdminDashboard = () => {
                                     <PartnerManagement />
                                 </motion.div>
                             )}
+                            {activeTab === 'applications' && (
+                                <motion.div
+                                    key="applications"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                >
+                                    <ApplicationManagement />
+                                </motion.div>
+                            )}
                         </AnimatePresence>
                     </div>
                 </main>
             </div>
+            </motion.div>
         </AdminGuard>
     );
 };
