@@ -25,6 +25,7 @@ const Account = lazy(() => import("./pages/Account"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const UpdatePassword = lazy(() => import("./pages/UpdatePassword"));
 const BuyerSettings = lazy(() => import("./pages/BuyerSettings"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -84,6 +85,7 @@ function AppRoutes() {
       <Route path="/:lang/intelligence/:slug" element={<BlogPost />} />
       <Route path="/:lang/login" element={<Login />} />
       <Route path="/:lang/dashboard" element={<Dashboard />} />
+      <Route path="/:lang/dashboard/admin" element={<AdminDashboard />} />
       <Route path="/:lang/account" element={<Account />} />
       <Route path="/:lang/account/settings" element={<BuyerSettings />} />
       <Route path="/:lang/auth/callback" element={<AuthCallback />} />

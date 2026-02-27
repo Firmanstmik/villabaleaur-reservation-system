@@ -8,7 +8,8 @@ export interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  userType: 'buyer' | 'agent' | null;
+  userType: 'buyer' | 'agent' | 'admin' | null;
+  isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, metadata: { name: string; user_type: 'buyer' | 'agent' }) => Promise<void>;
   signOut: () => Promise<void>;
@@ -23,7 +24,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userType, setUserType] = useState<'buyer' | 'agent' | null>(null);
+  const [userType, setUserType] = useState<'buyer' | 'agent' | 'admin' | null>(null);
+
+  // Fetch authoritative role from user_profiles table
+  const fetchUserRole = async (userId: string): Promise<'buyer' | 'agent' | 'admin' | null> => {
+    try {
+      const { data } = await supabase
+        .from('user_profiles')
+        .select('role')
+        .eq('id', userId)
+        .single();
+      return (data?.role as 'buyer' | 'agent' | 'admin' | null) || null;
+    } catch {
+      return null;
+    }
+  };
+
+  // Resolve role: DB first, then user_metadata fallback
+  const resolveUserRole = async (user: User): Promise<'buyer' | 'agent' | 'admin' | null> => {
+    const dbRole = await fetchUserRole(user.id);
+    if (dbRole) return dbRole;
+    return (user.user_metadata?.user_type as 'buyer' | 'agent' | null) || null;
+  };
 
   // Initialize auth state on mount
   useEffect(() => {
@@ -35,8 +57,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (session?.user) {
           setUser(session.user);
-          const type = session.user.user_metadata?.user_type as 'buyer' | 'agent' | null;
-          setUserType(type);
+          const role = await resolveUserRole(session.user);
+          setUserType(role);
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
@@ -53,8 +75,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (session?.user) {
         setUser(session.user);
-        const type = session.user.user_metadata?.user_type as 'buyer' | 'agent' | null;
-        setUserType(type);
+        const role = await resolveUserRole(session.user);
+        setUserType(role);
       } else {
         setUser(null);
         setUserType(null);
@@ -81,8 +103,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.session?.user) {
         setUser(data.session.user);
-        const type = data.session.user.user_metadata?.user_type as 'buyer' | 'agent' | null;
-        setUserType(type);
+        const role = await resolveUserRole(data.session.user);
+        setUserType(role);
       }
     } catch (error: any) {
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
@@ -182,6 +204,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session,
     loading,
     userType,
+    isAdmin: userType === 'admin',
     signIn,
     signUp,
     signOut,

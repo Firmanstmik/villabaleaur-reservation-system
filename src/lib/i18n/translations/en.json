@@ -123,6 +123,8 @@
     "secureAndVerified": "Secure and verified property",
     "ukonEstateAgent": "Ukon Estate Agent",
     "officialCompanyRepresentative": "Official company representative",
+    "verifiedPartner": "Verified Partner",
+    "verifiedPartnerDesc": "Official Ukon Estate verified partner",
     "showAllPhotos": "Show all photos",
     "sqm": "m²"
   },
@@ -392,6 +394,14 @@
     "privacyPolicy": "Privacy Policy",
     "termsOfUse": "Terms of Use",
     "disclaimer": "Disclaimer"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "partnerManagement": "Partner Management",
+    "allSellers": "Sellers",
+    "partnerStatus": "Partner Status",
+    "noSellers": "No seller profiles found",
+    "backToDashboard": "Agent Dashboard"
   },
   "common": {
     "loading": "Loading...",

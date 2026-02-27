@@ -63,6 +63,11 @@ const PropertyDetail = () => {
     const [savedId, setSavedId] = useState<string | null>(null);
     const [user, setUser] = useState<any>(null);
     const [saving, setSaving] = useState(false);
+    const [sellerProfile, setSellerProfile] = useState<{
+        agency_name: string | null;
+        profile_image_url: string | null;
+        is_ukon_partner: boolean;
+    } | null>(null);
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -91,6 +96,21 @@ const PropertyDetail = () => {
                         video_url: data.video_url
                     };
                     setProperty(normalized);
+
+                    // Fetch seller profile for partner badge and agent info
+                    if (data.user_id) {
+                        try {
+                            const { data: sellerData } = await supabase.rpc(
+                                'get_seller_profile_for_property',
+                                { p_user_id: data.user_id }
+                            );
+                            if (sellerData && sellerData.length > 0) {
+                                setSellerProfile(sellerData[0]);
+                            }
+                        } catch (sellerErr) {
+                            console.error('Error fetching seller profile:', sellerErr);
+                        }
+                    }
 
                     // Track view on page load
                     try {
@@ -530,53 +550,45 @@ const PropertyDetail = () => {
                         {/* Right Column: Sticky Overview & Contact */}
                         <div className="lg:w-1/3 relative">
                             <div className="sticky top-28 space-y-6">
-                                {/* Verification/Trust Badge - Moved to Top */}
-                                <motion.div
-                                    initial={{ opacity: 0, y: -20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className={`relative overflow-hidden rounded-3xl p-5 flex items-center gap-4 transition-all duration-300 ${property.isUkonAgent
-                                        ? 'bg-gradient-to-br from-[#0e2e50] to-[#1a4a7a] text-white shadow-xl shadow-[#0e2e50]/20'
-                                        : 'bg-secondary/40 border border-border text-foreground hover:bg-secondary/60'
-                                        }`}
-                                >
-                                    {/* Background decorative element for Ukon Agent */}
-                                    {property.isUkonAgent && (
-                                        <div className="absolute -right-4 -top-4 w-16 h-16 bg-white/5 rounded-full blur-2xl" />
-                                    )}
-
-                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 overflow-hidden ${property.isUkonAgent ? 'bg-white' : 'bg-[#0e2e50]/10'
-                                        }`}>
-                                        <img src={ukonLogo} alt="Ukon Estate Logo" className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="relative z-10 flex-1">
-                                        <h5 className="font-black text-sm uppercase tracking-wider mb-0.5 leading-none">
-                                            {property.isUkonAgent ? t('propertyDetail.ukonEstateAgent') : t('propertyDetail.verifiedListing')}
-                                        </h5>
-                                        <p className={`text-xs ${property.isUkonAgent ? 'text-white/80' : 'text-muted-foreground'}`}>
-                                            {property.isUkonAgent
-                                                ? t('propertyDetail.officialCompanyRepresentative')
-                                                : t('propertyDetail.secureAndVerified')}
-                                        </p>
-                                    </div>
-
-                                    {/* Dynamic/3D Green Checkmark */}
+                                {/* Verified Partner Badge - Only shown for Ukon Estate partners */}
+                                {sellerProfile?.is_ukon_partner && (
                                     <motion.div
-                                        animate={{
-                                            y: [0, -4, 0],
-                                            scale: [1, 1.1, 1],
-                                            rotateY: [0, 15, 0]
-                                        }}
-                                        transition={{
-                                            duration: 3,
-                                            repeat: Infinity,
-                                            ease: "easeInOut"
-                                        }}
-                                        className="ml-auto w-8 h-8 flex items-center justify-center bg-[#22c55e] rounded-full shadow-lg shadow-green-500/30 border-2 border-white/20"
-                                        style={{ perspective: '1000px' }}
+                                        initial={{ opacity: 0, y: -20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="relative overflow-hidden rounded-3xl p-5 flex items-center gap-4 bg-gradient-to-br from-[#0e2e50] to-[#1a4a7a] text-white shadow-xl shadow-[#0e2e50]/20"
                                     >
-                                        <CheckCircle2 className="text-white" size={18} />
+                                        <div className="absolute -right-4 -top-4 w-16 h-16 bg-white/5 rounded-full blur-2xl" />
+
+                                        <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0 overflow-hidden bg-white">
+                                            <img src={ukonLogo} alt="Ukon Estate Logo" className="w-full h-full object-cover" />
+                                        </div>
+                                        <div className="relative z-10 flex-1">
+                                            <h5 className="font-black text-sm uppercase tracking-wider mb-0.5 leading-none">
+                                                {t('propertyDetail.verifiedPartner')}
+                                            </h5>
+                                            <p className="text-xs text-white/80">
+                                                {t('propertyDetail.verifiedPartnerDesc')}
+                                            </p>
+                                        </div>
+
+                                        <motion.div
+                                            animate={{
+                                                y: [0, -4, 0],
+                                                scale: [1, 1.1, 1],
+                                                rotateY: [0, 15, 0]
+                                            }}
+                                            transition={{
+                                                duration: 3,
+                                                repeat: Infinity,
+                                                ease: "easeInOut"
+                                            }}
+                                            className="ml-auto w-8 h-8 flex items-center justify-center bg-[#22c55e] rounded-full shadow-lg shadow-green-500/30 border-2 border-white/20"
+                                            style={{ perspective: '1000px' }}
+                                        >
+                                            <CheckCircle2 className="text-white" size={18} />
+                                        </motion.div>
                                     </motion.div>
-                                </motion.div>
+                                )}
 
                                 {/* Overview Card */}
                                 <div className="bg-card border border-border rounded-3xl p-8 shadow-sm overflow-hidden relative">
@@ -616,15 +628,24 @@ const PropertyDetail = () => {
                                             <h4 className="text-lg font-bold mb-4">{t('propertyDetail.contactAgent')}</h4>
                                             <div className="flex items-center gap-4 mb-6">
                                                 <div className="w-14 h-14 rounded-full bg-secondary overflow-hidden shrink-0 border-2 border-[#0e2e50]/20 p-0.5">
-                                                    <img
-                                                        src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&q=80"
-                                                        alt="Agent"
-                                                        className="w-full h-full object-cover rounded-full"
-                                                    />
+                                                    {sellerProfile?.profile_image_url ? (
+                                                        <img
+                                                            src={sellerProfile.profile_image_url}
+                                                            alt="Agent"
+                                                            className="w-full h-full object-cover rounded-full"
+                                                        />
+                                                    ) : (
+                                                        <img
+                                                            src={ukonLogo}
+                                                            alt="Ukon Estate"
+                                                            className="w-full h-full object-cover rounded-full"
+                                                        />
+                                                    )}
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-foreground">Gino Beelt</p>
-                                                    <p className="text-xs text-muted-foreground">+31 (0) 818 0304 2211</p>
+                                                    <p className="font-bold text-foreground">
+                                                        {sellerProfile?.agency_name || 'Ukon Estate'}
+                                                    </p>
                                                 </div>
                                             </div>
 

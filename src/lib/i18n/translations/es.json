@@ -123,6 +123,8 @@
     "secureAndVerified": "Propiedad segura y verificada",
     "ukonEstateAgent": "Agente de Ukon Estate",
     "officialCompanyRepresentative": "Representante oficial de la empresa",
+    "verifiedPartner": "Socio Verificado",
+    "verifiedPartnerDesc": "Socio verificado oficial de Ukon Estate",
     "showAllPhotos": "Mostrar todas las fotos",
     "sqm": "m²"
   },
@@ -392,6 +394,14 @@
     "privacyPolicy": "Política de Privacidad",
     "termsOfUse": "Términos de Uso",
     "disclaimer": "Aviso Legal"
+  },
+  "admin": {
+    "title": "Panel de Administración",
+    "partnerManagement": "Gestión de Socios",
+    "allSellers": "Vendedores",
+    "partnerStatus": "Estado de Socio",
+    "noSellers": "No se encontraron perfiles de vendedores",
+    "backToDashboard": "Dashboard de Agente"
   },
   "common": {
     "loading": "Cargando...",

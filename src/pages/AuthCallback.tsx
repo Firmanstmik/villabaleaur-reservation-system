@@ -25,7 +25,9 @@ const AuthCallback = () => {
     }
 
     // Route based on user type
-    if (userType === 'agent') {
+    if (userType === 'admin') {
+      navigate('/dashboard/admin', { replace: true });
+    } else if (userType === 'agent') {
       navigate('/dashboard', { replace: true });
     } else if (userType === 'buyer') {
       navigate('/account', { replace: true });

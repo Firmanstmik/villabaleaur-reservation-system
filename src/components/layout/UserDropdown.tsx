@@ -10,13 +10,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LayoutDashboard, Heart, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Heart, Settings, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 
 export default function UserDropdown() {
-  const { user, userType, signOut } = useAuth();
+  const { user, userType, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -161,6 +161,16 @@ export default function UserDropdown() {
             <Heart className="mr-2 h-4 w-4" />
             <span>My Listings</span>
           </DropdownMenuItem>
+
+          {isAdmin && (
+            <DropdownMenuItem
+              onClick={() => navigate(`/${language}/dashboard/admin`)}
+              className="cursor-pointer transition-colors"
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              <span>Admin Panel</span>
+            </DropdownMenuItem>
+          )}
 
           {/* Settings - goes to account page */}
           <DropdownMenuItem

@@ -123,6 +123,8 @@
     "secureAndVerified": "Properti aman dan terverifikasi",
     "ukonEstateAgent": "Agen Ukon Estate",
     "officialCompanyRepresentative": "Perwakilan resmi perusahaan",
+    "verifiedPartner": "Mitra Terverifikasi",
+    "verifiedPartnerDesc": "Mitra terverifikasi resmi Ukon Estate",
     "showAllPhotos": "Tampilkan semua foto",
     "sqm": "m²"
   },
@@ -392,6 +394,14 @@
     "privacyPolicy": "Kebijakan Privasi",
     "termsOfUse": "Ketentuan Penggunaan",
     "disclaimer": "Sanggahan"
+  },
+  "admin": {
+    "title": "Panel Admin",
+    "partnerManagement": "Manajemen Mitra",
+    "allSellers": "Penjual",
+    "partnerStatus": "Status Mitra",
+    "noSellers": "Tidak ada profil penjual ditemukan",
+    "backToDashboard": "Dashboard Agen"
   },
   "common": {
     "loading": "Memuat...",

@@ -20,6 +20,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 import AddPropertyForm from '@/components/admin/AddPropertyForm';
 import { PropertyListingMenu } from '@/components/admin/PropertyListingMenu';
 import SellerSettings from '@/components/settings/SellerSettings';
@@ -33,6 +34,7 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const { language, t } = useLanguage();
     const { formatPrice, currency } = useCurrency();
+    const { userType: resolvedUserType } = useAuth();
 
     const [properties, setProperties] = useState<any[]>([]);
     const [statsLoading, setStatsLoading] = useState(true);
@@ -62,10 +64,11 @@ const Dashboard = () => {
             if (!user) {
                 navigate(`/${language}/`);
             } else {
-                // Check if user is agent type - only agents can access dashboard
-                const userType = user.user_metadata?.user_type;
-                if (userType !== 'agent') {
-                    // Buyer users cannot access dashboard
+                // Check if user is agent or admin type - only they can access dashboard
+                // Use resolved role from AuthContext (DB-backed) with metadata fallback
+                const metadataType = user.user_metadata?.user_type;
+                const effectiveRole = resolvedUserType || metadataType;
+                if (effectiveRole !== 'agent' && effectiveRole !== 'admin') {
                     toast.error('This page is for agents only');
                     navigate(`/${language}/`);
                     return;

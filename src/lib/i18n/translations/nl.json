@@ -123,6 +123,8 @@
     "secureAndVerified": "Veilig en geverifieerd pand",
     "ukonEstateAgent": "Ukon Estate Agent",
     "officialCompanyRepresentative": "Officiële vertegenwoordiger van het bedrijf",
+    "verifiedPartner": "Geverifieerde Partner",
+    "verifiedPartnerDesc": "Officiële geverifieerde partner van Ukon Estate",
     "showAllPhotos": "Alle foto's weergeven",
     "sqm": "m²"
   },
@@ -392,6 +394,14 @@
     "privacyPolicy": "Privacybeleid",
     "termsOfUse": "Gebruiksvoorwaarden",
     "disclaimer": "Disclaimer"
+  },
+  "admin": {
+    "title": "Beheerderspaneel",
+    "partnerManagement": "Partnerbeheer",
+    "allSellers": "Verkopers",
+    "partnerStatus": "Partnerstatus",
+    "noSellers": "Geen verkopersprofielen gevonden",
+    "backToDashboard": "Agent Dashboard"
   },
   "common": {
     "loading": "Laden...",
