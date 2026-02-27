@@ -14,7 +14,7 @@ import {
     TrendingUp,
     Star,
     Shield,
-    X
+    ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -132,10 +132,10 @@ const Dashboard = () => {
     const recentListings = properties.slice(0, 5);
 
     return (
-        <motion.div style={{ perspective: 1200 }} {...getMotionProps()} className="min-h-screen">
-        <div className="min-h-screen bg-secondary/30 flex">
+        <motion.div style={{ perspective: 1200 }} {...getMotionProps()} className="h-screen">
+        <div className="h-screen bg-secondary/30 flex">
             {/* Sidebar */}
-            <aside className="w-64 bg-[#0e2e50] text-white flex flex-col p-6 fixed h-full z-10">
+            <aside className="w-64 bg-[#0e2e50] text-white flex flex-col p-6 shrink-0 relative">
                 <div className="mb-10 px-2">
                     <h1 className="text-xl font-bold tracking-tighter text-white">UKON ESTATE</h1>
                     <p className="text-[10px] text-white/50 uppercase tracking-widest mt-1 font-bold">{t('admin.backToDashboard')}</p>
@@ -175,26 +175,25 @@ const Dashboard = () => {
                     </button>
                 )}
 
-                {/* Close dashboard */}
-                <button
-                    onClick={slideClose}
-                    className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-white/5 transition-all ${!isAdmin ? 'mt-auto' : ''} mb-1`}
-                >
-                    <X size={20} />
-                    {t('common.close')}
-                </button>
-
                 <button
                     onClick={handleLogout}
-                    className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-ukon-red/20 transition-all border border-transparent hover:border-ukon-red/30"
+                    className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white/60 hover:text-white hover:bg-ukon-red/20 transition-all border border-transparent hover:border-ukon-red/30 ${!isAdmin ? 'mt-auto' : ''}`}
                 >
                     <LogOut size={20} />
                     {t('navigation.logout')}
                 </button>
+
+                {/* Slide-close handle */}
+                <button
+                    onClick={slideClose}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-7 h-14 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white/60 hover:text-white transition-all z-20"
+                >
+                    <ChevronRight size={18} />
+                </button>
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 ml-64 p-8 lg:p-12 overflow-y-auto">
+            <main className="flex-1 p-8 lg:p-12 overflow-y-auto">
                 <div className="max-w-6xl mx-auto">
                     <AnimatePresence mode="wait">
                         {activeTab === 'overview' && (

@@ -34,10 +34,10 @@ const AdminDashboard = () => {
 
     return (
         <AdminGuard>
-            <motion.div style={{ perspective: 1200 }} {...getMotionProps()} className="min-h-screen">
-            <div className="min-h-screen bg-secondary/30 flex">
+            <motion.div style={{ perspective: 1200 }} {...getMotionProps()} className="h-screen">
+            <div className="h-screen bg-secondary/30 flex">
                 {/* Sidebar */}
-                <aside className="w-64 bg-[#0e2e50] text-white flex flex-col p-6 fixed h-full z-10">
+                <aside className="w-64 bg-[#0e2e50] text-white flex flex-col p-6 shrink-0">
                     <div className="mb-10 px-2">
                         <h1 className="text-xl font-bold tracking-tighter text-white">UKON ESTATE</h1>
                         <p className="text-[10px] text-white/50 uppercase tracking-widest mt-1 font-bold">{t('admin.title')}</p>
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
                 </aside>
 
                 {/* Main Content */}
-                <main className="flex-1 ml-64 p-8 lg:p-12 overflow-y-auto">
+                <main className="flex-1 p-8 lg:p-12 overflow-y-auto">
                     <div className="max-w-6xl mx-auto">
                         <AnimatePresence mode="wait">
                             {activeTab === 'partners' && (
