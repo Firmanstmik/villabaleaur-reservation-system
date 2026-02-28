@@ -186,7 +186,7 @@ const Dashboard = () => {
                 {/* Slide-close handle */}
                 <button
                     onClick={slideClose}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-7 h-14 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white/60 hover:text-white transition-all z-20"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-7 h-14 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all z-20"
                 >
                     <ChevronRight size={18} />
                 </button>
