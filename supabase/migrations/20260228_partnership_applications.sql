@@ -164,7 +164,7 @@ BEGIN
     pa.reviewed_by,
     pa.reviewed_at,
     pa.created_at,
-    au.email AS applicant_email,
+    au.email::TEXT AS applicant_email,
     sp.agency_name AS applicant_agency_name
   FROM partnership_applications pa
   LEFT JOIN auth.users au ON au.id = pa.user_id

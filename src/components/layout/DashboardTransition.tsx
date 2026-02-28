@@ -29,8 +29,9 @@ export function DashboardTransition({ children }: DashboardTransitionProps) {
     const { language } = useLanguage();
     const [exitAnimation, setExitAnimation] = useState<ExitAnimation>(null);
 
-    // Determine if we arrived via a flip (from the other dashboard)
+    // Determine if we arrived via a flip (from the other dashboard) or slide-in (from navbar)
     const cameFromFlip = (location.state as any)?.flip === true;
+    const cameFromSlideIn = (location.state as any)?.slideIn === true;
 
     const handleFlipTo = useCallback((targetPath: string) => {
         setExitAnimation('flip');
@@ -62,6 +63,15 @@ export function DashboardTransition({ children }: DashboardTransitionProps) {
             return {
                 animate: { x: '100%', opacity: 0 },
                 transition: { duration: 0.35, ease: [0.4, 0, 0.2, 1] },
+            };
+        }
+
+        // Enter: slide in from right (from navbar dropdown)
+        if (cameFromSlideIn) {
+            return {
+                initial: { x: '100%' },
+                animate: { x: 0 },
+                transition: { duration: 0.45, ease: [0.4, 0, 0.2, 1] },
             };
         }
 
@@ -104,6 +114,7 @@ export function useDashboardTransition() {
     const [exitAnimation, setExitAnimation] = useState<ExitAnimation>(null);
 
     const cameFromFlip = (location.state as any)?.flip === true;
+    const cameFromSlideIn = (location.state as any)?.slideIn === true;
 
     const flipTo = useCallback((targetPath: string) => {
         setExitAnimation('flip');
@@ -131,6 +142,13 @@ export function useDashboardTransition() {
             return {
                 animate: { x: '100%', opacity: 0 },
                 transition: { duration: 0.35, ease: [0.4, 0, 0.2, 1] as const },
+            };
+        }
+        if (cameFromSlideIn) {
+            return {
+                initial: { x: '100%' },
+                animate: { x: 0 },
+                transition: { duration: 0.45, ease: [0.4, 0, 0.2, 1] as const },
             };
         }
         if (cameFromFlip) {

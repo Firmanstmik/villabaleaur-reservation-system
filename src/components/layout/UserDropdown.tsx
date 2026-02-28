@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LayoutDashboard, Heart, Settings, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { storeReturnUrl } from '@/components/layout/DashboardTransition';
 import { toast } from 'sonner';
 
 export default function UserDropdown() {
@@ -147,7 +148,7 @@ export default function UserDropdown() {
         <DropdownMenuGroup>
           {/* Agent Dashboard */}
           <DropdownMenuItem
-            onClick={() => navigate(`/${language}/dashboard`)}
+            onClick={() => { storeReturnUrl(); navigate(`/${language}/dashboard`, { state: { slideIn: true } }); }}
             className="cursor-pointer transition-colors"
           >
             <LayoutDashboard className="mr-2 h-4 w-4" />
@@ -155,7 +156,7 @@ export default function UserDropdown() {
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() => navigate(`/${language}/dashboard`)}
+            onClick={() => { storeReturnUrl(); navigate(`/${language}/dashboard`, { state: { slideIn: true } }); }}
             className="cursor-pointer transition-colors"
           >
             <Heart className="mr-2 h-4 w-4" />
@@ -164,7 +165,7 @@ export default function UserDropdown() {
 
           {isAdmin && (
             <DropdownMenuItem
-              onClick={() => navigate(`/${language}/dashboard/admin`)}
+              onClick={() => { storeReturnUrl(); navigate(`/${language}/dashboard/admin`, { state: { slideIn: true } }); }}
               className="cursor-pointer transition-colors"
             >
               <Shield className="mr-2 h-4 w-4" />

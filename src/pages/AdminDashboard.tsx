@@ -86,7 +86,7 @@ const AdminDashboard = () => {
                     {/* Slide-close handle */}
                     <button
                         onClick={slideClose}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-7 h-14 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all z-20"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-7 h-14 bg-white hover:bg-white/90 rounded-full flex items-center justify-center text-[#0e2e50] transition-all z-20 shadow-sm"
                     >
                         <ChevronRight size={18} />
                     </button>

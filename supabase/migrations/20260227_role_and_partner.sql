@@ -115,7 +115,7 @@ BEGIN
     sp.is_ukon_partner,
     sp.profile_image_url,
     sp.created_at,
-    au.email AS user_email
+    au.email::TEXT AS user_email
   FROM seller_profiles sp
   LEFT JOIN auth.users au ON au.id = sp.user_id
   ORDER BY sp.created_at DESC;

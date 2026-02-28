@@ -114,14 +114,6 @@ const Dashboard = () => {
         setInitialEditTab('performance');
     };
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-[#0e2e50] border-t-transparent rounded-full animate-spin" />
-            </div>
-        );
-    }
-
     const navigationItems = [
         { id: 'overview' as Tab, icon: LayoutDashboard, label: t('dashboard.overview') },
         { id: 'listings' as Tab, icon: Home, label: t('dashboard.listings') },
@@ -130,6 +122,16 @@ const Dashboard = () => {
     ];
 
     const recentListings = properties.slice(0, 5);
+
+    if (loading) {
+        return (
+            <motion.div style={{ perspective: 1200 }} {...getMotionProps()} className="h-screen">
+                <div className="h-screen bg-secondary/30 flex items-center justify-center">
+                    <div className="w-12 h-12 border-4 border-[#0e2e50] border-t-transparent rounded-full animate-spin" />
+                </div>
+            </motion.div>
+        );
+    }
 
     return (
         <motion.div style={{ perspective: 1200 }} {...getMotionProps()} className="h-screen">
@@ -186,7 +188,7 @@ const Dashboard = () => {
                 {/* Slide-close handle */}
                 <button
                     onClick={slideClose}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-7 h-14 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all z-20"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-7 h-14 bg-white hover:bg-white/90 rounded-full flex items-center justify-center text-[#0e2e50] transition-all z-20 shadow-sm"
                 >
                     <ChevronRight size={18} />
                 </button>
