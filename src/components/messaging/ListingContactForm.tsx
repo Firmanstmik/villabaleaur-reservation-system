@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar as CalendarIcon, Eye, HelpCircle, Info, Send, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -35,21 +35,7 @@ export default function ListingContactForm({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const pendingIntentRef = useRef<MessageType | null>(null);
 
-  // If seller is viewing own listing, hide messaging entirely
-  if (user?.id === sellerId) {
-    return null;
-  }
-
-  // Watch for auth state change to auto-open form after login
-  useEffect(() => {
-    if (user && pendingIntentRef.current) {
-      const intent = pendingIntentRef.current;
-      pendingIntentRef.current = null;
-      handleCTAClick(intent);
-    }
-  }, [user]);
-
-  const getPrefilledMessage = (type: MessageType): string => {
+  const getPrefilledMessage = useCallback((type: MessageType): string => {
     switch (type) {
       case 'viewing':
         return `Hi, I'd like to schedule a viewing for ${listingTitle}.`;
@@ -58,9 +44,9 @@ export default function ListingContactForm({
       case 'question':
         return '';
     }
-  };
+  }, [listingTitle]);
 
-  const handleCTAClick = (type: MessageType) => {
+  const handleCTAClick = useCallback((type: MessageType) => {
     if (!user) {
       pendingIntentRef.current = type;
       openAuthPanel('signup');
@@ -75,7 +61,21 @@ export default function ListingContactForm({
     setTimeout(() => {
       textareaRef.current?.focus();
     }, 100);
-  };
+  }, [user, openAuthPanel, getPrefilledMessage]);
+
+  // Watch for auth state change to auto-open form after login
+  useEffect(() => {
+    if (user && pendingIntentRef.current) {
+      const intent = pendingIntentRef.current;
+      pendingIntentRef.current = null;
+      handleCTAClick(intent);
+    }
+  }, [user, handleCTAClick]);
+
+  // Hide messaging for mock/invalid listings or if seller is viewing own listing
+  if (!sellerId || user?.id === sellerId) {
+    return null;
+  }
 
   const handleDateSelect = (date: Date | undefined) => {
     setViewingDate(date);

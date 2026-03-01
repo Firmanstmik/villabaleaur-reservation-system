@@ -195,7 +195,7 @@ BEGIN
     c.created_at,
     c.last_message_at,
     p.title::TEXT AS listing_title,
-    (p.images->>0)::TEXT AS listing_image,
+    p.images[1]::TEXT AS listing_image,
     p.address::TEXT AS listing_address,
     CASE
       WHEN v_user_id = c.buyer_id THEN COALESCE(sp.agency_name::TEXT, up_seller.full_name::TEXT, 'Agent')
@@ -287,10 +287,10 @@ BEGIN
     RAISE EXCEPTION 'Not authenticated';
   END IF;
 
-  -- Enforce buyer role
-  IF NOT EXISTS (
+  -- Enforce buyer role: block agents/admins (users without a profile row default to buyer)
+  IF EXISTS (
     SELECT 1 FROM user_profiles
-    WHERE id = v_buyer_id AND role = 'buyer'
+    WHERE id = v_buyer_id AND role IN ('agent', 'admin')
   ) THEN
     RAISE EXCEPTION 'Only buyers can initiate conversations';
   END IF;
