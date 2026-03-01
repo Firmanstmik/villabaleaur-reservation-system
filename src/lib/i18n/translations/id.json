@@ -261,7 +261,8 @@
     "saving": "Menyimpan...",
     "signOut": "Keluar",
     "agentDashboard": "Dashboard Agen",
-    "myListings": "Daftar Saya"
+    "myListings": "Daftar Saya",
+    "messages": "Pesan"
   },
   "auth": {
     "email": {
@@ -367,7 +368,8 @@
     "allListings": "Semua Daftar",
     "manageListings": "Kelola dan pantau semua daftar properti Anda di satu tempat.",
     "searchListings": "Cari daftar...",
-    "noPropertiesFound": "Tidak ada properti yang ditemukan. Coba tambahkan daftar baru!"
+    "noPropertiesFound": "Tidak ada properti yang ditemukan. Coba tambahkan daftar baru!",
+    "messages": "Pesan"
   },
   "footer": {
     "positioning": "Penasihat real estat lintas batas untuk investor dan klien swasta yang mencari representasi properti strategis di seluruh dunia.",
@@ -465,6 +467,18 @@
     "statusApprovedText": "Aplikasi kemitraan Anda telah disetujui. Anda sekarang adalah Mitra Terverifikasi di jaringan Ukon Estate.",
     "statusRejected": "Aplikasi Tidak Disetujui",
     "statusRejectedText": "Setelah peninjauan cermat, aplikasi Anda tidak disetujui saat ini."
+  },
+  "messaging": {
+    "requestViewing": "Minta Kunjungan",
+    "askQuestion": "Ajukan Pertanyaan",
+    "getMoreInfo": "Dapatkan Info Lebih",
+    "sendMessage": "Kirim Pesan",
+    "messageSent": "Pesan terkirim!",
+    "agentWillRespond": "Agen akan segera merespons.",
+    "sendAnother": "Kirim Pesan Lagi",
+    "typeMessage": "Ketik pesan Anda...",
+    "typeReply": "Ketik balasan Anda...",
+    "selectDate": "Pilih tanggal yang diinginkan"
   },
   "common": {
     "loading": "Memuat...",

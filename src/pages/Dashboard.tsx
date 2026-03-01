@@ -14,7 +14,8 @@ import {
     TrendingUp,
     Star,
     Shield,
-    ChevronRight
+    ChevronRight,
+    MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,8 +28,9 @@ import { useDashboardTransition, storeReturnUrl } from '@/components/layout/Dash
 import AddPropertyForm from '@/components/admin/AddPropertyForm';
 import { PropertyListingMenu } from '@/components/admin/PropertyListingMenu';
 import SellerSettings from '@/components/settings/SellerSettings';
+import DashboardMessages from '@/components/messaging/DashboardMessages';
 
-type Tab = 'overview' | 'listings' | 'add-new' | 'edit' | 'settings';
+type Tab = 'overview' | 'listings' | 'add-new' | 'edit' | 'messages' | 'settings';
 
 const Dashboard = () => {
     const [user, setUser] = useState<any>(null);
@@ -118,6 +120,7 @@ const Dashboard = () => {
         { id: 'overview' as Tab, icon: LayoutDashboard, label: t('dashboard.overview') },
         { id: 'listings' as Tab, icon: Home, label: t('dashboard.listings') },
         { id: 'add-new' as Tab, icon: PlusCircle, label: t('dashboard.addNew') },
+        { id: 'messages' as Tab, icon: MessageSquare, label: t('dashboard.messages') },
         { id: 'settings' as Tab, icon: Settings, label: t('dashboard.settings') },
     ];
 
@@ -424,6 +427,17 @@ const Dashboard = () => {
                                         </table>
                                     </div>
                                 </div>
+                            </motion.div>
+                        )}
+
+                        {activeTab === 'messages' && user && (
+                            <motion.div
+                                key="messages"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                            >
+                                <DashboardMessages userId={user.id} />
                             </motion.div>
                         )}
 

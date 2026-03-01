@@ -261,7 +261,8 @@
     "saving": "Saving...",
     "signOut": "Sign Out",
     "agentDashboard": "Agent Dashboard",
-    "myListings": "My Listings"
+    "myListings": "My Listings",
+    "messages": "Messages"
   },
   "auth": {
     "email": {
@@ -367,7 +368,8 @@
     "allListings": "All Listings",
     "manageListings": "Manage and monitor all your property listings in one place.",
     "searchListings": "Search listings...",
-    "noPropertiesFound": "No properties found. Try adding a new listing!"
+    "noPropertiesFound": "No properties found. Try adding a new listing!",
+    "messages": "Messages"
   },
   "footer": {
     "positioning": "Cross-border real estate advisory for investors and private clients seeking strategic property representation worldwide.",
@@ -465,6 +467,18 @@
     "statusApprovedText": "Your partnership application has been approved. You are now a Verified Partner in the Ukon Estate network.",
     "statusRejected": "Application Not Approved",
     "statusRejectedText": "After careful review, your application was not approved at this time."
+  },
+  "messaging": {
+    "requestViewing": "Request Viewing",
+    "askQuestion": "Ask a Question",
+    "getMoreInfo": "Get More Info",
+    "sendMessage": "Send Message",
+    "messageSent": "Message sent!",
+    "agentWillRespond": "The agent will respond soon.",
+    "sendAnother": "Send Another Message",
+    "typeMessage": "Type your message...",
+    "typeReply": "Type your reply...",
+    "selectDate": "Select preferred date"
   },
   "common": {
     "loading": "Loading...",

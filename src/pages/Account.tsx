@@ -11,6 +11,7 @@ import {
   DollarSign,
   Home,
   X as XIcon,
+  MessageSquare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,8 +24,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+import BuyerMessages from '@/components/messaging/BuyerMessages';
 
-type Tab = 'saved' | 'alerts' | 'settings';
+type Tab = 'saved' | 'messages' | 'alerts' | 'settings';
 
 interface SavedProperty {
   id: string;
@@ -230,10 +232,14 @@ const Account = () => {
         {/* Main Content */}
         <div className="max-w-6xl mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as Tab)} className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
+          <TabsList className="grid w-full max-w-lg grid-cols-4">
             <TabsTrigger value="saved" className="flex items-center gap-2">
               <Heart className="h-4 w-4" />
               <span className="hidden sm:inline">{t('account.saved')}</span>
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">{t('account.messages')}</span>
             </TabsTrigger>
             <TabsTrigger value="alerts" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
@@ -332,6 +338,11 @@ const Account = () => {
                 </div>
               )}
             </div>
+          </TabsContent>
+
+          {/* Messages Tab */}
+          <TabsContent value="messages" className="space-y-6 mt-8">
+            <BuyerMessages userId={user.id} />
           </TabsContent>
 
           {/* Search Alerts Tab */}

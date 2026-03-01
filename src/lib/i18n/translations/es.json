@@ -261,7 +261,8 @@
     "saving": "Guardando...",
     "signOut": "Cerrar Sesión",
     "agentDashboard": "Panel del Agente",
-    "myListings": "Mis Listados"
+    "myListings": "Mis Listados",
+    "messages": "Mensajes"
   },
   "auth": {
     "email": {
@@ -367,7 +368,8 @@
     "allListings": "Todos los Anuncios",
     "manageListings": "Gestiona y supervisa todos tus anuncios de propiedades en un solo lugar.",
     "searchListings": "Buscar anuncios...",
-    "noPropertiesFound": "No se encontraron propiedades. ¡Intenta añadir un nuevo anuncio!"
+    "noPropertiesFound": "No se encontraron propiedades. ¡Intenta añadir un nuevo anuncio!",
+    "messages": "Mensajes"
   },
   "footer": {
     "positioning": "Asesoría inmobiliaria transfronteriza para inversores y clientes privados que buscan representación estratégica de propiedades a nivel mundial.",
@@ -465,6 +467,18 @@
     "statusApprovedText": "Su solicitud de asociación ha sido aprobada. Ahora es un Socio Verificado en la red de Ukon Estate.",
     "statusRejected": "Solicitud No Aprobada",
     "statusRejectedText": "Después de una revisión cuidadosa, su solicitud no fue aprobada en este momento."
+  },
+  "messaging": {
+    "requestViewing": "Solicitar Visita",
+    "askQuestion": "Hacer una Pregunta",
+    "getMoreInfo": "Obtener Más Info",
+    "sendMessage": "Enviar Mensaje",
+    "messageSent": "¡Mensaje enviado!",
+    "agentWillRespond": "El agente responderá pronto.",
+    "sendAnother": "Enviar Otro Mensaje",
+    "typeMessage": "Escriba su mensaje...",
+    "typeReply": "Escriba su respuesta...",
+    "selectDate": "Seleccione fecha preferida"
   },
   "common": {
     "loading": "Cargando...",

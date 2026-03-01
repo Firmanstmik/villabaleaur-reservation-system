@@ -261,7 +261,8 @@
     "saving": "Opslaan...",
     "signOut": "Afmelden",
     "agentDashboard": "Agent Dashboard",
-    "myListings": "Mijn Aanbiedingen"
+    "myListings": "Mijn Aanbiedingen",
+    "messages": "Berichten"
   },
   "auth": {
     "email": {
@@ -367,7 +368,8 @@
     "allListings": "Alle Aanbiedingen",
     "manageListings": "Beheer en controleer al uw onroerendgoedaanbiedingen op één plaats.",
     "searchListings": "Aanbiedingen doorzoeken...",
-    "noPropertiesFound": "Geen onroerend goed gevonden. Probeer een nieuwe aanbieding toe te voegen!"
+    "noPropertiesFound": "Geen onroerend goed gevonden. Probeer een nieuwe aanbieding toe te voegen!",
+    "messages": "Berichten"
   },
   "footer": {
     "positioning": "Grensoverschrijdend vastgoedadvies voor investeerders en particuliere cliënten die strategische vastgoedvertegenwoordiging wereldwijd zoeken.",
@@ -465,6 +467,18 @@
     "statusApprovedText": "Uw partneraanvraag is goedgekeurd. U bent nu een Geverifieerd Partner in het Ukon Estate netwerk.",
     "statusRejected": "Aanvraag Niet Goedgekeurd",
     "statusRejectedText": "Na zorgvuldige beoordeling is uw aanvraag op dit moment niet goedgekeurd."
+  },
+  "messaging": {
+    "requestViewing": "Bezichtiging Aanvragen",
+    "askQuestion": "Stel een Vraag",
+    "getMoreInfo": "Meer Informatie",
+    "sendMessage": "Bericht Versturen",
+    "messageSent": "Bericht verzonden!",
+    "agentWillRespond": "De makelaar zal spoedig reageren.",
+    "sendAnother": "Nog een Bericht Versturen",
+    "typeMessage": "Typ uw bericht...",
+    "typeReply": "Typ uw reactie...",
+    "selectDate": "Selecteer gewenste datum"
   },
   "common": {
     "loading": "Laden...",

@@ -12,8 +12,6 @@ import {
     ArrowLeft,
     Share2,
     Heart,
-    Phone,
-    Mail,
     MessageCircle,
     ChevronRight,
     ChevronLeft,
@@ -33,7 +31,8 @@ import {
     Plane,
     Trees
 } from 'lucide-react';
-import { properties as mockProperties, whatsappUrl } from '@/data/mockData';
+import { properties as mockProperties } from '@/data/mockData';
+import ListingContactForm from '@/components/messaging/ListingContactForm';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -222,14 +221,6 @@ const PropertyDetail = () => {
             toast.error('Failed to save property');
         } finally {
             setSaving(false);
-        }
-    };
-
-    const handleInquiry = async () => {
-        try {
-            await supabase.rpc('increment_property_inquiries', { p_property_id: property.id });
-        } catch (error) {
-            console.error('Error tracking inquiry:', error);
         }
     };
 
@@ -649,20 +640,11 @@ const PropertyDetail = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="space-y-3">
-                                                <a
-                                                    href={whatsappUrl + encodeURIComponent(` ${property.title} in ${property.address}`)}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="w-full"
-                                                    onClick={handleInquiry}
-                                                >
-                                                    <Button className="w-full bg-[#075e54] hover:bg-[#128c7e] text-white rounded-xl h-14 gap-2 text-lg font-bold shadow-lg shadow-green-900/10">
-                                                        <MessageCircle size={24} />
-                                                        {t('propertyDetail.whatsappAgent')}
-                                                    </Button>
-                                                </a>
-                                            </div>
+                                            <ListingContactForm
+                                                listingId={property.id}
+                                                sellerId={property.user_id}
+                                                listingTitle={property.title}
+                                            />
                                         </div>
                                     </div>
                                 </div>
