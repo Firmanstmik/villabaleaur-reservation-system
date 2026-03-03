@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -50,6 +50,7 @@ const Dashboard = () => {
     const [statsLoading, setStatsLoading] = useState(true);
     const [editingPropertyId, setEditingPropertyId] = useState<string | null>(null);
     const [initialEditTab, setInitialEditTab] = useState<'basic' | 'performance'>('basic');
+    const lastFetchRef = useRef<number>(0);
 
     // Lightweight unread count for sidebar badge (no heavy RPC, no conversation data)
     const unreadCount = useUnreadCount();
@@ -62,7 +63,11 @@ const Dashboard = () => {
         if (user && messagingActive) messaging.fetchConversations();
     }, [user, messagingActive]);
 
-    const fetchDashboardData = async (userId: string) => {
+    const STALE_THRESHOLD = 30_000; // 30 seconds
+
+    const fetchDashboardData = async (userId: string, force = false) => {
+        // Skip if data was fetched recently (unless forced)
+        if (!force && Date.now() - lastFetchRef.current < STALE_THRESHOLD) return;
         try {
             const { data, error } = await supabase
                 .from('properties')
@@ -72,6 +77,7 @@ const Dashboard = () => {
 
             if (error) throw error;
             setProperties(data || []);
+            lastFetchRef.current = Date.now();
         } catch (err) {
             console.error('Error fetching dashboard data:', err);
         } finally {
@@ -95,7 +101,7 @@ const Dashboard = () => {
                     return;
                 }
                 setUser(user);
-                fetchDashboardData(user.id);
+                fetchDashboardData(user.id, true);
             }
             setLoading(false);
         };
@@ -311,7 +317,7 @@ const Dashboard = () => {
                                                                 )}
                                                             </td>
                                                             <td className="px-8 py-6 text-right">
-                                                                <PropertyListingMenu property={p} onRefresh={() => fetchDashboardData(user.id)} onEdit={handleEditProperty} />
+                                                                <PropertyListingMenu property={p} onRefresh={() => fetchDashboardData(user.id, true)} onEdit={handleEditProperty} />
                                                             </td>
                                                         </tr>
                                                     ))
@@ -348,7 +354,7 @@ const Dashboard = () => {
                                     <h2 className="text-3xl font-bold text-[#0e2e50]">{t('dashboard.publishNewProperty')}</h2>
                                     <p className="text-muted-foreground mt-2 font-medium">{t('dashboard.fillDetails')}</p>
                                 </div>
-                                <AddPropertyForm onComplete={() => { fetchDashboardData(user.id); setActiveTab('listings'); }} />
+                                <AddPropertyForm onComplete={() => { fetchDashboardData(user.id, true); setActiveTab('listings'); }} />
                             </motion.div>
                         )}
 
@@ -366,7 +372,7 @@ const Dashboard = () => {
                                         setEditingPropertyId(null);
                                         setActiveTab('listings');
                                         setInitialEditTab('basic');
-                                        fetchDashboardData(user.id);
+                                        fetchDashboardData(user.id, true);
                                     }}
                                 />
                             </motion.div>
@@ -433,7 +439,7 @@ const Dashboard = () => {
                                                                 )}
                                                             </td>
                                                             <td className="px-8 py-6 text-right">
-                                                                <PropertyListingMenu property={p} onRefresh={() => fetchDashboardData(user.id)} onEdit={handleEditProperty} />
+                                                                <PropertyListingMenu property={p} onRefresh={() => fetchDashboardData(user.id, true)} onEdit={handleEditProperty} />
                                                             </td>
                                                         </tr>
                                                     ))

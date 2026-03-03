@@ -8,6 +8,7 @@ import { MapPin, AlertCircle, Loader } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isValidUKCoordinates } from '@/lib/mapbox';
 import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface PropertyMapProps {
   latitude: number;
