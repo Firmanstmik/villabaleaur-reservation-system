@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, useMemo, useRef, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
@@ -26,6 +26,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [userType, setUserType] = useState<'buyer' | 'agent' | 'admin' | null>(null);
 
+  // Cache: avoid re-fetching role for the same user within a session
+  const roleCacheRef = useRef<{ userId: string; role: 'buyer' | 'agent' | 'admin' | null } | null>(null);
+
   // Fetch authoritative role from user_profiles table
   const fetchUserRole = async (userId: string): Promise<'buyer' | 'agent' | 'admin' | null> => {
     try {
@@ -40,11 +43,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Resolve role: DB first, then user_metadata fallback
+  // Resolve role: use cache if same user, otherwise DB first, then user_metadata fallback
   const resolveUserRole = async (user: User): Promise<'buyer' | 'agent' | 'admin' | null> => {
+    // Return cached role if we already resolved it for this user
+    if (roleCacheRef.current?.userId === user.id) {
+      return roleCacheRef.current.role;
+    }
     const dbRole = await fetchUserRole(user.id);
-    if (dbRole) return dbRole;
-    return (user.user_metadata?.user_type as 'buyer' | 'agent' | null) || null;
+    const role = dbRole || (user.user_metadata?.user_type as 'buyer' | 'agent' | null) || null;
+    roleCacheRef.current = { userId: user.id, role };
+    return role;
   };
 
   // Initialize auth state on mount
@@ -80,6 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setUser(null);
         setUserType(null);
+        roleCacheRef.current = null;
       }
 
       setLoading(false);
@@ -90,7 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
@@ -103,6 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.session?.user) {
         setUser(data.session.user);
+        roleCacheRef.current = null; // Clear cache so fresh login fetches from DB
         const role = await resolveUserRole(data.session.user);
         setUserType(role);
       }
@@ -112,9 +122,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       throw error;
     }
-  };
+  }, []);
 
-  const signUp = async (
+  const signUp = useCallback(async (
     email: string,
     password: string,
     metadata: { name: string; user_type: 'buyer' | 'agent' }
@@ -147,9 +157,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       throw error;
     }
-  };
+  }, [language]);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
@@ -157,12 +167,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setUser(null);
       setUserType(null);
+      roleCacheRef.current = null;
     } catch (error: any) {
       throw error;
     }
-  };
+  }, []);
 
-  const sendMagicLink = async (email: string) => {
+  const sendMagicLink = useCallback(async (email: string) => {
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email,
@@ -180,9 +191,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       throw error;
     }
-  };
+  }, [language]);
 
-  const resetPassword = async (email: string, language: string) => {
+  const resetPassword = useCallback(async (email: string, language: string) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/${language}/auth/update-password`,
@@ -197,9 +208,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       throw error;
     }
-  };
+  }, []);
 
-  const value: AuthContextType = {
+  const value = useMemo<AuthContextType>(() => ({
     user,
     session,
     loading,
@@ -210,7 +221,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signOut,
     sendMagicLink,
     resetPassword,
-  };
+  }), [user, session, loading, userType, signIn, signUp, signOut, sendMagicLink, resetPassword]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

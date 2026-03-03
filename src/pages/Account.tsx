@@ -25,7 +25,7 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import BuyerMessages from '@/components/messaging/BuyerMessages';
-import { useMessaging } from '@/hooks/useMessaging';
+import { useMessaging, useUnreadCount } from '@/hooks/useMessaging';
 
 type Tab = 'saved' | 'messages' | 'alerts' | 'settings';
 
@@ -58,12 +58,16 @@ const Account = () => {
   const [bio, setBio] = useState('');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
-  // Messaging state (lifted for tab badge + realtime)
+  // Lightweight unread count for tab badge (no heavy RPC, no conversation data)
+  const unreadCount = useUnreadCount();
+
+  // Full messaging state — only activated when messages tab is open
   const messaging = useMessaging();
+  const messagingActive = activeTab === 'messages';
 
   useEffect(() => {
-    if (user) messaging.fetchConversations();
-  }, [user]);
+    if (user && messagingActive) messaging.fetchConversations();
+  }, [user, messagingActive]);
 
   // Redirect agents and non-authenticated users
   useEffect(() => {
@@ -248,9 +252,9 @@ const Account = () => {
             <TabsTrigger value="messages" className="flex items-center gap-2 relative">
               <MessageSquare className="h-4 w-4" />
               <span className="hidden sm:inline">{t('account.messages')}</span>
-              {messaging.totalUnreadCount > 0 && (
+              {unreadCount > 0 && (
                 <span className="bg-[#0e2e50] text-white text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1">
-                  {messaging.totalUnreadCount}
+                  {unreadCount}
                 </span>
               )}
             </TabsTrigger>

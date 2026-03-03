@@ -29,6 +29,62 @@ export interface Message {
   sender_name: string;
 }
 
+/**
+ * Lightweight hook for sidebar/tab unread badge.
+ * Only queries unread counts from conversations table — no JOINs, no heavy RPC.
+ * Keeps a single realtime subscription to stay in sync.
+ */
+export function useUnreadCount() {
+  const { user } = useAuth();
+  const [count, setCount] = useState(0);
+
+  const refresh = useCallback(async () => {
+    if (!user) { setCount(0); return; }
+    try {
+      // Lightweight: only select unread columns, no JOINs
+      const { data: asBuyer } = await supabase
+        .from('conversations')
+        .select('buyer_unread_count')
+        .eq('buyer_id', user.id);
+
+      const { data: asSeller } = await supabase
+        .from('conversations')
+        .select('seller_unread_count')
+        .eq('seller_id', user.id);
+
+      const total =
+        (asBuyer || []).reduce((s, c) => s + (c.buyer_unread_count || 0), 0) +
+        (asSeller || []).reduce((s, c) => s + (c.seller_unread_count || 0), 0);
+
+      setCount(total);
+    } catch {
+      // silent — badge is non-critical
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    refresh();
+
+    const channel = supabase
+      .channel(`unread-badge-${user.id}`)
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'conversations' },
+        (payload) => {
+          const updated = payload.new as Record<string, any>;
+          if (updated.buyer_id !== user.id && updated.seller_id !== user.id) return;
+          refresh();
+        },
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [user?.id, refresh]);
+
+  return count;
+}
+
 export function useMessaging() {
   const { user } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -199,8 +255,10 @@ export function useMessaging() {
   }, [activeConversationId, user?.id]);
 
   // --- Realtime: conversation list updates (unread counts, last_message_at) ---
+  // Only subscribe when conversations have been loaded (messages tab is active)
+  const hasConversations = conversations.length > 0;
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id || !hasConversations) return;
 
     const channel = supabase
       .channel(`conversations-${user.id}`)
@@ -266,7 +324,7 @@ export function useMessaging() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user?.id]);
+  }, [user?.id, hasConversations]);
 
   const totalUnreadCount = useMemo(
     () => conversations.reduce((sum, c) => sum + (c.unread_count || 0), 0),
