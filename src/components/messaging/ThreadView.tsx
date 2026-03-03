@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo, memo } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Send, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ interface ThreadViewProps {
   otherPartyName: string;
 }
 
-export default function ThreadView({
+export default memo(function ThreadView({
   messages,
   loading,
   currentUserId,
@@ -53,18 +53,21 @@ export default function ThreadView({
     }
   };
 
-  // Group messages by day
-  const groupedMessages: { label: string; messages: Message[] }[] = [];
-  let currentLabel = '';
-  for (const msg of messages) {
-    const label = formatDayLabel(msg.created_at);
-    if (label !== currentLabel) {
-      currentLabel = label;
-      groupedMessages.push({ label, messages: [msg] });
-    } else {
-      groupedMessages[groupedMessages.length - 1].messages.push(msg);
+  // Group messages by day (memoized to avoid recomputing on every render)
+  const groupedMessages = useMemo(() => {
+    const groups: { label: string; messages: Message[] }[] = [];
+    let currentLabel = '';
+    for (const msg of messages) {
+      const label = formatDayLabel(msg.created_at);
+      if (label !== currentLabel) {
+        currentLabel = label;
+        groups.push({ label, messages: [msg] });
+      } else {
+        groups[groups.length - 1].messages.push(msg);
+      }
     }
-  }
+    return groups;
+  }, [messages]);
 
   return (
     <div className="flex flex-col h-full">
@@ -170,4 +173,4 @@ export default function ThreadView({
       </div>
     </div>
   );
-}
+});

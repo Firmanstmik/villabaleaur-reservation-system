@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { MessageSquare } from 'lucide-react';
 import type { Conversation, Message } from '@/hooks/useMessaging';
 import ConversationList from './ConversationList';
@@ -15,7 +16,7 @@ interface BuyerMessagesProps {
   onSendReply: (content: string) => Promise<boolean>;
 }
 
-export default function BuyerMessages({
+export default memo(function BuyerMessages({
   userId,
   conversations,
   loadingConversations,
@@ -77,4 +78,4 @@ export default function BuyerMessages({
       </div>
     </div>
   );
-}
+});

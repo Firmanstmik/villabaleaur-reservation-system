@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -65,7 +65,7 @@ const Dashboard = () => {
 
     const STALE_THRESHOLD = 30_000; // 30 seconds
 
-    const fetchDashboardData = async (userId: string, force = false) => {
+    const fetchDashboardData = useCallback(async (userId: string, force = false) => {
         // Skip if data was fetched recently (unless forced)
         if (!force && Date.now() - lastFetchRef.current < STALE_THRESHOLD) return;
         try {
@@ -83,7 +83,7 @@ const Dashboard = () => {
         } finally {
             setStatsLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         const checkUser = async () => {
@@ -122,17 +122,17 @@ const Dashboard = () => {
         navigate(`/${language}/`);
     };
 
-    const handleEditProperty = (propertyId: string) => {
+    const handleEditProperty = useCallback((propertyId: string) => {
         setEditingPropertyId(propertyId);
         setActiveTab('edit');
         setInitialEditTab('basic');
-    };
+    }, []);
 
-    const handleOpenPerformance = (propertyId: string) => {
+    const handleOpenPerformance = useCallback((propertyId: string) => {
         setEditingPropertyId(propertyId);
         setActiveTab('edit');
         setInitialEditTab('performance');
-    };
+    }, []);
 
     const navigationItems = [
         { id: 'overview' as Tab, icon: LayoutDashboard, label: t('dashboard.overview') },

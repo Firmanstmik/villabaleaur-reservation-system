@@ -287,6 +287,7 @@ export function useMessaging() {
             const merged = {
               ...existing,
               last_message_at: updated.last_message_at,
+              last_message_preview: updated.last_message_preview || existing.last_message_preview,
               unread_count: unreadCount,
             };
 
@@ -296,27 +297,6 @@ export function useMessaging() {
               (a, b) => new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime(),
             );
           });
-
-          // Refetch last_message_preview for the updated conversation
-          (async () => {
-            const { data } = await supabase
-              .from('messages')
-              .select('content')
-              .eq('conversation_id', updated.id)
-              .order('created_at', { ascending: false })
-              .limit(1)
-              .single();
-
-            if (data) {
-              setConversations((prev) =>
-                prev.map((c) =>
-                  c.id === updated.id
-                    ? { ...c, last_message_preview: data.content.slice(0, 80) }
-                    : c,
-                ),
-              );
-            }
-          })();
         },
       )
       .subscribe();

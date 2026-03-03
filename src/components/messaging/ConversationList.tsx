@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare } from 'lucide-react';
 import { formatRelativeTime } from './MessageTimestamp';
@@ -11,7 +12,7 @@ interface ConversationListProps {
   emptyMessage?: string;
 }
 
-export default function ConversationList({
+export default memo(function ConversationList({
   conversations,
   loading,
   activeId,
@@ -99,4 +100,4 @@ export default function ConversationList({
       </AnimatePresence>
     </div>
   );
-}
+});

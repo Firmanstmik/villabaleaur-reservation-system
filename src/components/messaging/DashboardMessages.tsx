@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { MessageSquare } from 'lucide-react';
 import type { Conversation, Message } from '@/hooks/useMessaging';
 import ConversationList from './ConversationList';
@@ -15,7 +16,7 @@ interface DashboardMessagesProps {
   onSendReply: (content: string) => Promise<boolean>;
 }
 
-export default function DashboardMessages({
+export default memo(function DashboardMessages({
   userId,
   conversations,
   loadingConversations,
@@ -86,4 +87,4 @@ export default function DashboardMessages({
       </div>
     </div>
   );
-}
+});
