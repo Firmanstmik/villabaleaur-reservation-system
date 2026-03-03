@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -17,6 +17,7 @@ export interface Conversation {
   other_party_name: string;
   other_party_image: string | null;
   last_message_preview: string | null;
+  unread_count: number;
 }
 
 export interface Message {
@@ -139,6 +140,139 @@ export function useMessaging() {
     }
   }, [user]);
 
+  const markAsRead = useCallback(async (conversationId: string) => {
+    if (!user) return;
+    try {
+      const { error } = await supabase.rpc('mark_conversation_as_read', {
+        p_conversation_id: conversationId,
+      });
+      if (error) throw error;
+
+      // Update local state
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === conversationId ? { ...c, unread_count: 0 } : c,
+        ),
+      );
+    } catch (err) {
+      console.error('Error marking conversation as read:', err);
+    }
+  }, [user]);
+
+  // --- Realtime: new messages in active conversation ---
+  useEffect(() => {
+    if (!activeConversationId) return;
+
+    const channel = supabase
+      .channel(`messages-${activeConversationId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${activeConversationId}`,
+        },
+        (payload) => {
+          const newMsg = payload.new as Record<string, any>;
+          setMessages((prev) => {
+            if (prev.find((m) => m.id === newMsg.id)) return prev;
+            return [
+              ...prev,
+              {
+                id: newMsg.id,
+                conversation_id: newMsg.conversation_id,
+                sender_id: newMsg.sender_id,
+                content: newMsg.content,
+                created_at: newMsg.created_at,
+                sender_name: newMsg.sender_id === user?.id ? 'You' : '',
+              },
+            ];
+          });
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [activeConversationId, user?.id]);
+
+  // --- Realtime: conversation list updates (unread counts, last_message_at) ---
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const channel = supabase
+      .channel(`conversations-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'conversations',
+        },
+        (payload) => {
+          const updated = payload.new as Record<string, any>;
+
+          // Ignore conversations where user is not a participant
+          if (updated.buyer_id !== user.id && updated.seller_id !== user.id) return;
+
+          setConversations((prev) => {
+            const idx = prev.findIndex((c) => c.id === updated.id);
+            if (idx === -1) return prev;
+
+            const existing = prev[idx];
+            const unreadCount = user.id === updated.buyer_id
+              ? updated.buyer_unread_count
+              : updated.seller_unread_count;
+
+            const merged = {
+              ...existing,
+              last_message_at: updated.last_message_at,
+              unread_count: unreadCount,
+            };
+
+            const next = [...prev];
+            next[idx] = merged;
+            return next.sort(
+              (a, b) => new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime(),
+            );
+          });
+
+          // Refetch last_message_preview for the updated conversation
+          (async () => {
+            const { data } = await supabase
+              .from('messages')
+              .select('content')
+              .eq('conversation_id', updated.id)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .single();
+
+            if (data) {
+              setConversations((prev) =>
+                prev.map((c) =>
+                  c.id === updated.id
+                    ? { ...c, last_message_preview: data.content.slice(0, 80) }
+                    : c,
+                ),
+              );
+            }
+          })();
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id]);
+
+  const totalUnreadCount = useMemo(
+    () => conversations.reduce((sum, c) => sum + (c.unread_count || 0), 0),
+    [conversations],
+  );
+
   return {
     conversations,
     loadingConversations,
@@ -148,7 +282,9 @@ export function useMessaging() {
     fetchMessages,
     sendFirstMessage,
     sendReply,
+    markAsRead,
     activeConversationId,
     setActiveConversationId,
+    totalUnreadCount,
   };
 }

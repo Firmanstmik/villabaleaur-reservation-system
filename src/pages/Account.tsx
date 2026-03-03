@@ -25,6 +25,7 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import BuyerMessages from '@/components/messaging/BuyerMessages';
+import { useMessaging } from '@/hooks/useMessaging';
 
 type Tab = 'saved' | 'messages' | 'alerts' | 'settings';
 
@@ -56,6 +57,13 @@ const Account = () => {
   const [phone, setPhone] = useState('');
   const [bio, setBio] = useState('');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
+
+  // Messaging state (lifted for tab badge + realtime)
+  const messaging = useMessaging();
+
+  useEffect(() => {
+    if (user) messaging.fetchConversations();
+  }, [user]);
 
   // Redirect agents and non-authenticated users
   useEffect(() => {
@@ -237,9 +245,14 @@ const Account = () => {
               <Heart className="h-4 w-4" />
               <span className="hidden sm:inline">{t('account.saved')}</span>
             </TabsTrigger>
-            <TabsTrigger value="messages" className="flex items-center gap-2">
+            <TabsTrigger value="messages" className="flex items-center gap-2 relative">
               <MessageSquare className="h-4 w-4" />
               <span className="hidden sm:inline">{t('account.messages')}</span>
+              {messaging.totalUnreadCount > 0 && (
+                <span className="bg-[#0e2e50] text-white text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1">
+                  {messaging.totalUnreadCount}
+                </span>
+              )}
             </TabsTrigger>
             <TabsTrigger value="alerts" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
@@ -342,7 +355,25 @@ const Account = () => {
 
           {/* Messages Tab */}
           <TabsContent value="messages" className="space-y-6 mt-8">
-            <BuyerMessages userId={user.id} />
+            <BuyerMessages
+              userId={user.id}
+              conversations={messaging.conversations}
+              loadingConversations={messaging.loadingConversations}
+              messages={messaging.messages}
+              loadingMessages={messaging.loadingMessages}
+              activeConversationId={messaging.activeConversationId}
+              onSelect={(id) => {
+                messaging.setActiveConversationId(id);
+                messaging.fetchMessages(id);
+                messaging.markAsRead(id);
+              }}
+              onBack={() => messaging.setActiveConversationId(null)}
+              onSendReply={(content) =>
+                messaging.activeConversationId
+                  ? messaging.sendReply(messaging.activeConversationId, content)
+                  : Promise.resolve(false)
+              }
+            />
           </TabsContent>
 
           {/* Search Alerts Tab */}

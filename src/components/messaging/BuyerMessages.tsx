@@ -1,45 +1,32 @@
-import { useEffect } from 'react';
 import { MessageSquare } from 'lucide-react';
-import { useMessaging } from '@/hooks/useMessaging';
+import type { Conversation, Message } from '@/hooks/useMessaging';
 import ConversationList from './ConversationList';
 import ThreadView from './ThreadView';
 
 interface BuyerMessagesProps {
   userId: string;
+  conversations: Conversation[];
+  loadingConversations: boolean;
+  messages: Message[];
+  loadingMessages: boolean;
+  activeConversationId: string | null;
+  onSelect: (conversationId: string) => void;
+  onBack: () => void;
+  onSendReply: (content: string) => Promise<boolean>;
 }
 
-export default function BuyerMessages({ userId }: BuyerMessagesProps) {
-  const {
-    conversations,
-    loadingConversations,
-    fetchConversations,
-    messages,
-    loadingMessages,
-    fetchMessages,
-    sendReply,
-    activeConversationId,
-    setActiveConversationId,
-  } = useMessaging();
-
-  useEffect(() => {
-    fetchConversations();
-  }, [fetchConversations]);
-
+export default function BuyerMessages({
+  userId,
+  conversations,
+  loadingConversations,
+  messages,
+  loadingMessages,
+  activeConversationId,
+  onSelect,
+  onBack,
+  onSendReply,
+}: BuyerMessagesProps) {
   const activeConversation = conversations.find((c) => c.id === activeConversationId);
-
-  const handleSelect = (conversationId: string) => {
-    setActiveConversationId(conversationId);
-    fetchMessages(conversationId);
-  };
-
-  const handleBack = () => {
-    setActiveConversationId(null);
-  };
-
-  const handleSendReply = async (content: string) => {
-    if (!activeConversationId) return false;
-    return sendReply(activeConversationId, content);
-  };
 
   return (
     <div>
@@ -57,7 +44,7 @@ export default function BuyerMessages({ userId }: BuyerMessagesProps) {
               conversations={conversations}
               loading={loadingConversations}
               activeId={activeConversationId}
-              onSelect={handleSelect}
+              onSelect={onSelect}
               emptyMessage="No conversations yet. Contact an agent about a listing to start."
             />
           </div>
@@ -73,8 +60,8 @@ export default function BuyerMessages({ userId }: BuyerMessagesProps) {
                 messages={messages}
                 loading={loadingMessages}
                 currentUserId={userId}
-                onBack={handleBack}
-                onSendReply={handleSendReply}
+                onBack={onBack}
+                onSendReply={onSendReply}
                 listingTitle={activeConversation.listing_title}
                 listingImage={activeConversation.listing_image}
                 otherPartyName={activeConversation.other_party_name}

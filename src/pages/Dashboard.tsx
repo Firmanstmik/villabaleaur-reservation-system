@@ -29,6 +29,7 @@ import AddPropertyForm from '@/components/admin/AddPropertyForm';
 import { PropertyListingMenu } from '@/components/admin/PropertyListingMenu';
 import SellerSettings from '@/components/settings/SellerSettings';
 import DashboardMessages from '@/components/messaging/DashboardMessages';
+import { useMessaging } from '@/hooks/useMessaging';
 
 type Tab = 'overview' | 'listings' | 'add-new' | 'edit' | 'messages' | 'settings';
 
@@ -49,6 +50,13 @@ const Dashboard = () => {
     const [statsLoading, setStatsLoading] = useState(true);
     const [editingPropertyId, setEditingPropertyId] = useState<string | null>(null);
     const [initialEditTab, setInitialEditTab] = useState<'basic' | 'performance'>('basic');
+
+    // Messaging state (lifted for sidebar badge + realtime)
+    const messaging = useMessaging();
+
+    useEffect(() => {
+        if (user) messaging.fetchConversations();
+    }, [user]);
 
     const fetchDashboardData = async (userId: string) => {
         try {
@@ -158,6 +166,15 @@ const Dashboard = () => {
                         >
                             <item.icon size={20} className={activeTab === item.id ? 'text-[#0e2e50] scale-110' : 'group-hover:scale-110 transition-transform'} />
                             {item.label}
+                            {item.id === 'messages' && messaging.totalUnreadCount > 0 && (
+                                <span className={`ml-auto text-[10px] font-bold min-w-[20px] h-5 rounded-full flex items-center justify-center px-1.5 ${
+                                    activeTab === item.id
+                                        ? 'bg-[#0e2e50] text-white'
+                                        : 'bg-white/20 text-white'
+                                }`}>
+                                    {messaging.totalUnreadCount}
+                                </span>
+                            )}
                             {activeTab === item.id && (
                                 <motion.div
                                     layoutId="activeTab"
@@ -437,7 +454,25 @@ const Dashboard = () => {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                             >
-                                <DashboardMessages userId={user.id} />
+                                <DashboardMessages
+                                    userId={user.id}
+                                    conversations={messaging.conversations}
+                                    loadingConversations={messaging.loadingConversations}
+                                    messages={messaging.messages}
+                                    loadingMessages={messaging.loadingMessages}
+                                    activeConversationId={messaging.activeConversationId}
+                                    onSelect={(id) => {
+                                        messaging.setActiveConversationId(id);
+                                        messaging.fetchMessages(id);
+                                        messaging.markAsRead(id);
+                                    }}
+                                    onBack={() => messaging.setActiveConversationId(null)}
+                                    onSendReply={(content) =>
+                                        messaging.activeConversationId
+                                            ? messaging.sendReply(messaging.activeConversationId, content)
+                                            : Promise.resolve(false)
+                                    }
+                                />
                             </motion.div>
                         )}
 
