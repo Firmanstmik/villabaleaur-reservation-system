@@ -121,6 +121,7 @@ export function AgentsCarousel() {
                 <img
                   src={agentPhotos[agent.id] || agent.photo}
                   alt={agent.name}
+                  loading="lazy"
                   className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 group-hover:brightness-110 group-hover:saturate-[1.15] transition-all duration-300 ease-out pointer-events-none"
                   draggable={false}
                 />

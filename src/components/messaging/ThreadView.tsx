@@ -80,7 +80,7 @@ export default memo(function ThreadView({
         )}
         <div className="w-10 h-10 rounded-xl bg-secondary overflow-hidden shrink-0">
           {listingImage ? (
-            <img src={listingImage} alt="" className="w-full h-full object-cover" />
+            <img src={listingImage} alt="" loading="lazy" className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#0e2e50]/20 to-[#0e2e50]/10">
               <MessageSquare className="h-4 w-4 text-muted-foreground" />

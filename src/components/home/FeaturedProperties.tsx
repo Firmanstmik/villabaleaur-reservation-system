@@ -8,10 +8,12 @@ import { properties as mockProperties } from '@/data/mockData';
 import { useInView } from '@/hooks/useInView';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/supabase';
+import { useSavedListings } from '@/hooks/useSavedListings';
 
 export function FeaturedProperties() {
   const { ref, isInView } = useInView();
   const { language, t } = useLanguage();
+  const { isSaved, toggle } = useSavedListings();
   const [displayProperties, setDisplayProperties] = useState<any[]>([]);
 
   useEffect(() => {
@@ -87,7 +89,14 @@ export function FeaturedProperties() {
         {/* Properties Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredProperties.map((property, index) => (
-            <PropertyCard key={property.id} property={property} index={index} />
+            <PropertyCard
+              key={property.id}
+              property={property}
+              index={index}
+              eager={index === 0}
+              isSaved={isSaved(property.id)}
+              onToggleSave={() => toggle(property.id)}
+            />
           ))}
         </div>
 

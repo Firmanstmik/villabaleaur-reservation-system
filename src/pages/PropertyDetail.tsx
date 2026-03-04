@@ -49,10 +49,12 @@ import { PropertyMap } from '@/components/map/PropertyMap';
 import NearbyAmenities from '@/components/property/NearbyAmenities';
 import { DescriptionRenderer } from '@/components/property/DescriptionRenderer';
 import { getEmbedUrl } from '@/lib/video-utils';
+import { useSavedListings } from '@/hooks/useSavedListings';
 
 const PropertyDetail = () => {
     const { id } = useParams();
     const { t, language } = useLanguage();
+    const { isSaved: isPropertySaved, toggle: toggleSaved } = useSavedListings();
     const { currency, formatPrice: formatCurrencyPrice } = useCurrency();
     const [property, setProperty] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -383,6 +385,7 @@ const PropertyDetail = () => {
                                 <img
                                     src={img}
                                     alt={`${property.title} ${idx + 2}`}
+                                    loading="lazy"
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
                                 <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
@@ -666,7 +669,13 @@ const PropertyDetail = () => {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {similarProperties.map((p, index) => (
-                                <PropertyCard key={p.id} property={p} index={index} />
+                                <PropertyCard
+                                    key={p.id}
+                                    property={p}
+                                    index={index}
+                                    isSaved={isPropertySaved(p.id)}
+                                    onToggleSave={() => toggleSaved(p.id)}
+                                />
                             ))}
                         </div>
                     </section>

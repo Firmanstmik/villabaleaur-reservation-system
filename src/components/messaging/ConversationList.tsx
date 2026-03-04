@@ -59,6 +59,7 @@ export default memo(function ConversationList({
                   <img
                     src={convo.listing_image}
                     alt=""
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                 ) : (

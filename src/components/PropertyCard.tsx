@@ -11,6 +11,9 @@ import { toast } from 'sonner';
 interface PropertyCardProps {
   property: Property;
   index?: number;
+  eager?: boolean;
+  isSaved?: boolean;
+  onToggleSave?: () => void;
 }
 
 const statusColors = {
@@ -25,16 +28,21 @@ const statusLabelKeys = {
   investment: 'properties.forInvestment',
 };
 
-export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
-  const [isSaved, setIsSaved] = useState(false);
+export function PropertyCard({ property, index = 0, eager, isSaved: externalIsSaved, onToggleSave }: PropertyCardProps) {
+  const isExternalMode = onToggleSave !== undefined;
+
+  // Internal state — only used when parent doesn't provide saved state
+  const [internalIsSaved, setInternalIsSaved] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const { language, t } = useLanguage();
   const { currency, formatPrice } = useCurrency();
 
-  // Get current user and check if property is saved
+  // Internal fallback: fetch user + saved status per card (N+1 pattern)
+  // Skipped when parent provides onToggleSave
   useEffect(() => {
+    if (isExternalMode) return;
     const checkUser = async () => {
       try {
         const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -49,7 +57,7 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
             .maybeSingle();
 
           if (savedData) {
-            setIsSaved(true);
+            setInternalIsSaved(true);
             setSavedId(savedData.id);
           }
         }
@@ -59,11 +67,18 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
     };
 
     checkUser();
-  }, [property.id]);
+  }, [property.id, isExternalMode]);
+
+  const saved = isExternalMode ? (externalIsSaved ?? false) : internalIsSaved;
 
   const handleSave = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (isExternalMode) {
+      onToggleSave!();
+      return;
+    }
 
     if (!user) {
       toast.error('Sign in to save properties');
@@ -72,17 +87,15 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
 
     setSaving(true);
     try {
-      if (isSaved && savedId) {
-        // Delete saved listing
+      if (internalIsSaved && savedId) {
         await supabase
           .from('saved_listings')
           .delete()
           .eq('id', savedId);
-        setIsSaved(false);
+        setInternalIsSaved(false);
         setSavedId(null);
         toast.success('Property removed from saved');
       } else {
-        // Insert new saved listing
         const { data, error } = await supabase
           .from('saved_listings')
           .insert({ property_id: property.id, user_id: user.id })
@@ -90,7 +103,7 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
           .single();
 
         if (error) throw error;
-        setIsSaved(true);
+        setInternalIsSaved(true);
         setSavedId(data?.id ?? null);
         toast.success('Property saved');
       }
@@ -122,18 +135,19 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
           <img
             src={propertyImage}
             alt={propertyTitle}
+            loading={eager ? undefined : "lazy"}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
 
           {/* Save Button - Top Left */}
           <button
             onClick={handleSave}
-            className={`absolute top-4 left-4 p-2.5 rounded-full transition-all duration-300 z-10 ${isSaved
+            className={`absolute top-4 left-4 p-2.5 rounded-full transition-all duration-300 z-10 ${saved
               ? 'bg-ukon-red text-white shadow-lg scale-110'
               : 'bg-white/80 text-foreground hover:bg-white hover:scale-110 backdrop-blur-sm'
               }`}
           >
-            <Heart size={18} className={isSaved ? 'fill-current' : ''} />
+            <Heart size={18} className={saved ? 'fill-current' : ''} />
           </button>
 
           {/* Status Badge - Top Right */}

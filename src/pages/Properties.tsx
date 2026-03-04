@@ -9,12 +9,14 @@ import { useInView } from '@/hooks/useInView';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useFilters } from '@/hooks/useFilters';
 import { supabase } from '@/lib/supabase';
+import { useSavedListings } from '@/hooks/useSavedListings';
 import heroBg from '@/assets/Ukon_Estate_Hero.avif';
 import heroVideo from '@/assets/Ukon_Estate_hero-video-v2.mp4';
 
 const Properties = () => {
   const { ref, isInView } = useInView();
   const { t } = useLanguage();
+  const { isSaved, toggle } = useSavedListings();
   const [displayProperties, setDisplayProperties] = useState<any[]>([]);
 
   useEffect(() => {
@@ -121,7 +123,13 @@ const Properties = () => {
             {filteredProperties.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredProperties.map((property, index) => (
-                  <PropertyCard key={property.id} property={property} index={index} />
+                  <PropertyCard
+                    key={property.id}
+                    property={property}
+                    index={index}
+                    isSaved={isSaved(property.id)}
+                    onToggleSave={() => toggle(property.id)}
+                  />
                 ))}
               </div>
             ) : (

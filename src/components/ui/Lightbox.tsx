@@ -123,7 +123,7 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
                                         : 'border-transparent opacity-40 hover:opacity-80'
                                         }`}
                                 >
-                                    <img src={img} className="w-full h-full object-cover" alt={`Thumb ${idx + 1}`} />
+                                    <img src={img} loading="lazy" className="w-full h-full object-cover" alt={`Thumb ${idx + 1}`} />
                                     {currentIndex === idx && (
                                         <motion.div
                                             layoutId="activeThumb"
