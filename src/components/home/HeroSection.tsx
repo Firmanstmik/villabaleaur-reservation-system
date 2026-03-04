@@ -44,6 +44,9 @@ export function HeroSection() {
     const video = videoRef.current;
     if (!video) return;
 
+    // Ensure muted is set on the DOM element (React 18 doesn't always apply it)
+    video.muted = true;
+
     const tryPlay = () => { video.play().catch(() => {}); };
     tryPlay();
     video.addEventListener('canplay', tryPlay, { once: true });
