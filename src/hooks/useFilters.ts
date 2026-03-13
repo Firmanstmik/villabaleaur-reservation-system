@@ -27,7 +27,7 @@ export interface UseFiltersReturn {
 export function useFilters(allProperties: Property[]): UseFiltersReturn {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
-  const { currency, exchangeRates } = useCurrency();
+  const { currency, exchangeRates, convertToEUR } = useCurrency();
 
   // Debounced text fields (300ms delay)
   const debouncedLocation = useDebounce(filters.location, 300);
@@ -111,12 +111,9 @@ export function useFilters(allProperties: Property[]): UseFiltersReturn {
       const cleaned = priceStr.replace(/[^0-9.]/g, '');
       const n = parseFloat(cleaned);
       if (isNaN(n)) return null;
-      if (currency === 'EUR') return n;
-      const rate = exchangeRates[currency];
-      if (!rate || rate === 0) return null;
-      return n / rate;
+      return convertToEUR(n, currency);
     },
-    [currency, exchangeRates]
+    [currency, convertToEUR]
   );
 
   // Memoized filtered results

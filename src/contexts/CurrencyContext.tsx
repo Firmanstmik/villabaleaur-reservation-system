@@ -11,6 +11,8 @@ export interface CurrencyContextType {
   setCurrency: (curr: SupportedCurrency) => void;
   exchangeRates: ExchangeRates;
   convert: (amountInEUR: number, targetCurrency: SupportedCurrency) => number;
+  fromEUR: (amountInEUR: number, targetCurrency: SupportedCurrency) => number;
+  convertToEUR: (amountInAny: number, fromCurrency: SupportedCurrency) => number;
   formatPrice: (amountInEUR: number, targetCurrency: SupportedCurrency, language: string) => string;
   isDetecting: boolean;
   isLoading: boolean;
@@ -239,6 +241,23 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
     // Always convert from EUR base to avoid cumulative rounding errors
     return converted;
   }, [exchangeRates]);
+  
+  // Convert amount from ANY currency back to EUR
+  const convertToEUR = useCallback((amountInAny: number, fromCurrency: SupportedCurrency): number => {
+    if (fromCurrency === 'EUR') {
+      return amountInAny;
+    }
+
+    const rate = exchangeRates[fromCurrency];
+    if (!rate || rate === 0) {
+      console.warn(`No exchange rate found for ${fromCurrency}, returning original amount`);
+      return amountInAny;
+    }
+
+    const converted = amountInAny / rate;
+    console.log(`💱 Converting back: ${amountInAny} ${fromCurrency} ÷ ${rate} = ${converted} EUR`);
+    return converted;
+  }, [exchangeRates]);
 
   // Format price with currency and locale-specific formatting
   const formatPrice = useCallback(
@@ -280,6 +299,8 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
       setCurrency: handleSetCurrency,
       exchangeRates,
       convert,
+      fromEUR: convert,
+      convertToEUR,
       formatPrice,
       isDetecting,
       isLoading,

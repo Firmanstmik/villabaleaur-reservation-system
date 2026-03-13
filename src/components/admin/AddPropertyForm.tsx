@@ -183,7 +183,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
     const [isEditMode] = useState(!!propertyId);
     const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
     const [listingCodeManuallyEdited, setListingCodeManuallyEdited] = useState(false);
-    const { currency, setCurrency, availableCurrencies } = useCurrency();
+    const { currency, setCurrency, availableCurrencies, convert, convertToEUR } = useCurrency();
 
     const initialListingCode = useMemo(() => `UK-${Math.random().toString(36).substring(2, 7).toUpperCase()}`, []);
 
@@ -289,7 +289,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                             longitude: data.longitude,
                             formatted_address: data.formatted_address || '',
                             countryCode: data.countryCode || '',
-                            price: data.price?.toString() || '',
+                            price: data.price ? convert(data.price, currency).toString() : '',
                             price_type: data.price_type || data.status || 'sale',
                             bedrooms: data.bedrooms?.toString() || '',
                             bathrooms: data.bathrooms?.toString() || '',
@@ -664,7 +664,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                 latitude: formData.latitude,
                 longitude: formData.longitude,
                 formatted_address: formData.formatted_address,
-                price: parseFloat(formData.price) || 0,
+                price: convertToEUR(parseFloat(formData.price) || 0, currency),
                 price_type: formData.price_type,
                 bedrooms: parseInt(formData.bedrooms) || 0,
                 bathrooms: parseInt(formData.bathrooms) || 0,
@@ -759,7 +759,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                 latitude: formData.latitude,
                 longitude: formData.longitude,
                 formatted_address: formData.formatted_address,
-                price: parseFloat(formData.price) || 0,
+                price: convertToEUR(parseFloat(formData.price) || 0, currency),
                 price_type: formData.price_type,
                 bedrooms: parseInt(formData.bedrooms) || 0,
                 bathrooms: parseInt(formData.bathrooms) || 0,
@@ -1021,6 +1021,10 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                                         type="button"
                                                         data-currency-selector=""
                                                         onClick={() => {
+                                                            const rawPrice = parseFloat(formData.price) || 0;
+                                                            const priceInEUR = convertToEUR(rawPrice, currency);
+                                                            const newPrice = convert(priceInEUR, curr);
+                                                            setFormData(prev => ({ ...prev, price: Math.round(newPrice).toString() }));
                                                             setCurrency(curr);
                                                             setShowCurrencyDropdown(false);
                                                         }}
@@ -1630,6 +1634,10 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                                                         type="button"
                                                         data-currency-selector=""
                                                         onClick={() => {
+                                                            const rawPrice = parseFloat(formData.price) || 0;
+                                                            const priceInEUR = convertToEUR(rawPrice, currency);
+                                                            const newPrice = convert(priceInEUR, curr);
+                                                            setFormData(prev => ({ ...prev, price: Math.round(newPrice).toString() }));
                                                             setCurrency(curr);
                                                             setShowCurrencyDropdown(false);
                                                         }}
