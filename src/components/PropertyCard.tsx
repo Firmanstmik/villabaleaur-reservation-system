@@ -204,6 +204,9 @@ export function PropertyCard({ property, index = 0, eager, isSaved: externalIsSa
           {/* Price */}
           <p className="text-lg font-bold text-foreground pt-1">
             {formatPrice(property.price, currency, language)}
+            {propertyStatus === 'rent' && (
+              <span className="text-sm font-normal text-muted-foreground ml-1">{t('propertyDetail.perMonth')}</span>
+            )}
           </p>
         </div>
       </Link>
