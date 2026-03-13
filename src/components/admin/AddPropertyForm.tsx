@@ -868,7 +868,7 @@ const AddPropertyForm = ({ onComplete, propertyId, initialTab }: AddPropertyForm
                 />
 
                 {/* Main Content Area */}
-                <div className="bg-white rounded-[3rem] shadow-sm border border-border overflow-hidden">
+                <div className="bg-white rounded-[3rem] shadow-sm border border-border">
                     {/* Tab Navigation */}
                     <LuxuryTabNavigation
                         tabs={steps.map(s => ({ id: s.id as TabType, label: s.label }))}
