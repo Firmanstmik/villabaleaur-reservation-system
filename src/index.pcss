@@ -1,0 +1,181 @@
+@import "@fontsource/playfair-display";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 33% 97%;
+    --foreground: 210 62% 16%;
+
+    --card: 40 38% 98%;
+    --card-foreground: 210 62% 16%;
+
+    --popover: 40 38% 98%;
+    --popover-foreground: 210 62% 16%;
+
+    --primary: 39 60% 63%;
+    --primary-foreground: 210 62% 16%;
+
+    --secondary: 198 48% 58%;
+    --secondary-foreground: 210 62% 16%;
+
+    --muted: 39 28% 91%;
+    --muted-foreground: 220 8% 46%;
+
+    --accent: 42 67% 86%;
+    --accent-foreground: 210 62% 16%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --brand-gold: 39 60% 63%;
+    --brand-soft-gold: 42 67% 73%;
+    --brand-cream: 42 68% 86%;
+    --brand-ocean: 197 47% 58%;
+    --brand-deep-ocean: 200 54% 27%;
+    --brand-aqua: 195 55% 79%;
+    --brand-white: 40 16% 96%;
+    --brand-beige: 37 29% 91%;
+    --brand-navy: 210 62% 16%;
+    --brand-gray: 220 8% 46%;
+
+    --border: 38 24% 84%;
+    --input: 38 24% 84%;
+    --ring: 39 60% 63%;
+    --radius: 1.4rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Inter", "Manrope", "Poppins", system-ui, sans-serif;
+    background-image:
+      radial-gradient(circle at top left, rgba(232, 201, 139, 0.2), transparent 28%),
+      radial-gradient(circle at top right, rgba(169, 215, 232, 0.16), transparent 24%),
+      linear-gradient(180deg, rgba(248, 247, 244, 0.98), rgba(239, 233, 223, 0.5));
+    color: #102a43;
+  }
+
+  .font-serif {
+    font-family: "Playfair Display", serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Playfair Display", serif;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: rgba(217, 179, 106, 0.28);
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply mx-auto max-w-7xl px-4 lg:px-8;
+  }
+
+  .section-space {
+    @apply py-16 md:py-20 lg:py-24;
+  }
+
+  .admin-shell {
+    background-image:
+      radial-gradient(circle at top left, rgba(232, 201, 139, 0.14), transparent 26%),
+      radial-gradient(circle at bottom right, rgba(169, 215, 232, 0.12), transparent 24%),
+      linear-gradient(180deg, rgba(248, 247, 244, 0.98), rgba(242, 238, 231, 0.82));
+  }
+
+  .admin-shell .app-shell {
+    @apply max-w-none px-0;
+  }
+
+  .admin-shell .section-space {
+    @apply py-8 md:py-10 lg:py-12;
+  }
+
+  .admin-shell main {
+    @apply relative;
+  }
+
+  .admin-shell .soft-panel,
+  .admin-shell [data-slot="card"] {
+    box-shadow: 0 36px 96px -60px rgba(16, 42, 67, 0.28);
+  }
+
+  .admin-shell table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .admin-shell thead th {
+    backdrop-filter: blur(10px);
+  }
+
+  .admin-shell tbody tr {
+    transition: background-color 220ms ease, transform 220ms ease;
+  }
+
+  .admin-shell tbody tr:hover {
+    transform: translateY(-1px);
+  }
+
+  .admin-shell input,
+  .admin-shell textarea,
+  .admin-shell select {
+    backdrop-filter: blur(10px);
+  }
+
+  .soft-panel {
+    @apply rounded-[2rem] border border-white/70 bg-[rgba(248,247,244,0.88)] shadow-[0_30px_80px_-42px_rgba(16,42,67,0.22)] backdrop-blur-md;
+  }
+
+  .hero-overlay {
+    background:
+      linear-gradient(125deg, rgba(16, 42, 67, 0.82), rgba(31, 78, 104, 0.5)),
+      linear-gradient(0deg, rgba(217, 179, 106, 0.18), rgba(246, 231, 193, 0.08)),
+      radial-gradient(circle at top right, rgba(246, 231, 193, 0.2), transparent 26%);
+  }
+
+  .subtle-grid {
+    background-image:
+      linear-gradient(rgba(248, 247, 244, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(248, 247, 244, 0.08) 1px, transparent 1px);
+    background-size: 26px 26px;
+  }
+
+  .brand-outline {
+    @apply border border-[rgba(217,179,106,0.28)] bg-[rgba(248,247,244,0.78)] backdrop-blur-sm;
+  }
+
+  .villa-gradient-text {
+    background: linear-gradient(135deg, #f6e7c1 0%, #e8c98b 45%, #d9b36a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

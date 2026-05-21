@@ -1,209 +1,1311 @@
-import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useTransition, ReactNode } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type SupportedLanguage = 'en' | 'id' | 'nl' | 'es';
+export type Language = "id" | "en";
 
-export interface LanguageContextType {
-  language: SupportedLanguage;
-  translations: Record<string, any>;
-  setLanguage: (lang: SupportedLanguage) => void;
-  t: (key?: string) => string;
-  isLoading: boolean;
-  isPending: boolean;
-  availableLanguages: SupportedLanguage[];
+const LANGUAGE_STORAGE_KEY = "villa_booking_language";
+
+const translations = {
+  id: {
+    app: {
+      brandTagline: "Pengalaman Menginap Pegunungan",
+      brandName: "Bale Aur Sembalun",
+      loadingFallback: "Memuat data...",
+      nav: {
+        home: "Beranda",
+        villas: "Kamar",
+        about: "Tentang",
+        contact: "Kontak",
+        signIn: "Masuk",
+        register: "Daftar",
+        logout: "Keluar",
+        dashboard: "Dashboard",
+        toggleMenu: "Buka navigasi",
+        language: "Bahasa",
+      },
+      userMenu: {
+        guestAccess: "Akses Tamu",
+        dashboard: "Dashboard Anda",
+        adminDashboard: "Dashboard Admin",
+        profile: "Profil",
+      },
+      status: {
+        tersedia: "Tersedia",
+        maintenance: "Maintenance",
+        nonaktif: "Nonaktif",
+        menunggu: "Menunggu",
+        disetujui: "Disetujui",
+        ditolak: "Ditolak",
+        selesai: "Selesai",
+      },
+      footer: {
+        description: "Official stay experience Bale Aur Sembalun dengan panorama pegunungan, keramahan alami, dan reservasi yang tenang.",
+        startBooking: "Reservasi Sekarang",
+      },
+    },
+    home: {
+      heroTag: "Pengalaman Villa Pegunungan",
+      heroTitleLine1: "Menginap di",
+      heroTitleLine2: "Pegunungan",
+      heroTitleAccent: "Mewah",
+      heroDescription: "Nikmati pengalaman menginap dengan panorama pegunungan Sembalun, nuansa kayu alami, dan ketenangan stay premium yang terasa hangat.",
+      explore: "Lihat Kamar",
+      watchVideo: "Lihat Stay",
+      search: {
+        location: "Lokasi",
+        locationValue: "Sembalun Lawang, Lombok Timur",
+        checkIn: "Check-in",
+        dateValue: "Pilih tanggal stay",
+        checkOut: "Check-out",
+        guests: "Tamu",
+        guestsValue: "2 Tamu",
+        button: "Cek Ketersediaan",
+      },
+      about: {
+        eyebrow: "Tentang Bale Aur Sembalun",
+        title: "Modern mountain stay dengan atmosfer Lombok yang autentik",
+        description: "Bale Aur Sembalun dirancang sebagai single luxury property dengan kamar bernuansa kayu natural, balkon pegunungan, dan pengalaman menginap yang tenang di kaki Rinjani.",
+        features: [
+          "Panorama pegunungan Sembalun yang terasa segar sejak pagi hingga senja.",
+          "Pilihan kamar resmi Bale Aur Sembalun dengan detail stay yang lebih jelas.",
+          "Desain modern mountain cabin dengan nuansa kayu, balkon, dan teras.",
+          "Alur reservasi single-property yang tenang, rapi, dan mudah dipahami.",
+        ],
+      },
+      why: {
+        eyebrow: "Kenapa Bale Aur",
+        title: "Nature hospitality, udara sejuk, dan mountain retreat yang refined",
+        description: "Setiap detail stay difokuskan pada pemandangan gunung, kenyamanan esensial, dan suasana healing yang terasa alami namun tetap premium.",
+        items: [
+          {
+            title: "Mountain View Sembalun",
+            text: "Kamar dan area duduk dirancang untuk memaksimalkan view pegunungan dan suasana sunrise yang menenangkan.",
+          },
+          {
+            title: "Stay Resmi Satu Properti",
+            text: "Seluruh alur difokuskan pada Bale Aur Sembalun sehingga tamu lebih mudah memilih kamar dan memesan stay.",
+          },
+          {
+            title: "Natural Hospitality",
+            text: "Nuansa kayu, udara sejuk, dan pelayanan hangat menghadirkan pengalaman healing yang terasa personal.",
+          },
+        ],
+      },
+      featured: {
+        eyebrow: "Pilihan Kamar Bale Aur",
+        title: "Room types untuk mountain stay yang hangat dan alami",
+        description: "Temukan tipe kamar Bale Aur Sembalun dengan balkon, teras, mountain view, dan harga per malam yang jelas.",
+        viewAll: "Lihat Semua Kamar",
+        loading: "Menyiapkan pilihan kamar Bale Aur...",
+        emptyTitle: "Pilihan kamar belum tersedia",
+        emptyDescription: "Tipe kamar resmi Bale Aur Sembalun akan tampil di sini setelah data diperbarui.",
+        manage: "Kelola Kamar",
+      },
+    },
+    login: {
+      toastSuccess: "Login berhasil.",
+      toastError: "Login gagal.",
+      heroTag: "Selamat Datang Kembali",
+      heroTitle: "Kembali ke pengalaman reservasi Bale Aur yang lebih tenang.",
+      heroDescription: "Akses akun Anda untuk mengelola reservation, meninjau mountain stay, dan melanjutkan eksplorasi kamar Bale Aur Sembalun.",
+      heroImageAlt: "Ilustrasi login Bale Aur Sembalun",
+      eyebrow: "Login",
+      title: "Masuk ke akun Anda",
+      description: "Lanjutkan rencana stay Anda, kelola reservasi, dan akses dashboard Bale Aur Anda.",
+      phone: "Nomor WhatsApp",
+      phonePlaceholder: "Contoh: 6281234567890",
+      password: "Password",
+      submit: "Masuk",
+      loading: "Sedang masuk...",
+      newHere: "Belum punya akun?",
+      createAccount: "Buat akun",
+    },
+    register: {
+      toastSuccess: "Register berhasil. Anda sudah otomatis login.",
+      toastError: "Register gagal.",
+      errorTitle: "Registrasi belum berhasil",
+      validationTitle: "Periksa data pendaftaran",
+      networkTitle: "Server belum terhubung",
+      duplicateTitle: "Nomor WhatsApp sudah digunakan",
+      genericDescription: "Silakan cek kembali data Anda dan coba lagi.",
+      networkDescription: "Layanan backend belum aktif. Nyalakan server API lalu coba daftar kembali.",
+      eyebrow: "Daftar",
+      title: "Buat akun Anda",
+      description: "Mulai pengalaman Bale Aur Sembalun Anda dengan akses cepat ke pilihan kamar, reservation status, dan stay details.",
+      fullName: "Nama Lengkap",
+      phone: "Nomor WhatsApp",
+      phonePlaceholder: "Contoh: 6281234567890",
+      password: "Password",
+      submit: "Buat Akun",
+      loading: "Membuat akun...",
+      existingAccount: "Sudah punya akun?",
+      signIn: "Masuk",
+      heroTag: "Buat Akun",
+      heroTitle: "Buat akun Anda dan nikmati akses lebih mudah ke mountain stay Bale Aur Sembalun.",
+      heroImageAlt: "Ilustrasi pendaftaran akun Bale Aur Sembalun",
+      heroBullets: ["Akses akun yang cepat", "Reservasi Bale Aur", "Pilihan kamar resmi"],
+      validation: {
+        name: "Nama lengkap minimal 3 karakter.",
+        phone: "Masukkan nomor WhatsApp yang valid.",
+        password: "Password minimal 8 karakter.",
+      },
+    },
+    notFound: {
+      title: "Halaman tidak ditemukan",
+      description: "Halaman yang Anda cari tidak tersedia. Kembali ke beranda untuk melanjutkan eksplorasi Bale Aur Sembalun.",
+      action: "Kembali ke Beranda",
+    },
+    villasPage: {
+      eyebrow: "Pilihan Kamar",
+      title: "Temukan room type terbaik untuk stay di Bale Aur Sembalun",
+      description: "Jelajahi pilihan kamar resmi Bale Aur Sembalun dengan detail mountain stay, lokasi yang jelas, dan alur reservasi yang nyaman.",
+      quickSearch: "Pencarian cepat",
+      quickSearchDescription: "Cari room type, lokasi, atau status ketersediaan Bale Aur Sembalun.",
+      searchPlaceholder: "Cari tipe kamar atau detail stay...",
+      stats: {
+        shown: "Kamar tampil",
+        shownValue: (count: number) => `${count} room type Bale Aur tersedia`,
+        destination: "Lokasi",
+        destinationValue: "Sembalun Lawang, Lombok Timur",
+        filter: "Pencarian",
+        filterValue: "Temukan kamar sesuai kebutuhan mountain stay Anda",
+      },
+      loading: "Menyiapkan pilihan kamar Bale Aur...",
+      emptyTitle: "Tidak ada kamar yang cocok dengan pencarian Anda",
+      emptyDescription: "Coba kata kunci lain atau reset pencarian untuk melihat seluruh pilihan kamar Bale Aur Sembalun.",
+      reset: "Reset Pencarian",
+    },
+    villaCard: {
+      nightlyRate: "Harga per malam",
+      detail: "Lihat Detail",
+    },
+    villaDetail: {
+      loginRequiredTitle: "Login diperlukan",
+      loginRequiredDescription: "Silakan masuk terlebih dahulu untuk melanjutkan reservasi kamar Bale Aur ini.",
+      unavailableTitle: "Kamar belum tersedia",
+      unavailableDescription: "Kamar ini sedang tidak dapat dibooking. Silakan pilih room type Bale Aur lain yang tersedia.",
+      missingDatesTitle: "Lengkapi tanggal menginap",
+      missingDatesDescription: "Pilih tanggal check-in dan check-out terlebih dahulu.",
+      invalidDateTitle: "Tanggal booking tidak valid",
+      invalidDateDescription: "Tanggal checkout harus lebih besar dari tanggal check-in.",
+      invalidGuestsTitle: "Jumlah tamu tidak valid",
+      invalidGuestsDescription: "Masukkan jumlah tamu antara 1 sampai 10 orang.",
+      successTitle: "Reservasi berhasil dikirim",
+      successDescription: "Permintaan booking Anda sudah masuk dan sedang menunggu konfirmasi admin.",
+      errorTitle: "Reservasi belum berhasil",
+      errorDescription: "Terjadi kendala saat mengirim booking. Silakan coba lagi.",
+      loading: "Memuat detail Bale Aur stay...",
+      unavailablePageTitle: "Detail kamar tidak tersedia",
+      unavailablePageDescription: "Room type yang dipilih tidak ditemukan atau sudah tidak tersedia saat ini.",
+      backToList: "Kembali ke Daftar Kamar",
+      backButton: "Kembali ke daftar kamar",
+      eyebrow: "Detail Room Type",
+      info: {
+        nightlyRate: "Harga per malam",
+        capacity: "Kapasitas maksimum",
+        capacityValue: "2 - 4 tamu",
+        location: "Lokasi properti",
+      },
+      maxGuests: (count: number) => `Maks ${count} tamu`,
+      idealForGuests: (count: number) => `Kamar ini ideal untuk ${count} tamu.`,
+      validation: {
+        checkinRequired: "Pilih tanggal check-in terlebih dahulu.",
+        checkoutRequired: "Pilih tanggal check-out terlebih dahulu.",
+        checkoutAfterCheckin: "Tanggal check-out tidak boleh sebelum atau sama dengan check-in.",
+        guestsMin: "Jumlah tamu minimal 1 orang.",
+        guestsOverCapacity: (max: number) => `Jumlah tamu melebihi kapasitas kamar. Maksimal ${max} tamu.`,
+      },
+      stepper: {
+        decrease: "Kurangi jumlah tamu",
+        increase: "Tambah jumlah tamu",
+      },
+      facilitiesEyebrow: "Fasilitas Bale Aur",
+      facilitiesTitle: "Kenyamanan esensial untuk mountain stay yang tenang",
+      facilities: [
+        {
+          title: "Mountain View",
+          description: "Pemandangan pegunungan Sembalun yang terasa segar dari kamar, balkon, atau teras.",
+        },
+        {
+          title: "Balcony dan Terrace",
+          description: "Area duduk santai untuk menikmati udara pagi, sunrise, dan suasana alam yang tenang.",
+        },
+        {
+          title: "Private Bathroom",
+          description: "Kamar mandi privat dengan shower, bidet, dan kebutuhan stay yang tetap nyaman.",
+        },
+        {
+          title: "Breakfast dan WiFi",
+          description: "Sarapan hangat dan koneksi WiFi gratis untuk stay yang tetap praktis di alam terbuka.",
+        },
+      ],
+      reservationEyebrow: "Form Reservasi",
+      reservationTitle: "Reservasi mountain stay Anda",
+      reservationDescription: "Tentukan tanggal menginap dan jumlah tamu untuk mengirim reservasi Bale Aur Sembalun dengan alur yang cepat dan nyaman.",
+      nightlyRate: "Harga per malam",
+      checkin: "Tanggal check-in",
+      checkout: "Tanggal check-out",
+      guests: "Jumlah tamu",
+      nights: (count: number) => `${count} malam`,
+      summaryTitle: "Ringkasan booking",
+      summary: {
+        room: "Nama kamar",
+        checkin: "Check-in",
+        checkout: "Check-out",
+        nights: "Jumlah malam",
+        guests: "Jumlah tamu",
+        estimate: "Estimasi harga",
+      },
+      successEyebrow: "Konfirmasi reservasi",
+      successPrimaryAction: "Lihat Booking Saya",
+      successSecondaryAction: "Buat booking lagi",
+      successDialogHint: "Reservasi tersimpan dengan aman dan siap dilanjutkan ke kartu booking Anda.",
+      pass: {
+        eyebrow: "Kartu Booking",
+        title: "Booking pass siap digunakan",
+        description: "Simpan kartu ini agar proses check-in di Bale Aur terasa lebih cepat dan rapi.",
+        openCard: "Lihat Kartu Booking",
+        downloadPng: "Download PNG",
+        downloadPdf: "Download PDF",
+        close: "Tutup",
+        issuedLabel: "Diterbitkan",
+        brandName: "Bale Aur Sembalun",
+        brandTag: "Booking Pass",
+      },
+      unavailableInline: "Kamar ini sedang tidak tersedia untuk reservasi. Silakan jelajahi room type Bale Aur lainnya.",
+      processing: "Memproses Reservasi...",
+      submit: "Kirim Reservasi",
+      loginToBook: "Login untuk Booking",
+      moreEyebrow: "Tipe Kamar Lainnya",
+      moreTitle: "Pilihan room type lain di Bale Aur Sembalun",
+      moreDescription: "Temukan alternatif kamar dengan view pegunungan, balkon, dan pengalaman stay yang tetap hangat.",
+      moreEmptyTitle: "Tipe kamar lainnya akan segera hadir",
+      moreEmptyDescription: "Pilihan stay Bale Aur lainnya akan tampil di sini saat room type bertambah.",
+    },
+    userDashboard: {
+      heroTag: "Bale Aur Mountain Stay Experience",
+      heroGreeting: "Selamat datang kembali,",
+      heroDescription: "Kelola reservasi Bale Aur Anda dengan pengalaman digital yang tenang, refined, dan fokus pada mountain stay di Sembalun.",
+      explore: "Lihat Kamar",
+      history: "Lihat Riwayat Booking",
+      profileEyebrow: "Profil Tamu",
+      guestFallback: "Tamu",
+      guestName: "Nama tamu",
+      totalBooking: "Total Booking",
+      pending: "Pending",
+      favoriteFallback: "Belum ada room type favorit",
+      stats: {
+        activeTitle: "Reservasi Aktif",
+        activeSubtitle: "Stay yang sedang berjalan atau menunggu kedatangan",
+        completedTitle: "Stay Selesai",
+        completedSubtitle: "Riwayat pengalaman menginap yang telah selesai",
+        pendingTitle: "Booking Pending",
+        pendingSubtitle: "Reservasi yang sedang menunggu konfirmasi admin",
+        favoriteTitle: "Room Type Favorit",
+        favoriteSubtitle: "Pilihan stay Bale Aur yang paling dekat dengan preferensi terbaru Anda",
+      },
+      latestEyebrow: "Reservasi Terbaru",
+      latestTitle: "Reservasi terbaru Anda",
+      latestDescription: "Tinjau status reservasi, tanggal menginap, dan pilihan room type Bale Aur terbaru dalam tampilan yang lebih visual dan nyaman.",
+      latestAction: "Lihat semua booking",
+      loading: "Memuat pengalaman dashboard premium Anda...",
+      emptyTitle: "Belum ada reservasi yang tampil",
+      emptyDescription: "Mulai jelajahi room type Bale Aur untuk menghadirkan pengalaman mountain stay pertama Anda. Riwayat reservasi akan tampil di sini setelah booking dibuat.",
+      detailStatus: "Detail Status",
+      bookingNote: "Booking ini tersimpan dengan status yang jelas sehingga Anda dapat memantau perjalanan reservasi dengan tenang.",
+      quickEyebrow: "Akses Cepat",
+      quickTitle: "Akses cepat yang lebih refined",
+      quickItems: [
+        {
+          title: "Lihat Kamar",
+          description: "Temukan room type Bale Aur dengan mountain view dan nuansa natural.",
+        },
+        {
+          title: "Riwayat Booking",
+          description: "Lihat seluruh status reservasi secara rapi dan jelas.",
+        },
+        {
+          title: "Profil Tamu",
+          description: "Periksa detail akun dan identitas pengguna Anda.",
+        },
+      ],
+      preferredEyebrow: "Pilihan Utama",
+      preferredTitle: "Pilihan stay yang paling dekat dengan gaya perjalanan Anda",
+      preferredDescriptionWithVilla: (villa: string) => `${villa} menjadi referensi terbaik untuk inspirasi reservasi berikutnya.`,
+      preferredDescriptionEmpty: "Mulai dari satu booking pertama untuk membangun koleksi pengalaman stay yang terasa personal dan eksklusif.",
+      preferredAction: "Temukan Kamar Pilihan",
+    },
+    userBookings: {
+      eyebrow: "Riwayat Booking",
+      title: "Pantau seluruh reservasi Bale Aur Anda",
+      description: "Lihat status booking room type Bale Aur Sembalun dengan tampilan yang rapi, jelas, dan nyaman dibaca.",
+      actions: {
+        pass: "Kartu Booking",
+      },
+      summary: {
+        pending: "Pending",
+        approved: "Disetujui",
+        rejected: "Ditolak",
+      },
+      loading: "Memuat riwayat reservasi...",
+      emptyTitle: "Belum ada booking",
+      emptyDescription: "Riwayat reservasi Anda akan tampil di sini setelah booking Bale Aur pertama berhasil dibuat.",
+      explore: "Lihat Kamar",
+      mobile: {
+        checkin: "Check-in",
+        checkout: "Check-out",
+        guests: "Jumlah tamu",
+      },
+      table: {
+        villa: "Kamar",
+        checkin: "Check-in",
+        checkout: "Check-out",
+        guests: "Jumlah Tamu",
+        status: "Status",
+        actions: "Aksi",
+      },
+      guestsCount: (count: number) => `${count} tamu`,
+    },
+    userProfile: {
+      eyebrow: "Profil",
+      title: "Profil tamu Anda",
+      description: "Lihat detail akun, status akses, dan informasi profil Anda dalam layout hospitality yang tenang dan rapi.",
+      fields: {
+        name: "Nama",
+        email: "Email",
+        role: "Peran",
+        created: "Dibuat",
+      },
+      logout: "Keluar",
+    },
+    adminNav: {
+      dashboard: "Dashboard",
+      villas: "Kelola Kamar",
+      bookings: "Kelola Reservasi",
+      guests: "Kelola Tamu",
+      profile: "Profil Admin",
+    },
+    adminDashboard: {
+      eyebrow: "Ringkasan Operasional",
+      title: "Kelola Bale Aur dan reservasinya dengan lebih jelas",
+      description: "Pantau room type, aktivitas reservation, dan data tamu Bale Aur melalui dashboard operasional yang bersih.",
+      manageVillas: "Kelola Kamar",
+      manageReservations: "Kelola Reservasi",
+      loading: "Memuat ringkasan operasional...",
+      trendLabelInventory: "inventory",
+      trendLabelOperations: "operational",
+      trendLabelPending: "pending",
+      trendLabelDirectory: "directory",
+      activityGuestFallback: "Tamu",
+      activityBookingTitle: (guestName: string) => `Reservasi baru • ${guestName}`,
+      activityBookingDescription: (status: string, roomName: string, checkIn: string, checkOut: string) =>
+        `${status} • ${roomName} • ${checkIn.slice(0, 10)} → ${checkOut.slice(0, 10)}`,
+      activityGuestTitle: (guestName: string) => `Tamu baru • ${guestName}`,
+      activityGuestDescription: (totalBooking: number) => `Total booking: ${totalBooking}`,
+      quickActionHint: (href: string) =>
+        href === "/admin/villas"
+          ? "Kelola listing kamar, galeri, dan status."
+          : href === "/admin/bookings"
+            ? "Review & approve reservasi terbaru."
+            : href === "/admin/guests"
+              ? "Pantau data tamu dan histori booking."
+              : "Perbarui galeri room type.",
+      stats: {
+        totalVillas: "Total Tipe Kamar",
+        totalReservations: "Total Reservasi",
+        pendingApproval: "Menunggu Persetujuan",
+        registeredGuests: "Tamu Terdaftar",
+      },
+      quickActions: {
+        title: "Quick Actions",
+        addRoom: "Tambah kamar",
+        viewBookings: "Lihat reservasi",
+        manageGuests: "Kelola tamu",
+        updateGallery: "Update galeri",
+      },
+      activity: {
+        title: "Recent Activity",
+        empty: "Belum ada aktivitas terbaru.",
+      },
+    },
+    adminBookings: {
+      success: "Status booking berhasil diperbarui.",
+      error: "Gagal memperbarui status booking.",
+      eyebrow: "Kontrol Reservasi",
+      title: "Kelola reservasi tamu",
+      description: "Tinjau stay Bale Aur, ubah status reservasi, dan jaga alur ketersediaan kamar tetap jelas di setiap layar.",
+      loading: "Memuat reservasi...",
+      emptyTitle: "Belum ada reservasi",
+      emptyDescription: "Reservasi tamu akan tampil di sini begitu booking baru berhasil dibuat.",
+      actions: {
+        approve: "Approve",
+        reject: "Reject",
+      },
+      mobile: {
+        villa: "Kamar",
+        dates: "Tanggal",
+        guests: "Tamu",
+      },
+      table: {
+        user: "Pengguna",
+        villa: "Kamar",
+        dates: "Tanggal",
+        guests: "Tamu",
+        status: "Status",
+        changeStatus: "Ubah Status",
+      },
+      changeStatusLabel: (id: number) => `Ubah status booking ${id}`,
+      guestsCount: (count: number) => `${count} tamu`,
+    },
+    adminVillas: {
+      updateSuccess: "Data kamar berhasil diperbarui.",
+      createSuccess: "Tipe kamar baru berhasil ditambahkan.",
+      saveError: "Gagal menyimpan data kamar.",
+      loadError: "Gagal memuat detail kamar.",
+      deleteConfirm: "Hapus data kamar ini?",
+      deleteSuccess: "Kamar berhasil dihapus.",
+      deleteError: "Gagal menghapus kamar.",
+      eyebrow: "Manajemen Kamar",
+      title: "Kelola room type Bale Aur Sembalun dengan lebih mudah",
+      description: "Perbarui listing kamar, segarkan visual, dan kelola ketersediaan stay melalui alur kerja yang rapi.",
+      editorEyebrow: "Editor Kamar",
+      editorTitleAdd: "Tambah tipe kamar baru",
+      editorTitleEdit: "Perbarui detail kamar",
+      editorPageDescription: "Gunakan halaman ini untuk memperbarui detail kamar, galeri, harga, dan status dengan alur kerja yang lebih fokus.",
+      backToCollection: "Kembali ke Koleksi",
+      fields: {
+        name: "Nama Kamar",
+        location: "Lokasi",
+        price: "Harga",
+        maxGuest: "Kapasitas Maksimum",
+        description: "Deskripsi",
+        status: "Status Kamar",
+        thumbnail: "Thumbnail kartu kamar",
+        image: "Upload Gambar (bisa banyak)",
+        galleryUrls: "URL Galeri (1 per baris)",
+      },
+      changeThumbnail: "Ubah thumbnail",
+      thumbnailHint: "Pilih gambar yang tampil sebagai cover pada kartu kamar.",
+      upload: {
+        title: "Upload gambar kamar",
+        description: "Drag & drop gambar ke area ini, atau pilih file. Kamu bisa upload banyak gambar sekaligus.",
+        browse: "Pilih file",
+        clear: "Reset",
+      },
+      priceLabel: "Harga per malam",
+      standardDoubleAutofill: "Gunakan semua gambar asset untuk Standard Double Room",
+      standardDoubleAutofillLoading: "Menyiapkan gambar Standard Double Room...",
+      standardDoubleAutofillSuccess: "Semua gambar berhasil dimasukkan ke form.",
+      standardDoubleAutofillError: "Gagal memuat gambar asset. Coba lagi.",
+      importFromUrls: "Import dari URL (Booking.com)",
+      importRequiresSavedRoom: "Simpan kamar terlebih dahulu sebelum import galeri dari URL.",
+      importFromUrlsLoading: "Mengunduh gambar dari URL...",
+      importFromUrlsSuccess: "Gambar berhasil diimport dan tersimpan di server.",
+      importFromUrlsError: "Gagal import gambar dari URL.",
+      saveLoading: "Menyimpan...",
+      saveChanges: "Simpan Perubahan",
+      addVilla: "Tambah Kamar",
+      cancel: "Batal",
+      collectionTitle: "Koleksi Kamar",
+      collectionDescription: "Tampilkan semua koleksi kamar Bale Aur dalam layout yang rapi, visual, dan mudah dikelola oleh admin.",
+      manageFlowTitle: "Kurasi koleksi kamar dengan alur yang lebih fokus",
+      manageFlowDescription: "Semua kamar tampil dalam katalog premium. Klik edit pada kartu kamar untuk membuka halaman kerja terpisah saat memperbarui detail.",
+      loading: "Memuat koleksi kamar...",
+      emptyTitle: "Belum ada kamar tersedia",
+      emptyDescription: "Buat listing kamar pertama Anda untuk mulai membangun data stay Bale Aur.",
+      stats: {
+        totalRooms: "Total kamar",
+        availableRooms: "Kamar tersedia",
+        maintenanceRooms: "Perlu perhatian",
+        galleryAssets: "Total visual",
+      },
+      galleryCount: (count: number) => `${count} gambar galeri`,
+      galleryEmpty: "Belum ada galeri",
+      edit: "Edit",
+      delete: "Hapus",
+      editorSummaryTitle: "Ringkasan editor",
+      editorSummaryDescription: "Halaman ini dirancang sebagai workspace terpisah agar pembaruan detail kamar terasa lebih fokus, rapi, dan aman.",
+      editorModeCreate: "Mode tambah kamar",
+      editorModeEdit: "Mode perbarui kamar",
+      selectedUploads: (count: number) => `${count} file dipilih`,
+      galleryAssetsCount: (count: number) => `${count} item galeri`,
+      editorTipsTitle: "Panduan cepat",
+      editorTipOne: "Upload banyak gambar sekaligus untuk mempercepat kurasi visual kamar.",
+      editorTipTwo: "Untuk import dari URL, simpan kamar terlebih dahulu lalu jalankan import galeri.",
+      editorTipThree: "Gunakan status kamar agar tim mudah membaca kondisi listing saat ini.",
+      table: {
+        name: "Nama Kamar",
+        location: "Lokasi",
+        price: "Harga",
+        status: "Status",
+        actions: "Aksi",
+      },
+      statusAria: "Status kamar",
+    },
+    adminGuests: {
+      eyebrow: "Manajemen Tamu",
+      title: "Kelola tamu Bale Aur dengan tampilan yang rapi",
+      description: (totalGuests: number, totalBookings: number) =>
+        `Pantau ${totalGuests} tamu terdaftar dan total ${totalBookings} booking dalam panel hospitality yang tenang.`,
+      loading: "Memuat data tamu...",
+      errorLoad: "Gagal memuat data tamu.",
+      emptyTitle: "Belum ada tamu",
+      emptyDescription: "Data tamu akan tampil di sini setelah ada pendaftaran akun atau reservasi baru.",
+      collectionEyebrow: "Guest Directory",
+      collectionTitle: "Daftar tamu",
+      filters: {
+        users: "User",
+        admins: "Admin",
+      },
+      statusActive: "Aktif",
+      statusAdmin: "Admin",
+      kpis: {
+        totalGuests: "Total Tamu",
+        totalBookings: "Total Booking",
+      },
+      fields: {
+        totalBookings: "Total booking",
+        created: "Tanggal daftar",
+      },
+      table: {
+        guest: "Nama Tamu",
+        phone: "Nomor WhatsApp",
+        totalBookings: "Total Booking",
+        created: "Tanggal Daftar",
+        status: "Status",
+        actions: "Aksi",
+      },
+      actions: {
+        delete: "Hapus",
+        noAction: "-",
+      },
+      form: {
+        name: "Nama",
+        namePlaceholder: "Nama lengkap",
+        phone: "WhatsApp",
+        phonePlaceholder: "Contoh: 6281234567890",
+        email: "Email",
+        emailPlaceholder: "Opsional",
+        role: "Role",
+        roleUser: "User",
+        roleAdmin: "Admin",
+        password: "Password",
+        passwordPlaceholder: "Minimal 6 karakter",
+        submit: "Tambah Akun",
+      },
+      deleteConfirm: (name: string) => `Hapus user ${name}? Semua booking terkait juga akan terhapus.`,
+      deleteSuccess: "User berhasil dihapus.",
+      deleteError: "Gagal menghapus user.",
+      deleteAdminBlocked: "Admin tidak bisa dihapus dari menu ini.",
+      createSuccess: "Akun berhasil ditambahkan.",
+      createError: "Gagal menambahkan akun.",
+    },
+    adminProfile: {
+      eyebrow: "Profil Admin",
+      title: "Akses admin Bale Aur Sembalun",
+      description: "Kelola identitas akses, keamanan akun, dan kontrol operasional dalam tampilan executive yang tenang.",
+      accessEyebrow: "Admin Access",
+      backToDashboard: "Kembali",
+      logout: "Keluar",
+      editEyebrow: "Edit Profil",
+      editTitle: "Perbarui identitas akses admin",
+      editDescription: "Sesuaikan data akses admin untuk memastikan komunikasi dan keamanan akun tetap terjaga.",
+      form: {
+        name: "Nama",
+        namePlaceholder: "Nama admin",
+        phone: "WhatsApp",
+        phonePlaceholder: "Contoh: 6281234567890",
+        email: "Email",
+        emailPlaceholder: "Opsional",
+        password: "Password baru",
+        passwordPlaceholder: "Kosongkan bila tidak diganti",
+        note: "Perubahan akan tersimpan pada akun admin ini.",
+        submit: "Simpan Perubahan",
+      },
+      updateSuccess: "Profil admin berhasil diperbarui.",
+      updateError: "Gagal memperbarui profil admin.",
+      fields: {
+        role: "Peran",
+        created: "Terdaftar",
+        security: "Keamanan",
+      },
+      securityNote: "Gunakan akses admin dengan aman. Hindari membagikan kredensial login kepada pihak lain.",
+    },
+  },
+  en: {
+    app: {
+      brandTagline: "Luxury Mountain Stay Experience",
+      brandName: "Bale Aur Sembalun",
+      loadingFallback: "Loading...",
+      nav: {
+        home: "Home",
+        villas: "Rooms",
+        about: "About Us",
+        contact: "Contact",
+        signIn: "Sign In",
+        register: "Register",
+        logout: "Logout",
+        dashboard: "Dashboard",
+        toggleMenu: "Toggle navigation",
+        language: "Language",
+      },
+      userMenu: {
+        guestAccess: "Guest Access",
+        dashboard: "Your Dashboard",
+        adminDashboard: "Admin Dashboard",
+        profile: "Profile",
+      },
+      status: {
+        tersedia: "Available",
+        maintenance: "Maintenance",
+        nonaktif: "Inactive",
+        menunggu: "Pending",
+        disetujui: "Approved",
+        ditolak: "Rejected",
+        selesai: "Completed",
+      },
+      footer: {
+        description: "The official Bale Aur Sembalun stay experience with mountain views, natural hospitality, and calm reservations.",
+        startBooking: "Reserve Now",
+      },
+    },
+    home: {
+      heroTag: "Luxury Mountain Villa Experience",
+      heroTitleLine1: "Luxury Mountain",
+      heroTitleLine2: "Villa",
+      heroTitleAccent: "Experience",
+      heroDescription: "Enjoy a stay experience with Sembalun mountain panoramas, natural timber warmth, and calm premium comfort at Bale Aur.",
+      explore: "View Rooms",
+      watchVideo: "View Stay",
+      search: {
+        location: "Location",
+        locationValue: "Sembalun Lawang, East Lombok",
+        checkIn: "Check-in",
+        dateValue: "Select stay dates",
+        checkOut: "Check-out",
+        guests: "Guests",
+        guestsValue: "2 Guests",
+        button: "Check Availability",
+      },
+      about: {
+        eyebrow: "About Bale Aur Sembalun",
+        title: "A modern mountain stay with an authentic Lombok atmosphere",
+        description: "Bale Aur Sembalun is designed as a single luxury property with timber-toned rooms, mountain balconies, and a calm stay experience at the foot of Rinjani.",
+        features: [
+          "Sembalun mountain panoramas that feel fresh from sunrise to dusk.",
+          "Official Bale Aur room options with clearer stay details.",
+          "Modern mountain-cabin design with natural timber, balconies, and terraces.",
+          "A single-property reservation flow that stays calm, polished, and easy to understand.",
+        ],
+      },
+      why: {
+        eyebrow: "Why Bale Aur",
+        title: "Nature hospitality, cool air, and a refined mountain retreat",
+        description: "Every stay detail is focused on mountain views, essential comfort, and a healing atmosphere that feels natural yet premium.",
+        items: [
+          {
+            title: "Sembalun Mountain View",
+            text: "Rooms and seating areas are designed to maximize mountain scenery and calming sunrise moments.",
+          },
+          {
+            title: "Official Single Property Stay",
+            text: "The entire flow is centered on Bale Aur Sembalun, making it easier to choose a room and reserve your stay.",
+          },
+          {
+            title: "Natural Hospitality",
+            text: "Timber textures, cool air, and warm service create a healing stay that feels personal and grounded.",
+          },
+        ],
+      },
+      featured: {
+        eyebrow: "Bale Aur Room Selection",
+        title: "Room types for a warm and nature-led mountain stay",
+        description: "Discover Bale Aur Sembalun room types with balconies, terraces, mountain views, and clear nightly rates.",
+        viewAll: "View All Rooms",
+        loading: "Preparing Bale Aur room options...",
+        emptyTitle: "Room options are not available yet",
+        emptyDescription: "Official Bale Aur Sembalun room types will appear here once the data is updated.",
+        manage: "Manage Rooms",
+      },
+    },
+    login: {
+      toastSuccess: "Login successful.",
+      toastError: "Login failed.",
+      heroTag: "Welcome Back",
+      heroTitle: "Return to a calmer Bale Aur reservation experience.",
+      heroDescription: "Access your account to manage reservations, review your mountain stay, and continue exploring Bale Aur Sembalun rooms.",
+      heroImageAlt: "Bale Aur Sembalun login illustration",
+      eyebrow: "Login",
+      title: "Sign in to your account",
+      description: "Continue your stay planning, manage reservations, and access your Bale Aur dashboard.",
+      phone: "WhatsApp Number",
+      phonePlaceholder: "Example: 6281234567890",
+      password: "Password",
+      submit: "Sign In",
+      loading: "Signing in...",
+      newHere: "New here?",
+      createAccount: "Create account",
+    },
+    register: {
+      toastSuccess: "Registration successful. You are now signed in automatically.",
+      toastError: "Registration failed.",
+      errorTitle: "Registration could not be completed",
+      validationTitle: "Please review your details",
+      networkTitle: "Server is not connected",
+      duplicateTitle: "WhatsApp number is already in use",
+      genericDescription: "Please review your information and try again.",
+      networkDescription: "The backend service is not running yet. Start the API server and try registering again.",
+      eyebrow: "Register",
+      title: "Create your account",
+      description: "Start your Bale Aur Sembalun journey with quick access to room options, reservation status, and stay details.",
+      fullName: "Full Name",
+      phone: "WhatsApp Number",
+      phonePlaceholder: "Example: 6281234567890",
+      password: "Password",
+      submit: "Create Account",
+      loading: "Creating account...",
+      existingAccount: "Already have an account?",
+      signIn: "Sign in",
+      heroTag: "Create Account",
+      heroTitle: "Create your account and unlock easier access to the Bale Aur Sembalun mountain stay.",
+      heroImageAlt: "Bale Aur Sembalun registration illustration",
+      heroBullets: ["Quick account access", "Bale Aur reservations", "Official room selection"],
+      validation: {
+        name: "Full name must be at least 3 characters.",
+        phone: "Please enter a valid WhatsApp number.",
+        password: "Password must be at least 8 characters.",
+      },
+    },
+    notFound: {
+      title: "Page not found",
+      description: "The page you are looking for is unavailable. Return to the homepage to continue exploring Bale Aur Sembalun.",
+      action: "Back to Home",
+    },
+    villasPage: {
+      eyebrow: "Room Selection",
+      title: "Discover the best room types for your Bale Aur Sembalun stay",
+      description: "Explore official Bale Aur room options with mountain-stay details, a clear location, and a polished reservation flow.",
+      quickSearch: "Quick search",
+      quickSearchDescription: "Find Bale Aur room types by name, location, or availability status.",
+      searchPlaceholder: "Search room type or stay details...",
+      stats: {
+        shown: "Visible rooms",
+        shownValue: (count: number) => `${count} Bale Aur room types available`,
+        destination: "Location",
+        destinationValue: "Sembalun Lawang, East Lombok",
+        filter: "Search",
+        filterValue: "Find the right room faster for your mountain stay",
+      },
+      loading: "Preparing Bale Aur room selection...",
+      emptyTitle: "No rooms matched your search",
+      emptyDescription: "Try another keyword or reset the search to explore the full Bale Aur room selection.",
+      reset: "Reset Search",
+    },
+    villaCard: {
+      nightlyRate: "Nightly rate",
+      detail: "View Details",
+    },
+    villaDetail: {
+      loginRequiredTitle: "Login required",
+      loginRequiredDescription: "Please sign in first to continue this Bale Aur room reservation.",
+      unavailableTitle: "Room is not available",
+      unavailableDescription: "This room cannot be reserved right now. Please choose another available Bale Aur room type.",
+      missingDatesTitle: "Complete your stay dates",
+      missingDatesDescription: "Please select both check-in and check-out dates first.",
+      invalidDateTitle: "Invalid booking dates",
+      invalidDateDescription: "The check-out date must be later than the check-in date.",
+      invalidGuestsTitle: "Invalid guest count",
+      invalidGuestsDescription: "Please enter between 1 and 10 guests.",
+      successTitle: "Reservation submitted successfully",
+      successDescription: "Your booking request has been received and is now waiting for admin confirmation.",
+      errorTitle: "Reservation could not be completed",
+      errorDescription: "There was an issue while sending your booking request. Please try again.",
+      loading: "Loading Bale Aur stay details...",
+      unavailablePageTitle: "Room details are unavailable",
+      unavailablePageDescription: "The selected room type could not be found or is no longer available.",
+      backToList: "Back to Room List",
+      backButton: "Back to room list",
+      eyebrow: "Room Type Details",
+      info: {
+        nightlyRate: "Nightly rate",
+        capacity: "Maximum capacity",
+        capacityValue: "2 - 4 guests",
+        location: "Property location",
+      },
+      maxGuests: (count: number) => `Max ${count} guests`,
+      idealForGuests: (count: number) => `This room is ideal for ${count} guests.`,
+      validation: {
+        checkinRequired: "Please select a check-in date.",
+        checkoutRequired: "Please select a check-out date.",
+        checkoutAfterCheckin: "Check-out date must be after check-in date.",
+        guestsMin: "Minimum 1 guest.",
+        guestsOverCapacity: (max: number) => `Guest count exceeds room capacity. Maximum ${max} guests.`,
+      },
+      stepper: {
+        decrease: "Decrease guest count",
+        increase: "Increase guest count",
+      },
+      facilitiesEyebrow: "Bale Aur Facilities",
+      facilitiesTitle: "Essential comfort for a calm mountain stay",
+      facilities: [
+        {
+          title: "Mountain View",
+          description: "Open views across the Sembalun mountains from the room, balcony, or terrace.",
+        },
+        {
+          title: "Balcony and Terrace",
+          description: "A quiet outdoor corner for sunrise, cool air, and slow mountain mornings.",
+        },
+        {
+          title: "Private Bathroom",
+          description: "Private bathroom with shower, bidet, and essential comfort for the stay.",
+        },
+        {
+          title: "Breakfast and WiFi",
+          description: "Warm breakfast and free WiFi for a stay that remains practical in nature.",
+        },
+      ],
+      reservationEyebrow: "Reservation Form",
+      reservationTitle: "Reserve your mountain stay",
+      reservationDescription: "Choose your stay dates and guest count to submit a Bale Aur Sembalun reservation through a quick and polished flow.",
+      nightlyRate: "Nightly rate",
+      checkin: "Check-in date",
+      checkout: "Check-out date",
+      guests: "Guests",
+      nights: (count: number) => `${count} nights`,
+      summaryTitle: "Booking summary",
+      summary: {
+        room: "Room",
+        checkin: "Check-in",
+        checkout: "Check-out",
+        nights: "Nights",
+        guests: "Guests",
+        estimate: "Estimated price",
+      },
+      successEyebrow: "Reservation confirmation",
+      successPrimaryAction: "View My Bookings",
+      successSecondaryAction: "Create another booking",
+      successDialogHint: "Your reservation is safely recorded and ready to continue to the booking pass.",
+      pass: {
+        eyebrow: "Booking Pass",
+        title: "Your booking pass is ready",
+        description: "Save this card for a faster and more polished arrival experience at Bale Aur.",
+        openCard: "View Booking Pass",
+        downloadPng: "Download PNG",
+        downloadPdf: "Download PDF",
+        close: "Close",
+        issuedLabel: "Issued",
+        brandName: "Bale Aur Sembalun",
+        brandTag: "Booking Pass",
+      },
+      unavailableInline: "This room is not available for reservation right now. Please explore another available Bale Aur room type.",
+      processing: "Processing Reservation...",
+      submit: "Submit Reservation",
+      loginToBook: "Login to Book",
+      moreEyebrow: "More Room Types",
+      moreTitle: "More room types at Bale Aur Sembalun",
+      moreDescription: "Discover alternative room options with mountain views, balconies, and the same warm stay experience.",
+      moreEmptyTitle: "More room types are coming soon",
+      moreEmptyDescription: "Additional Bale Aur stay options will appear here as the room selection grows.",
+    },
+    userDashboard: {
+      heroTag: "Bale Aur Mountain Stay Experience",
+      heroGreeting: "Welcome back,",
+      heroDescription: "Manage your Bale Aur reservations through a calm, refined digital experience focused on the Sembalun mountain stay.",
+      explore: "View Rooms",
+      history: "View Booking History",
+      profileEyebrow: "Guest Profile",
+      guestFallback: "Guest",
+      guestName: "Guest name",
+      totalBooking: "Total Booking",
+      pending: "Pending",
+      favoriteFallback: "No favorite room type yet",
+      stats: {
+        activeTitle: "Active Reservation",
+        activeSubtitle: "Stays that are currently ongoing or waiting for arrival",
+        completedTitle: "Completed Stays",
+        completedSubtitle: "Your completed stay history and finished experiences",
+        pendingTitle: "Pending Bookings",
+        pendingSubtitle: "Reservations currently waiting for admin confirmation",
+        favoriteTitle: "Favorite Room Type",
+        favoriteSubtitle: "The Bale Aur stay that best matches your recent preferences",
+      },
+      latestEyebrow: "Latest Reservations",
+      latestTitle: "Your latest reservations",
+      latestDescription: "Review reservation status, stay dates, and your latest Bale Aur room choices in a more visual and comfortable layout.",
+      latestAction: "View all bookings",
+      loading: "Loading your premium dashboard experience...",
+      emptyTitle: "No reservations are showing yet",
+      emptyDescription: "Start exploring Bale Aur room types to create your first mountain stay. Your reservation history will appear here after your first booking.",
+      detailStatus: "View Status",
+      bookingNote: "This booking is stored with a clear status so you can follow your reservation journey with confidence.",
+      quickEyebrow: "Quick Access",
+      quickTitle: "A more refined quick access area",
+      quickItems: [
+        {
+          title: "View Rooms",
+          description: "Discover Bale Aur room types with mountain views and a natural atmosphere.",
+        },
+        {
+          title: "Booking History",
+          description: "Review every reservation status with a clear and polished layout.",
+        },
+        {
+          title: "Guest Profile",
+          description: "Review your account details and guest identity information.",
+        },
+      ],
+      preferredEyebrow: "Preferred Escape",
+      preferredTitle: "The stay that feels closest to your taste",
+      preferredDescriptionWithVilla: (villa: string) => `${villa} becomes the strongest reference for your next reservation inspiration.`,
+      preferredDescriptionEmpty: "Start with your first booking to build a personal and exclusive collection of stay experiences.",
+      preferredAction: "Find Your Room",
+    },
+    userBookings: {
+      eyebrow: "Booking History",
+      title: "Track all of your Bale Aur reservations",
+      description: "View Bale Aur room booking status in a layout that stays clear, polished, and comfortable across devices.",
+      actions: {
+        pass: "Booking Pass",
+      },
+      summary: {
+        pending: "Pending",
+        approved: "Approved",
+        rejected: "Rejected",
+      },
+      loading: "Loading booking history...",
+      emptyTitle: "No bookings yet",
+      emptyDescription: "Your reservation history will appear here after your first Bale Aur booking is created.",
+      explore: "View Rooms",
+      mobile: {
+        checkin: "Check-in",
+        checkout: "Check-out",
+        guests: "Guests",
+      },
+      table: {
+        villa: "Room",
+        checkin: "Check-in",
+        checkout: "Check-out",
+        guests: "Guests",
+        status: "Status",
+        actions: "Actions",
+      },
+      guestsCount: (count: number) => `${count} guests`,
+    },
+    userProfile: {
+      eyebrow: "Profile",
+      title: "Your guest profile",
+      description: "View your account details, access status, and profile information in a calm hospitality-style layout.",
+      fields: {
+        name: "Name",
+        email: "Email",
+        role: "Role",
+        created: "Created",
+      },
+      logout: "Logout",
+    },
+    adminNav: {
+      dashboard: "Dashboard",
+      villas: "Manage Rooms",
+      bookings: "Manage Reservations",
+      guests: "Manage Guests",
+      profile: "Admin Profile",
+    },
+    adminDashboard: {
+      eyebrow: "Operations Overview",
+      title: "Manage Bale Aur rooms and reservations with clarity",
+      description: "Monitor room-type availability, reservation activity, and guest growth through a clean operations dashboard.",
+      manageVillas: "Manage Rooms",
+      manageReservations: "Manage Reservations",
+      loading: "Loading operations overview...",
+      trendLabelInventory: "inventory",
+      trendLabelOperations: "operations",
+      trendLabelPending: "pending",
+      trendLabelDirectory: "directory",
+      activityGuestFallback: "Guest",
+      activityBookingTitle: (guestName: string) => `New booking • ${guestName}`,
+      activityBookingDescription: (status: string, roomName: string, checkIn: string, checkOut: string) =>
+        `${status} • ${roomName} • ${checkIn.slice(0, 10)} → ${checkOut.slice(0, 10)}`,
+      activityGuestTitle: (guestName: string) => `New guest • ${guestName}`,
+      activityGuestDescription: (totalBooking: number) => `Total bookings: ${totalBooking}`,
+      quickActionHint: (href: string) =>
+        href === "/admin/villas"
+          ? "Manage room listing, gallery, and status."
+          : href === "/admin/bookings"
+            ? "Review & approve the latest bookings."
+            : href === "/admin/guests"
+              ? "Track guest profiles and booking history."
+              : "Refresh room gallery assets.",
+      stats: {
+        totalVillas: "Total Room Types",
+        totalReservations: "Total Reservations",
+        pendingApproval: "Pending Approval",
+        registeredGuests: "Registered Guests",
+      },
+      quickActions: {
+        title: "Quick Actions",
+        addRoom: "Add room",
+        viewBookings: "View bookings",
+        manageGuests: "Manage guests",
+        updateGallery: "Update gallery",
+      },
+      activity: {
+        title: "Recent Activity",
+        empty: "No recent activity yet.",
+      },
+    },
+    adminBookings: {
+      success: "Booking status updated successfully.",
+      error: "Failed to update booking status.",
+      eyebrow: "Reservation Control",
+      title: "Manage guest reservations",
+      description: "Review Bale Aur stays, adjust reservation status, and keep room availability clear across every screen.",
+      loading: "Loading reservations...",
+      emptyTitle: "No reservations yet",
+      emptyDescription: "Guest reservations will appear here as soon as new bookings are created.",
+      actions: {
+        approve: "Approve",
+        reject: "Reject",
+      },
+      mobile: {
+        villa: "Room",
+        dates: "Dates",
+        guests: "Guests",
+      },
+      table: {
+        user: "User",
+        villa: "Room",
+        dates: "Dates",
+        guests: "Guests",
+        status: "Status",
+        changeStatus: "Change Status",
+      },
+      changeStatusLabel: (id: number) => `Change booking status ${id}`,
+      guestsCount: (count: number) => `${count} guests`,
+    },
+    adminVillas: {
+      updateSuccess: "Room data updated successfully.",
+      createSuccess: "New room type added successfully.",
+      saveError: "Failed to save room data.",
+      loadError: "Failed to load room details.",
+      deleteConfirm: "Delete this room data?",
+      deleteSuccess: "Room deleted successfully.",
+      deleteError: "Failed to delete room.",
+      eyebrow: "Room Management",
+      title: "Manage Bale Aur Sembalun room types with ease",
+      description: "Update room listings, refresh imagery, and manage stay availability through a clean property workflow.",
+      editorEyebrow: "Room Editor",
+      editorTitleAdd: "Add a new room type",
+      editorTitleEdit: "Update room details",
+      editorPageDescription: "Use this page to update room details, gallery, pricing, and status in a more focused workflow.",
+      backToCollection: "Back to Collection",
+      fields: {
+        name: "Room Name",
+        location: "Location",
+        price: "Price",
+        maxGuest: "Maximum Capacity",
+        description: "Description",
+        status: "Room Status",
+        thumbnail: "Room card thumbnail",
+        image: "Upload Images (multiple)",
+        galleryUrls: "Gallery URLs (one per line)",
+      },
+      changeThumbnail: "Change thumbnail",
+      thumbnailHint: "Choose the image used as the cover on room cards.",
+      upload: {
+        title: "Upload room images",
+        description: "Drag & drop images into this area, or browse files. You can upload multiple images at once.",
+        browse: "Browse files",
+        clear: "Reset",
+      },
+      priceLabel: "Price per night",
+      standardDoubleAutofill: "Use all asset images for Standard Double Room",
+      standardDoubleAutofillLoading: "Preparing Standard Double Room images...",
+      standardDoubleAutofillSuccess: "All images have been added to the form.",
+      standardDoubleAutofillError: "Failed to load asset images. Please try again.",
+      importFromUrls: "Import from URLs (Booking.com)",
+      importRequiresSavedRoom: "Save the room first before importing gallery images from URLs.",
+      importFromUrlsLoading: "Downloading images from URLs...",
+      importFromUrlsSuccess: "Images imported and saved on the server.",
+      importFromUrlsError: "Failed to import images from URLs.",
+      saveLoading: "Saving...",
+      saveChanges: "Save Changes",
+      addVilla: "Add Room",
+      cancel: "Cancel",
+      collectionTitle: "Room Collection",
+      collectionDescription: "Display the full Bale Aur room collection in a polished visual layout that is easy for admins to manage.",
+      manageFlowTitle: "Curate the room collection with a more focused workflow",
+      manageFlowDescription: "Every room is shown in a premium catalog. Click edit on a room card to open a separate workspace page for updating details.",
+      loading: "Loading room collection...",
+      emptyTitle: "No rooms available yet",
+      emptyDescription: "Create your first room listing to begin building Bale Aur stay data.",
+      stats: {
+        totalRooms: "Total rooms",
+        availableRooms: "Available rooms",
+        maintenanceRooms: "Needs attention",
+        galleryAssets: "Total visuals",
+      },
+      galleryCount: (count: number) => `${count} gallery images`,
+      galleryEmpty: "No gallery yet",
+      edit: "Edit",
+      delete: "Delete",
+      editorSummaryTitle: "Editor summary",
+      editorSummaryDescription: "This page is designed as a separate workspace so updating room details feels more focused, polished, and safe.",
+      editorModeCreate: "Add room mode",
+      editorModeEdit: "Update room mode",
+      selectedUploads: (count: number) => `${count} files selected`,
+      galleryAssetsCount: (count: number) => `${count} gallery items`,
+      editorTipsTitle: "Quick guide",
+      editorTipOne: "Upload multiple images at once to speed up room visual curation.",
+      editorTipTwo: "To import from URLs, save the room first and then run the gallery import.",
+      editorTipThree: "Use room status so the team can quickly read the current listing condition.",
+      table: {
+        name: "Room Name",
+        location: "Location",
+        price: "Price",
+        status: "Status",
+        actions: "Actions",
+      },
+      statusAria: "Room status",
+    },
+    adminGuests: {
+      eyebrow: "Guest Management",
+      title: "Manage Bale Aur guests with a clean view",
+      description: (totalGuests: number, totalBookings: number) =>
+        `Monitor ${totalGuests} registered guests and ${totalBookings} total bookings in a calm hospitality panel.`,
+      loading: "Loading guests...",
+      errorLoad: "Failed to load guests.",
+      emptyTitle: "No guests yet",
+      emptyDescription: "Guests will appear here once new accounts or bookings are created.",
+      collectionEyebrow: "Guest Directory",
+      collectionTitle: "Guests list",
+      filters: {
+        users: "Users",
+        admins: "Admins",
+      },
+      statusActive: "Active",
+      statusAdmin: "Admin",
+      kpis: {
+        totalGuests: "Total Guests",
+        totalBookings: "Total Bookings",
+      },
+      fields: {
+        totalBookings: "Total bookings",
+        created: "Joined date",
+      },
+      table: {
+        guest: "Guest",
+        phone: "WhatsApp",
+        totalBookings: "Total bookings",
+        created: "Joined",
+        status: "Status",
+        actions: "Actions",
+      },
+      actions: {
+        delete: "Delete",
+        noAction: "-",
+      },
+      deleteConfirm: (name: string) => `Delete user ${name}? All related bookings will also be removed.`,
+      deleteSuccess: "User deleted.",
+      deleteError: "Failed to delete user.",
+      deleteAdminBlocked: "Admins cannot be deleted from this menu.",
+      createSuccess: "Account created successfully.",
+      createError: "Failed to create account.",
+      form: {
+        name: "Name",
+        namePlaceholder: "Full name",
+        phone: "WhatsApp",
+        phonePlaceholder: "Example: 6281234567890",
+        email: "Email",
+        emailPlaceholder: "Optional",
+        role: "Role",
+        roleUser: "User",
+        roleAdmin: "Admin",
+        password: "Password",
+        passwordPlaceholder: "Minimum 6 characters",
+        submit: "Add Account",
+      },
+    },
+    adminProfile: {
+      eyebrow: "Admin Profile",
+      title: "Bale Aur Sembalun admin access",
+      description: "Manage access identity, account security, and operational control in a calm executive view.",
+      accessEyebrow: "Admin Access",
+      backToDashboard: "Back",
+      logout: "Logout",
+      editEyebrow: "Edit Profile",
+      editTitle: "Update admin access identity",
+      editDescription: "Adjust admin access details to keep communication and account security in check.",
+      form: {
+        name: "Name",
+        namePlaceholder: "Admin name",
+        phone: "WhatsApp",
+        phonePlaceholder: "Example: 6281234567890",
+        email: "Email",
+        emailPlaceholder: "Optional",
+        password: "New password",
+        passwordPlaceholder: "Leave blank to keep current",
+        note: "Changes will be saved to this admin account.",
+        submit: "Save Changes",
+      },
+      updateSuccess: "Admin profile updated.",
+      updateError: "Failed to update admin profile.",
+      fields: {
+        role: "Role",
+        created: "Joined",
+        security: "Security",
+      },
+      securityNote: "Keep admin access secure. Avoid sharing login credentials with anyone else.",
+    },
+  },
+} as const;
+
+interface LanguageContextValue {
+  language: Language;
+  setLanguage: (language: Language) => void;
+  translations: (typeof translations)[Language];
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
-const SUPPORTED_LANGUAGES: SupportedLanguage[] = ['en', 'id', 'nl', 'es'];
-const STORAGE_KEY = 'ukon_language_preference';
-
-// Lazy load translation files
-async function loadTranslations(lang: SupportedLanguage): Promise<Record<string, any>> {
-  try {
-    const module = await import(`@/lib/i18n/translations/${lang}.json`);
-    return module.default;
-  } catch (error) {
-    console.warn(`Failed to load translations for ${lang}, falling back to English`, error);
-    if (lang !== 'en') {
-      return loadTranslations('en');
-    }
-    return {};
+function getInitialLanguage(): Language {
+  if (typeof window === "undefined") {
+    return "id";
   }
-}
 
-// Resolve a dot-notation key against a translations object
-function resolveKey(key: string, obj: Record<string, any>): string | undefined {
-  const value = key.split('.').reduce<any>((acc, part) => acc?.[part], obj);
-  return typeof value === 'string' ? value : undefined;
-}
+  const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
 
-// Auto-detect language from browser
-function detectLanguage(): SupportedLanguage {
-  if (typeof navigator === 'undefined') return 'en';
-
-  const browserLang = navigator.language.split('-')[0].toLowerCase();
-
-  if (SUPPORTED_LANGUAGES.includes(browserLang as SupportedLanguage)) {
-    return browserLang as SupportedLanguage;
+  if (storedLanguage === "id" || storedLanguage === "en") {
+    return storedLanguage;
   }
 
-  return 'en';
+  return "id";
 }
 
-// Get language from URL, localStorage, or detection
-function resolveLanguage(urlLang: string | undefined): SupportedLanguage {
-  // 1. Priority: URL parameter (authoritative)
-  if (urlLang && SUPPORTED_LANGUAGES.includes(urlLang as SupportedLanguage)) {
-    return urlLang as SupportedLanguage;
-  }
+export function LanguageProvider({ children }: { children: ReactNode }) {
+  const [language, setLanguage] = useState<Language>(getInitialLanguage);
 
-  // 2. Priority: localStorage preference
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored && SUPPORTED_LANGUAGES.includes(stored as SupportedLanguage)) {
-    return stored as SupportedLanguage;
-  }
-
-  // 3. Priority: browser detection
-  return detectLanguage();
-}
-
-interface LanguageProviderProps {
-  children: ReactNode;
-}
-
-export function LanguageProvider({ children }: LanguageProviderProps) {
-  const params = useParams<{ lang?: string }>();
-  const navigate = useNavigate();
-
-  const urlLang = params.lang;
-  const [language, setLanguageState] = useState<SupportedLanguage>(() =>
-    resolveLanguage(urlLang)
-  );
-  const [translations, setTranslations] = useState<Record<string, any>>({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [isPending, startTransition] = useTransition();
-
-  // Cache English translations for fallback
-  const enFallbackRef = useRef<Record<string, any>>({});
-
-  // Load translations on mount and language change
   useEffect(() => {
-    let isMounted = true;
-
-    const load = async () => {
-      setIsLoading(true);
-
-      // Always ensure English fallback is loaded
-      if (Object.keys(enFallbackRef.current).length === 0) {
-        enFallbackRef.current = await loadTranslations('en');
-      }
-
-      const trans = language === 'en'
-        ? enFallbackRef.current
-        : await loadTranslations(language);
-
-      if (isMounted) {
-        setTranslations(trans);
-        setIsLoading(false);
-      }
-    };
-
-    load();
-
-    return () => {
-      isMounted = false;
-    };
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+    document.documentElement.lang = language;
   }, [language]);
 
-  // Sync URL language to state (URL is authoritative)
-  useEffect(() => {
-    const resolvedLang = resolveLanguage(urlLang);
-
-    if (resolvedLang !== language) {
-      startTransition(() => {
-        setLanguageState(resolvedLang);
-      });
-    }
-  }, [urlLang, language]);
-
-  // Handle language change: update both state and URL
-  const handleSetLanguage = (newLang: SupportedLanguage) => {
-    if (newLang === language) return;
-
-    // Save preference to localStorage
-    localStorage.setItem(STORAGE_KEY, newLang);
-
-    startTransition(() => {
-      setLanguageState(newLang);
-
-      // Update URL to match new language
-      const currentPath = window.location.pathname;
-      const pathSegments = currentPath.split('/').filter(Boolean);
-
-      // Remove old language prefix if it exists
-      if (SUPPORTED_LANGUAGES.includes(pathSegments[0] as SupportedLanguage)) {
-        pathSegments[0] = newLang;
-      } else {
-        pathSegments.unshift(newLang);
-      }
-
-      navigate(`/${pathSegments.join('/')}`);
-    });
-  };
-
-  // Translation function: active locale → English fallback → raw key
-  const t = (key?: string): string => {
-    if (typeof key !== 'string') return '';
-
-    // Try active locale first
-    const value = resolveKey(key, translations);
-    if (value !== undefined) return value;
-
-    // Fallback to English
-    const fallback = resolveKey(key, enFallbackRef.current);
-    if (fallback !== undefined) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn(`[i18n] Missing "${language}" translation for: ${key}`);
-      }
-      return fallback;
-    }
-
-    // Last resort: return the key itself
-    if (process.env.NODE_ENV === 'development') {
-      console.warn(`[i18n] Missing translation key in all locales: ${key}`);
-    }
-    return key;
-  };
-
-  // Memoize context value to prevent unnecessary re-renders
-  const value = useMemo<LanguageContextType>(() => ({
-    language,
-    translations,
-    setLanguage: handleSetLanguage,
-    t,
-    isLoading,
-    isPending,
-    availableLanguages: SUPPORTED_LANGUAGES,
-  }), [language, translations, isLoading, isPending]);
-
-  // Block render until translations are loaded to prevent raw key flash
-  if (isLoading) {
-    return <div className="min-h-screen bg-background" />;
-  }
-
-  return (
-    <LanguageContext.Provider value={value}>
-      {children}
-    </LanguageContext.Provider>
+  const value = useMemo<LanguageContextValue>(
+    () => ({
+      language,
+      setLanguage,
+      translations: translations[language],
+    }),
+    [language],
   );
+
+  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 
-export function useLanguage(): LanguageContextType {
+export function useLanguage() {
   const context = useContext(LanguageContext);
 
   if (!context) {
-    throw new Error('useLanguage must be used within LanguageProvider');
+    throw new Error("useLanguage harus digunakan di dalam LanguageProvider.");
   }
 
   return context;
