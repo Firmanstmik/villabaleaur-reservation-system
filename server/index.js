@@ -838,6 +838,29 @@ app.patch("/api/admin/bookings/:id/status", auth("admin"), async (req, res) => {
   }
 });
 
+app.delete("/api/admin/bookings/:id", auth("admin"), async (req, res) => {
+  try {
+    const bookings = await query(
+      `
+        delete from bookings
+        where id = $1
+        returning id
+      `,
+      [req.params.id],
+    );
+
+    if (bookings.length === 0) {
+      res.status(404).json({ message: "Reservasi tidak ditemukan." });
+      return;
+    }
+
+    res.json({ message: "Reservasi berhasil dihapus." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Gagal menghapus reservasi." });
+  }
+});
+
 app.get("/api/admin/dashboard", auth("admin"), async (_, res) => {
   try {
     await syncCompletedBookings();

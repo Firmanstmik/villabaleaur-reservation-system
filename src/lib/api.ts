@@ -226,6 +226,11 @@ export const bookingApi = {
       body: JSON.stringify({ status_booking }),
     });
   },
+  deleteBooking(id: number) {
+    return request<{ message: string }>(`/api/admin/bookings/${id}`, {
+      method: "DELETE",
+    });
+  },
   adminSummary() {
     const fallback: { summary: AdminDashboardSummary } = {
       summary: {

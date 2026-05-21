@@ -29,6 +29,7 @@ export default function AdminBookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   async function fetchBookings() {
     const response = await bookingApi.adminBookings();
@@ -49,6 +50,22 @@ export default function AdminBookingsPage() {
       toast.error(error instanceof Error ? error.message : translations.adminBookings.error);
     } finally {
       setUpdatingId(null);
+    }
+  }
+
+  async function handleDeleteBooking(id: number) {
+    const confirmed = window.confirm(translations.adminBookings.deleteConfirm(id));
+    if (!confirmed) return;
+
+    setDeletingId(id);
+    try {
+      await bookingApi.deleteBooking(id);
+      toast.success(translations.adminBookings.deleteSuccess);
+      await fetchBookings();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : translations.adminBookings.deleteError);
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -101,37 +118,60 @@ export default function AdminBookingsPage() {
                           <p className="font-medium text-[#102A43]">{translations.adminBookings.guestsCount(booking.jumlah_tamu)}</p>
                         </div>
                         {booking.status_booking === "menunggu" ? (
-                          <div className="grid grid-cols-2 gap-3 pt-2">
+                          <>
+                            <div className="grid grid-cols-2 gap-3 pt-2">
+                              <Button
+                                type="button"
+                                disabled={updatingId === booking.id || deletingId === booking.id}
+                                onClick={() => handleStatusChange(booking.id, "disetujui")}
+                              >
+                                {translations.adminBookings.actions.approve}
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                disabled={updatingId === booking.id || deletingId === booking.id}
+                                onClick={() => handleStatusChange(booking.id, "ditolak")}
+                              >
+                                {translations.adminBookings.actions.reject}
+                              </Button>
+                            </div>
                             <Button
                               type="button"
-                              disabled={updatingId === booking.id}
-                              onClick={() => handleStatusChange(booking.id, "disetujui")}
+                              variant="outline"
+                              className="mt-3 w-full"
+                              disabled={updatingId === booking.id || deletingId === booking.id}
+                              onClick={() => handleDeleteBooking(booking.id)}
                             >
-                              {translations.adminBookings.actions.approve}
+                              {translations.adminBookings.actions.delete}
                             </Button>
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              disabled={updatingId === booking.id}
-                              onClick={() => handleStatusChange(booking.id, "ditolak")}
-                            >
-                              {translations.adminBookings.actions.reject}
-                            </Button>
-                          </div>
+                          </>
                         ) : (
-                          <select
-                            aria-label={translations.adminBookings.changeStatusLabel(booking.id)}
-                            title={translations.adminBookings.changeStatusLabel(booking.id)}
-                            value={booking.status_booking}
-                            onChange={(event) => handleStatusChange(booking.id, event.target.value as BookingStatus)}
-                            className="h-11 w-full rounded-[1.35rem] border border-[rgba(217,179,106,0.2)] bg-[rgba(248,247,244,0.94)] px-4 text-sm text-[#102A43] shadow-[0_18px_34px_-26px_rgba(16,42,67,0.38)] focus:outline-none focus:ring-4 focus:ring-[rgba(95,169,198,0.16)]"
-                          >
-                            {statusOptions.map((status) => (
-                              <option key={status} value={status}>
-                                {translations.app.status[status]}
-                              </option>
-                            ))}
-                          </select>
+                          <>
+                            <select
+                              aria-label={translations.adminBookings.changeStatusLabel(booking.id)}
+                              title={translations.adminBookings.changeStatusLabel(booking.id)}
+                              value={booking.status_booking}
+                              disabled={updatingId === booking.id || deletingId === booking.id}
+                              onChange={(event) => handleStatusChange(booking.id, event.target.value as BookingStatus)}
+                              className="h-11 w-full rounded-[1.35rem] border border-[rgba(217,179,106,0.2)] bg-[rgba(248,247,244,0.94)] px-4 text-sm text-[#102A43] shadow-[0_18px_34px_-26px_rgba(16,42,67,0.38)] focus:outline-none focus:ring-4 focus:ring-[rgba(95,169,198,0.16)]"
+                            >
+                              {statusOptions.map((status) => (
+                                <option key={status} value={status}>
+                                  {translations.app.status[status]}
+                                </option>
+                              ))}
+                            </select>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="mt-3 w-full"
+                              disabled={updatingId === booking.id || deletingId === booking.id}
+                              onClick={() => handleDeleteBooking(booking.id)}
+                            >
+                              {translations.adminBookings.actions.delete}
+                            </Button>
+                          </>
                         )}
                       </div>
                     </div>
@@ -181,7 +221,7 @@ export default function AdminBookingsPage() {
                               <Button
                                 type="button"
                                 size="sm"
-                                disabled={updatingId === booking.id}
+                                disabled={updatingId === booking.id || deletingId === booking.id}
                                 onClick={() => handleStatusChange(booking.id, "disetujui")}
                               >
                                 {translations.adminBookings.actions.approve}
@@ -190,26 +230,47 @@ export default function AdminBookingsPage() {
                                 type="button"
                                 size="sm"
                                 variant="destructive"
-                                disabled={updatingId === booking.id}
+                                disabled={updatingId === booking.id || deletingId === booking.id}
                                 onClick={() => handleStatusChange(booking.id, "ditolak")}
                               >
                                 {translations.adminBookings.actions.reject}
                               </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                disabled={updatingId === booking.id || deletingId === booking.id}
+                                onClick={() => handleDeleteBooking(booking.id)}
+                              >
+                                {translations.adminBookings.actions.delete}
+                              </Button>
                             </div>
                           ) : (
-                            <select
-                              aria-label={translations.adminBookings.changeStatusLabel(booking.id)}
-                              title={translations.adminBookings.changeStatusLabel(booking.id)}
-                              value={booking.status_booking}
-                              onChange={(event) => handleStatusChange(booking.id, event.target.value as BookingStatus)}
-                              className="h-11 rounded-[1.35rem] border border-[rgba(217,179,106,0.2)] bg-[rgba(248,247,244,0.94)] px-4 text-sm text-[#102A43] shadow-[0_18px_34px_-26px_rgba(16,42,67,0.38)] focus:outline-none focus:ring-4 focus:ring-[rgba(95,169,198,0.16)]"
-                            >
-                              {statusOptions.map((status) => (
-                                <option key={status} value={status}>
-                                  {translations.app.status[status]}
-                                </option>
-                              ))}
-                            </select>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <select
+                                aria-label={translations.adminBookings.changeStatusLabel(booking.id)}
+                                title={translations.adminBookings.changeStatusLabel(booking.id)}
+                                value={booking.status_booking}
+                                disabled={updatingId === booking.id || deletingId === booking.id}
+                                onChange={(event) => handleStatusChange(booking.id, event.target.value as BookingStatus)}
+                                className="h-11 rounded-[1.35rem] border border-[rgba(217,179,106,0.2)] bg-[rgba(248,247,244,0.94)] px-4 text-sm text-[#102A43] shadow-[0_18px_34px_-26px_rgba(16,42,67,0.38)] focus:outline-none focus:ring-4 focus:ring-[rgba(95,169,198,0.16)]"
+                              >
+                                {statusOptions.map((status) => (
+                                  <option key={status} value={status}>
+                                    {translations.app.status[status]}
+                                  </option>
+                                ))}
+                              </select>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                disabled={updatingId === booking.id || deletingId === booking.id}
+                                onClick={() => handleDeleteBooking(booking.id)}
+                              >
+                                {translations.adminBookings.actions.delete}
+                              </Button>
+                            </div>
                           )}
                         </TableCell>
                       </TableRow>

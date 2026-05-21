@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { jsPDF } from "jspdf";
 import { Download, FileDown, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -355,27 +356,6 @@ function downloadDataUrl(dataUrl: string, filename: string) {
   link.remove();
 }
 
-function openPrintWindow(svgText: string, title: string) {
-  const win = window.open("", "_blank", "noopener,noreferrer,width=920,height=780");
-  if (!win) throw new Error("Popup diblokir. Izinkan popup untuk download PDF.");
-  win.document.title = title;
-  win.document.body.style.margin = "0";
-  win.document.body.innerHTML = `
-    <style>
-      @page { size: A4 landscape; margin: 12mm; }
-      html, body { height: 100%; background: #f4efe8; }
-      body { font-family: system-ui, -apple-system, sans-serif; }
-      .wrap { display: flex; justify-content: center; align-items: center; min-height: 100%; padding: 18px; }
-      .card { width: 100%; max-width: 900px; }
-      svg { width: 100%; height: auto; }
-      @media print { body { background: #fff; } .wrap { padding: 0; } }
-    </style>
-    <div class="wrap"><div class="card">${svgText}</div></div>
-  `;
-  win.focus();
-  win.print();
-}
-
 // ─────────────────────────────────────────────
 //  Types
 // ─────────────────────────────────────────────
@@ -523,7 +503,31 @@ export default function BookingPassModal({
     if (downloading) return;
     setDownloading("pdf");
     try {
-      openPrintWindow(inlineSvgText, `Bale Aur Booking Pass ${buildBookingCode(booking.id)}`);
+      const pngDataUrl = await svgToPngDataUrl(svgText, 2);
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+        compress: true,
+      });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 12;
+      const maxWidth = pageWidth - margin * 2;
+      const maxHeight = pageHeight - margin * 2;
+      const imageWidth = 920;
+      const imageHeight = 460;
+      const scale = Math.min(maxWidth / imageWidth, maxHeight / imageHeight);
+      const renderWidth = imageWidth * scale;
+      const renderHeight = imageHeight * scale;
+      const offsetX = (pageWidth - renderWidth) / 2;
+      const offsetY = (pageHeight - renderHeight) / 2;
+
+      pdf.setFillColor(244, 239, 232);
+      pdf.rect(0, 0, pageWidth, pageHeight, "F");
+      pdf.addImage(pngDataUrl, "PNG", offsetX, offsetY, renderWidth, renderHeight, undefined, "FAST");
+      pdf.save(`bale-aur-booking-${buildBookingCode(booking.id)}.pdf`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Gagal membuat PDF.");
     } finally {

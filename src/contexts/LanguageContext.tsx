@@ -430,6 +430,8 @@ const translations = {
     adminBookings: {
       success: "Status booking berhasil diperbarui.",
       error: "Gagal memperbarui status booking.",
+      deleteSuccess: "Reservasi berhasil dihapus.",
+      deleteError: "Gagal menghapus reservasi.",
       eyebrow: "Kontrol Reservasi",
       title: "Kelola reservasi tamu",
       description: "Tinjau stay Bale Aur, ubah status reservasi, dan jaga alur ketersediaan kamar tetap jelas di setiap layar.",
@@ -439,6 +441,7 @@ const translations = {
       actions: {
         approve: "Approve",
         reject: "Reject",
+        delete: "Hapus",
       },
       mobile: {
         villa: "Kamar",
@@ -454,6 +457,7 @@ const translations = {
         changeStatus: "Ubah Status",
       },
       changeStatusLabel: (id: number) => `Ubah status booking ${id}`,
+      deleteConfirm: (id: number) => `Hapus reservasi #${id}? Tindakan ini tidak bisa dibatalkan.`,
       guestsCount: (count: number) => `${count} tamu`,
     },
     adminVillas: {
@@ -1056,6 +1060,8 @@ const translations = {
     adminBookings: {
       success: "Booking status updated successfully.",
       error: "Failed to update booking status.",
+      deleteSuccess: "Reservation deleted successfully.",
+      deleteError: "Failed to delete reservation.",
       eyebrow: "Reservation Control",
       title: "Manage guest reservations",
       description: "Review Bale Aur stays, adjust reservation status, and keep room availability clear across every screen.",
@@ -1065,6 +1071,7 @@ const translations = {
       actions: {
         approve: "Approve",
         reject: "Reject",
+        delete: "Delete",
       },
       mobile: {
         villa: "Room",
@@ -1080,6 +1087,7 @@ const translations = {
         changeStatus: "Change Status",
       },
       changeStatusLabel: (id: number) => `Change booking status ${id}`,
+      deleteConfirm: (id: number) => `Delete reservation #${id}? This action cannot be undone.`,
       guestsCount: (count: number) => `${count} guests`,
     },
     adminVillas: {
