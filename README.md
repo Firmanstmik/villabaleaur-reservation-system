@@ -17,6 +17,11 @@ Modern villa reservation platform with elegant UI, premium stay presentation, an
 - CRUD villa dengan upload gambar
 - Booking villa dan update status booking
 
+## Clone di Lokal Folder, misal buat folder baru dengan nama : SISTEM BOOKING VILLA BALE AUR
+```bash
+git clone https://github.com/Firmanstmik/villabaleaur-reservation-system
+```
+
 ## Setup Lokal
 
 1. Install dependency
