@@ -29,12 +29,32 @@ function buildBookingCode(id: number) {
 
 function resolveStatusAccent(status: BookingStatus) {
   if (status === "disetujui")
-    return { label: "Approved", color: "#8B6914", tint: "rgba(196,154,90,0.14)" };
+    return {
+      label: "Approved",
+      color: "#8B6914",
+      tint: "rgba(196,154,90,0.14)",
+      badgeClassName: "bg-[rgba(196,154,90,0.14)] text-[#8B6914]",
+    };
   if (status === "ditolak")
-    return { label: "Rejected", color: "#8B1A1A", tint: "rgba(160,50,50,0.10)" };
+    return {
+      label: "Rejected",
+      color: "#8B1A1A",
+      tint: "rgba(160,50,50,0.10)",
+      badgeClassName: "bg-[rgba(160,50,50,0.10)] text-[#8B1A1A]",
+    };
   if (status === "selesai")
-    return { label: "Completed", color: "#1A5038", tint: "rgba(30,80,60,0.10)" };
-  return { label: "Pending", color: "#7A5D21", tint: "rgba(196,154,90,0.11)" };
+    return {
+      label: "Completed",
+      color: "#1A5038",
+      tint: "rgba(30,80,60,0.10)",
+      badgeClassName: "bg-[rgba(30,80,60,0.10)] text-[#1A5038]",
+    };
+  return {
+    label: "Pending",
+    color: "#7A5D21",
+    tint: "rgba(196,154,90,0.11)",
+    badgeClassName: "bg-[rgba(196,154,90,0.11)] text-[#7A5D21]",
+  };
 }
 
 function buildPassSvg({
@@ -567,8 +587,7 @@ export default function BookingPassModal({
               <CardContent className="flex min-h-0 flex-1 flex-col p-0">
 
                 {/* ── Header ── */}
-                <div className="flex items-start justify-between gap-3 border-b border-[rgba(196,154,90,0.15)] bg-[linear-gradient(160deg,rgba(13,28,46,0.99),rgba(18,44,80,0.95))] px-4 py-4 text-white sm:px-5"
-                  style={{ borderTop: "2.5px solid #C49A5A" }}>
+                <div className="flex items-start justify-between gap-3 border-b border-t-[2.5px] border-[rgba(196,154,90,0.15)] border-t-[#C49A5A] bg-[linear-gradient(160deg,rgba(13,28,46,0.99),rgba(18,44,80,0.95))] px-4 py-4 text-white sm:px-5">
                   <div className="min-w-0 space-y-1">
                     <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#C49A5A]">
                       {translations.villaDetail.pass.eyebrow}
@@ -583,8 +602,10 @@ export default function BookingPassModal({
                   <div className="flex items-center gap-2 self-start">
                     {/* Status pill */}
                     <div
-                      className="rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] sm:text-[11px]"
-                      style={{ background: accent.tint, color: accent.color }}
+                      className={cn(
+                        "rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] sm:text-[11px]",
+                        accent.badgeClassName,
+                      )}
                     >
                       {statusText}
                     </div>
